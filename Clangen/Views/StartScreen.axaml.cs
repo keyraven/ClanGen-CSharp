@@ -2,9 +2,9 @@
 
 namespace Clangen.Views;
 
-public partial class MainView : UserControl
+public partial class StartScreenView : UserControl
 {
-    public MainView()
+    public StartScreenView()
     {
         InitializeComponent();
     }

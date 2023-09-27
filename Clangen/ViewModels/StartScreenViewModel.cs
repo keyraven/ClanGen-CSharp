@@ -1,6 +1,6 @@
 ﻿namespace Clangen.ViewModels;
 
-public partial class MainViewModel : ViewModelBase
+public partial class StartScreenViewModel : ViewModelBase
 {
     public string Greeting => "Welcome to Avalonia!";
 }

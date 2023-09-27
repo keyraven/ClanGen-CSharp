@@ -20,4 +20,10 @@
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\StartScreen.axaml.cs">
+      <DependentUpon>StartScreen.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
 </Project>
