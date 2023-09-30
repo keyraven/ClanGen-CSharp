@@ -20,7 +20,7 @@ public partial class Cat : IEquatable<Cat>
     //PUBLIC ATTRIBUTES and PROPERTIES
 
     /// <summary>
-    /// String ID to idenify a cat
+    /// String ID to identify a cat
     /// </summary>
     public readonly string Id;
     
@@ -47,7 +47,7 @@ public partial class Cat : IEquatable<Cat>
     /// <summary>
     /// The biological sex of a cat. Male or Female. 
     /// </summary>
-    public readonly CatSex sex;
+    public readonly CatSex Sex;
 
     /// <summary>
     /// String representing the gender of a cat. 
@@ -63,26 +63,62 @@ public partial class Cat : IEquatable<Cat>
     /// List of cat Ids. Holds the adoptive parents. 
     /// </summary>
     public List<string> adoptiveParents { get; set; }
+    
     /// <summary>
     /// Boolian indicating if the cat is outside the clan. 
     /// </summary>
     public bool outside { get; set; }
+    
     /// <summary>
     /// Boolian indicating if a cat is in the Dark Forest
     /// </summary>
     public bool darkForest { get; set; }
+    
     /// <summary>
     /// Boolian indicating if a cat is dead
     /// </summary>
     public bool dead { get; private set; }
+    
     /// <summary>
     /// Current number of lives that a cat has. For most cats, this should always be 1 or 0. 
     /// </summary>
     public int lives { get; private set; } = 1;
+    
     /// <summary>
     /// Holds relationships to other cats. Key values are cat ids, which are linked to the relationship object. 
     /// </summary>
     public Dictionary<string, Relationship> relationships { get; set; }
+    
+    /*
+    // Part of me really wants to take the chance to switch everything to quarter-moon timeskips
+    // We have a good change with this rewrite, and it would help a lot with slowing the game down
+    // and making injury duration make more sense. However, this might be a decent change. It won't really be hard
+    // to implement (just reduce all the chances by 4, maybe some balencing with patrol EX and relationship events), 
+    // but it's a decent direction difference.  --keyraven
+    private int _timeskips = 0;
+    public int timeskips
+    {
+        get
+        {
+            return _timeskips;
+        }
+        set
+        {
+            _timeskips = value;
+            //Set Age
+        }
+    }
+
+    public float moons
+    {
+        get
+        {
+            return (float)timeskips / 4;
+        }
+    }
+    */
+    
+    
     /// <summary>
     /// Age of the cat, in moons. 
     /// </summary>
@@ -166,15 +202,16 @@ public partial class Cat : IEquatable<Cat>
     }
 
 
-    public Cat(CatStatus status = CatStatus.Newborn, int moons = 0, CatSex sex = CatSex.Female, List<string>? bioParents = null,
-        List<string>? adoptiveParents = null, string? prefix = null, string? gender = null, string? suffix = null, int experience = 0)
+    public Cat(CatStatus status = CatStatus.Newborn, int moons = 0, CatSex sex = CatSex.Female, 
+        List<string>? bioParents = null, List<string>? adoptiveParents = null, string? prefix = null, 
+        string? gender = null, string? suffix = null, int experience = 0)
     {
         gender ??= sex.ToString();
         adoptiveParents ??= new();
         bioParents ??= new();
         
         this.Id = GetValidId();
-        this.sex = sex;
+        this.Sex = sex;
         this.gender = gender;
         this.status = status;
         this.moons = moons;

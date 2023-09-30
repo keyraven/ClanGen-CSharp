@@ -19,11 +19,17 @@
 
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="Sandreas.Avalonia.SimpleRouter" Version="0.0.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Views\StartScreen.axaml.cs">
+    <Compile Update="Views\StartScreenView.axaml.cs">
       <DependentUpon>StartScreen.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\MainView.axaml.cs">
+      <DependentUpon>MainView.axaml</DependentUpon>
+      <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
 </Project>

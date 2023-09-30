@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Clangen.ViewModels"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="700"
              x:Class="Clangen.Views.StartScreenView"
              x:DataType="vm:StartScreenViewModel">
   <Design.DataContext>
@@ -11,6 +11,12 @@
          to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
     <vm:StartScreenViewModel />
   </Design.DataContext>
-
-  <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    <StackPanel>
+        <StackPanel.Background>
+            <ImageBrush Source="/Assets/menu.png" Stretch="UniformToFill"/>
+        </StackPanel.Background>
+        
+        <Button Content="Start">
+        </Button>
+    </StackPanel>
 </UserControl>
