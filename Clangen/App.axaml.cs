@@ -26,6 +26,7 @@ public partial class App : Application
         BindingPlugins.DataValidators.RemoveAt(0);
         
         // Run all startup activities related to the game itself. 
+        // Maybe move this somewhere else to allow for a loading screen, at some point.
         Game.GameStart();
         
         IServiceProvider services = ConfigureServices();
