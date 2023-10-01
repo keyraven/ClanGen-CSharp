@@ -42,6 +42,7 @@ public static class Game
         //Sprite.LoadResources();
         //TODO --> Needs to be run once at startup. 
         LoadSave();
+        Console.WriteLine("Done!");
     }
 
 }

@@ -9,19 +9,20 @@ public class Name
 {
     private class NameDetails
     {
-        public List<string> normalPrefixes { get; set; }
-        public List<string> normalSuffixes { get; set; }
-        public Dictionary<Cat.CatStatus, string> specialSuffixes { get; set; }
-        public List<string> inappropriateNames { get; set; }
+        public List<string> normalPrefixes { get; set; } = new();
+        public List<string> normalSuffixes { get; set; } = new();
+        public Dictionary<Cat.CatStatus, string>? specialSuffixes { get; set; } = new();
+        public List<string>? inappropriateNames { get; set; } = new();
     }
-
+    
+    // Not sure how to remove the "possible null reference" warning. 
     private static readonly NameDetails details = JsonSerializer.Deserialize<NameDetails>(
         File.ReadAllText("Resources/names.json"));
 
     public string Prefix;
     public string Suffix;
     public bool SpecSuffixHidden;
-    public Cat.CatStatus NameStatus;
+    public Cat? OwnerCat;
 
     /// <summary>
     /// Returns the full name of the cat, with prefix, suffix, and any special
@@ -31,9 +32,13 @@ public class Name
     {
         get
         {
-            if (!SpecSuffixHidden && details.specialSuffixes.ContainsKey(NameStatus))
+            if (OwnerCat is null)
             {
-                return $"{Prefix}{details.specialSuffixes[NameStatus]}";
+                return $"{Prefix}{Suffix}";
+            }
+            if (!SpecSuffixHidden && details.specialSuffixes.ContainsKey(OwnerCat.status))
+            {
+                return $"{Prefix}{details.specialSuffixes[OwnerCat.status]}";
             }
 
             return $"{Prefix}{Suffix}";
@@ -49,15 +54,16 @@ public class Name
     /// <param name="prefix"></param>
     /// <param name="suffix"></param>
     /// <param name="specSuffixHidden"></param>
+    /// <param name="nameStatus">  </param>
     public Name(string? prefix, string? suffix, bool specSuffixHidden = false,
-        Cat.CatStatus nameStatus = Cat.CatStatus.Warrior)
+        Cat? cat = null)
     {
         prefix ??= "";
         suffix ??= "";
         this.Prefix = prefix;
         this.Suffix = suffix;
         this.SpecSuffixHidden = specSuffixHidden;
-        this.NameStatus = nameStatus;
+        this.OwnerCat = cat;
     }
 
     /// <summary>
@@ -65,7 +71,7 @@ public class Name
     /// </summary>
     /// <param name="nameStatus"></param>
     /// <returns></returns>
-    public static Name GenerateRandomName(Cat.CatStatus nameStatus = Cat.CatStatus.Warrior)
+    public static Name GenerateRandomName(Cat? cat)
     {
         string chosenPrefix = Utilities.ChoseRandom(details.normalPrefixes);
         string chosenSuffix = Utilities.ChoseRandom(details.normalSuffixes);
@@ -79,10 +85,10 @@ public class Name
             chosenPrefix = Utilities.ChoseRandom(details.normalPrefixes);
             i++;
         }
-
-        return new Name(chosenPrefix, chosenSuffix, false, nameStatus);
+        
+        return new Name(chosenPrefix, chosenSuffix, false, cat);
     }
-
+    
     /// <summary>
     /// Determines if a certain set of prefix and suffixes are valid together. 
     /// </summary>

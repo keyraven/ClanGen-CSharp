@@ -25,7 +25,8 @@ public partial class Cat : IEquatable<Cat>
     public readonly string Id;
     
     /// <summary>
-    /// Name object, holding information on the cat's name.  
+    /// Name object, holding information on the cat's name. To get the full name of a cat
+    /// as a string, use the FullName property.
     /// </summary>
     public Name name { get; set; }
     
@@ -162,16 +163,19 @@ public partial class Cat : IEquatable<Cat>
     /// List of previous apprentices.
     /// </summary>
     public List<string> previousApprentice { get; set; } = new();
+    
     /// <summary>
     /// List of current mates. 
     /// </summary>
     public List<string> mates { get; private set; } = new();
+    
     /// <summary>
     /// List of previous mates. 
     /// </summary>
     public List<string> previousMates { get; private set; }
 
     private int _experience;
+    
     /// <summary>
     /// Cat experience. 
     /// </summary>
@@ -185,12 +189,13 @@ public partial class Cat : IEquatable<Cat>
             experienceLevel = ExpLevel.Untrained;
         }
     }
+    
     /// <summary>
-    /// Current experence level, as an enum. 
+    /// Current experience level, as an enum. 
     /// </summary>
     public ExpLevel experienceLevel { get; set; }
     /// <summary>
-    /// Cat pronouns, to be used for text replacment purposes. 
+    /// Cat pronouns, to be used for text replacement purposes. 
     /// </summary>
     public List<Pronoun> pronouns { get; set; }
     //public SKBitmap sprite { get; set; }
@@ -198,7 +203,7 @@ public partial class Cat : IEquatable<Cat>
 
     public string fullName
     {
-        get { return name.ToString(); }
+        get { return name.fullName; }
     }
 
 
@@ -219,7 +224,7 @@ public partial class Cat : IEquatable<Cat>
         this.adoptiveParents = adoptiveParents;
         this.experience = experience;
 
-        name = new Name(prefix, suffix, nameStatus: this.status);
+        name = new Name(prefix, suffix, cat: this);
     }
 
     //NEW CAT FUNCTIONS

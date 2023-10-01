@@ -4,6 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Avalonia.SimpleRouter;
+using Clangen.Models;
 using Microsoft.Extensions.DependencyInjection;
 
 using Clangen.ViewModels;
@@ -23,7 +24,10 @@ public partial class App : Application
         // Line below is needed to remove Avalonia data validation.
         // Without this line you will get duplicate validations from both Avalonia and CT
         BindingPlugins.DataValidators.RemoveAt(0);
-
+        
+        // Run all startup activities related to the game itself. 
+        Game.GameStart();
+        
         IServiceProvider services = ConfigureServices();
         var mainViewModel = services.GetRequiredService<MainViewModel>();
         
@@ -43,6 +47,8 @@ public partial class App : Application
         }
 
         base.OnFrameworkInitializationCompleted();
+
+        
     }
     
     

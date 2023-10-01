@@ -1,0 +1,13 @@
+﻿{
+  "specialSuffixes": {
+    "Leader": "star",
+    "Newborn": "kit",
+    "Kitten": "kit",
+    "Apprentice": "paw",
+    "MedicineCatApprentice": "paw",
+    "MediatorApprentice": "paw"
+  },
+  "normalPrefixes": ["Blue", "Gray", "Light", "Shade", "Lion", "Tiger"],
+  "normalSuffixes": ["heart", "tail", "stripe", "pelt", "fur"],
+  "inappropriateNames": ["wetback", "blackface", "whiteface", "yellowface"]
+}

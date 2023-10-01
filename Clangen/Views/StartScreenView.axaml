@@ -16,7 +16,7 @@
             <ImageBrush Source="/Assets/menu.png" Stretch="UniformToFill"/>
         </StackPanel.Background>
         
-        <Button Content="Start">
-        </Button>
+        <Button Content="Start" Command="{Binding PressStart}"/>
+        <Button Content="Settings" Command="{Binding PressSettings}"/>
     </StackPanel>
 </UserControl>

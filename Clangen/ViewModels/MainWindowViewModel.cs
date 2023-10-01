@@ -1,23 +1,13 @@
 ﻿using System.Collections.Generic;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Avalonia.SimpleRouter;
 
 namespace Clangen.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    [ObservableProperty]
-    private ViewModelBase _contentViewModel;
-
-    private Dictionary<string, ViewModelBase> Pages = new();
-
-    public MainWindowViewModel()
+    public MainWindowViewModel(HistoryRouter<ViewModelBase> router) : base(router)
     {
-        this.Pages = new()
-        {
-            ["StartScreen"] = new StartScreenViewModel(),
-            ["ClanScreen"] = new ClanScreenViewModel()
-        };
+        
     }
-
-
 }
