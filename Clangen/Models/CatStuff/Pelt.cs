@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Clangen.Models.CatStuff;
 
-public class Pelt
+public partial class Pelt
 {
+    
 }

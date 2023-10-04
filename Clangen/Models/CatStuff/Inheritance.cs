@@ -68,9 +68,9 @@ public class Inheritance
     public void Update()
     {
 
-        if (Game.CurrentClan == null)
+        if (Game.currentWorld == null)
         {
-            throw new Exception("Can't update inheritance without clan loaded.");
+            throw new Exception("Can't update inheritance without world loaded.");
         }
 
         parents.Clear();
@@ -87,11 +87,6 @@ public class Inheritance
 
         //Parents
         InitParents();
-
-
-
-
-
     }
 
     private void InitParents()
@@ -100,7 +95,7 @@ public class Inheritance
         //Blood
         foreach (var id in cat.bioParents)
         {
-            current = Game.CurrentClan.FetchCat(id);
+            current = Game.currentWorld?.FetchCat(id);
             if (current == null)
             {
                 continue;
@@ -113,7 +108,7 @@ public class Inheritance
         //Adoptive
         foreach (var id in cat.adoptiveParents)
         {
-            current = Game.CurrentClan.FetchCat(id);
+            current = Game.currentWorld?.FetchCat(id);
             if (current == null)
             {
                 continue;

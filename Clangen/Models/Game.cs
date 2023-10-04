@@ -7,8 +7,6 @@ using System.IO;
 namespace Clangen.Models;
 
 
-
-
 public class GameConfig
 {
     public Dictionary<Cat.CatAge, int[]> ageMoons { get; set; }
@@ -18,7 +16,7 @@ public class GameConfig
 public static class Game
 {
     public static readonly Random Rnd = new();
-    public static Clan? CurrentClan = null;
+    public static World? currentWorld { get; set; }
     // TODO --> Fix the nullable warning that shows up here. 
     // TODO --> It also might be helpful to have a check to ensure this got 
     // TODO ---> everything that's needed. 
@@ -31,7 +29,7 @@ public static class Game
     /// </summary>
     public static void LoadSave()
     {
-        CurrentClan = new Clan("Test");
+        currentWorld = new World();
     }
 
     /// <summary>
@@ -42,7 +40,7 @@ public static class Game
         //Sprite.LoadResources();
         //TODO --> Needs to be run once at startup. 
         LoadSave();
-        Console.WriteLine("Done!");
+        Console.WriteLine("Game-Start Tasks Complete");
     }
 
 }

@@ -21,12 +21,12 @@ public class Relationship
     {
         get
         {
-            if (Game.CurrentClan == null)
+            if (Game.currentWorld == null)
             {
                 throw new Exception("Can't access relationships without loaded clan");
             }
 
-            Cat? output = Game.CurrentClan.FetchCat(_catFrom);
+            Cat? output = Game.currentWorld?.FetchCat(_catFrom);
             if (output == null)
             {
                 throw new Exception($"Invalid _catFrom in relationships: {_catFrom}");
@@ -44,12 +44,12 @@ public class Relationship
     {
         get
         {
-            if (Game.CurrentClan == null)
+            if (Game.currentWorld == null)
             {
                 throw new Exception("Can't access relationships without loaded clan");
             }
 
-            Cat? output = Game.CurrentClan.FetchCat(_catTo);
+            Cat? output = Game.currentWorld?.FetchCat(_catTo);
             if (output == null)
             {
                 throw new Exception($"Invalid _catTo in relationships: {_catFrom}");

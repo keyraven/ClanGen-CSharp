@@ -1,10 +1,7 @@
 ﻿using Avalonia.Media.Imaging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+using Clangen.Models.CatGroups;
 
 namespace Clangen.Models.CatStuff;
 
@@ -90,7 +87,6 @@ public partial class Cat : IEquatable<Cat>
     /// </summary>
     public Dictionary<string, Relationship> relationships { get; set; }
     
-    /*
     // Part of me really wants to take the chance to switch everything to quarter-moon timeskips
     // We have a good change with this rewrite, and it would help a lot with slowing the game down
     // and making injury duration make more sense. However, this might be a decent change. It won't really be hard
@@ -106,10 +102,13 @@ public partial class Cat : IEquatable<Cat>
         set
         {
             _timeskips = value;
-            //Set Age
+            Console.WriteLine("ToDo- Set Age");
         }
     }
 
+    /// <summary>
+    /// Age of the cat, in moons. Readonly, increment timeskips instead. 
+    /// </summary>
     public float moons
     {
         get
@@ -117,28 +116,18 @@ public partial class Cat : IEquatable<Cat>
             return (float)timeskips / 4;
         }
     }
-    */
     
     
-    /// <summary>
-    /// Age of the cat, in moons. 
-    /// </summary>
-    public int moons
-    {
-        get { return _moons; }
-        set
-        {
-            _moons = value;
-            Console.WriteLine("TODO - set AGE");
-        }
-    }
     /// <summary>
     /// Status or Rank of the cat. 
     /// </summary>
     public CatStatus status
     {
         get { return _status; }
-        set { ChangeStatus(value); }
+        set
+        {
+            _status = value;
+        }
     }
 
     // TODO-- proper setters.
@@ -148,15 +137,16 @@ public partial class Cat : IEquatable<Cat>
     public string? mentor
     {
         get { return _mentor; }
-        set { _mentor = value; }
+        private set { _mentor = value; }
     }
+    
     /// <summary>
     /// List of current apprentices. 
     /// </summary>
     public List<string> apprentice
     {
         get { return _apprentices; }
-        set { _apprentices = value; }
+        private set { _apprentices = value; }
     }
 
     /// <summary>
@@ -194,10 +184,13 @@ public partial class Cat : IEquatable<Cat>
     /// Current experience level, as an enum. 
     /// </summary>
     public ExpLevel experienceLevel { get; set; }
+    
     /// <summary>
     /// Cat pronouns, to be used for text replacement purposes. 
     /// </summary>
     public List<Pronoun> pronouns { get; set; }
+    
+    // TODO - figure out how to handle sprites. IDEA - use SKSharp. 
     //public SKBitmap sprite { get; set; }
 
 
@@ -206,10 +199,13 @@ public partial class Cat : IEquatable<Cat>
         get { return name.fullName; }
     }
 
+    // Reference to the group the cat is part off (figure out how to save this correctly...
+    public Group? belongGroup;
 
-    public Cat(CatStatus status = CatStatus.Newborn, int moons = 0, CatSex sex = CatSex.Female, 
-        List<string>? bioParents = null, List<string>? adoptiveParents = null, string? prefix = null, 
-        string? gender = null, string? suffix = null, int experience = 0)
+    public Cat(CatStatus status = CatStatus.Newborn, int timeskips = 0, CatSex sex = CatSex.Female,
+        List<string>? bioParents = null, List<string>? adoptiveParents = null, string? prefix = null,
+        string? gender = null, string? suffix = null, int experience = 0, Group? belongGroup = null,
+        World? world = null)
     {
         gender ??= sex.ToString();
         adoptiveParents ??= new();
@@ -219,12 +215,20 @@ public partial class Cat : IEquatable<Cat>
         this.Sex = sex;
         this.gender = gender;
         this.status = status;
-        this.moons = moons;
+        this.timeskips = timeskips;
         this.bioParents = bioParents;
         this.adoptiveParents = adoptiveParents;
         this.experience = experience;
 
         name = new Name(prefix, suffix, cat: this);
+
+        if (belongGroup != null)
+        {
+            this.belongGroup = belongGroup;
+            this.belongGroup.AddMember(this);
+        }
+
+        
     }
 
     //NEW CAT FUNCTIONS
@@ -281,15 +285,10 @@ public partial class Cat : IEquatable<Cat>
     public static bool operator !=(Cat? lhs, Cat? rhs) => !(lhs == rhs);
 
     // END EQ OVERRIDES
-
-    private void ChangeStatus(CatStatus newStatus)
+    
+    public void TimeSkip()
     {
-        _status = newStatus;
-    }
-
-    public void OneMoon()
-    {
-        moons += 1;
+        timeskips += 1;
     }
 
     public bool IsPotentialMate(Cat otherCat)
@@ -339,6 +338,11 @@ public partial class Cat : IEquatable<Cat>
     public void UnSetMate(Cat otherCat)
     {
 
+    }
+
+    public void SetApprentice(Cat apprentice)
+    {
+        
     }
 
 }

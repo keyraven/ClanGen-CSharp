@@ -102,13 +102,13 @@ public partial class Cat : IEquatable<Cat>
         _lastId += 1;
         while (true)
         {
-            if (Game.CurrentClan == null)
+            if (Game.currentWorld == null)
             {
                 break;
             }
 
-            if (Game.CurrentClan.AllCats.ContainsKey(_lastId.ToString()) |
-                    Game.CurrentClan.FadedIds.Contains(_lastId.ToString()))
+            if (Game.currentWorld.AllCats.ContainsKey(_lastId.ToString()) |
+                    Game.currentWorld.FadedIds.Contains(_lastId.ToString()))
             {
                 _lastId += 1;
             }

@@ -6,7 +6,7 @@ namespace Clangen.Models.CatStuff;
 
 enum Trait
 {
-    cold, quiet, compassionate
+    
 }
 
 public class Personality
