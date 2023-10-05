@@ -16,82 +16,28 @@ public partial class Cat : IEquatable<Cat>
 
     //PUBLIC ATTRIBUTES and PROPERTIES
 
-    /// <summary>
-    /// String ID to identify a cat
-    /// </summary>
-    public readonly string Id;
+    public readonly string Id = GetValidId();
     
-    /// <summary>
-    /// Name object, holding information on the cat's name. To get the full name of a cat
-    /// as a string, use the FullName property.
-    /// </summary>
     public Name name { get; set; }
-    
-    /// <summary>
-    /// Holds a lot of information on a cat's looks. Used in sprite generation. 
-    /// </summary>
+    public string fullName
+    {
+        get { return name.fullName; }
+    }
     public Pelt pelt { get; set; }
-
-    /// <summary>
-    /// Holds a cat's trait, and personality facets. 
-    /// </summary>
     public Personality personality { get; set; }
-
-    /// <summary>
-    /// Holds a cat's skills, and methods for advancing a cat's skills
-    /// </summary>
     public CatSkills skills { get; set; }
-
-    /// <summary>
-    /// The biological sex of a cat. Male or Female. 
-    /// </summary>
     public readonly CatSex Sex;
-
-    /// <summary>
-    /// String representing the gender of a cat. 
-    /// </summary>
     public string gender { get; set; }
-
-    /// <summary>
-    /// List of cat Ids. Holds the biological parents. 
-    /// </summary>
+    public List<Pronoun> pronouns { get; set; } = new() {Pronoun.theyThem};
     public readonly List<string> bioParents;
-    
-    /// <summary>
-    /// List of cat Ids. Holds the adoptive parents. 
-    /// </summary>
     public List<string> adoptiveParents { get; set; }
-    
-    /// <summary>
-    /// Boolian indicating if the cat is outside the clan. 
-    /// </summary>
     public bool outside { get; set; }
-    
-    /// <summary>
-    /// Boolian indicating if a cat is in the Dark Forest
-    /// </summary>
     public bool darkForest { get; set; }
-    
-    /// <summary>
-    /// Boolian indicating if a cat is dead
-    /// </summary>
     public bool dead { get; private set; }
-    
-    /// <summary>
-    /// Current number of lives that a cat has. For most cats, this should always be 1 or 0. 
-    /// </summary>
     public int lives { get; private set; } = 1;
-    
-    /// <summary>
-    /// Holds relationships to other cats. Key values are cat ids, which are linked to the relationship object. 
-    /// </summary>
-    public Dictionary<string, Relationship> relationships { get; set; }
-    
-    // Part of me really wants to take the chance to switch everything to quarter-moon timeskips
-    // We have a good change with this rewrite, and it would help a lot with slowing the game down
-    // and making injury duration make more sense. However, this might be a decent change. It won't really be hard
-    // to implement (just reduce all the chances by 4, maybe some balencing with patrol EX and relationship events), 
-    // but it's a decent direction difference.  --keyraven
+    public Dictionary<string, Relationship> relationships { get; set; } = new();
+    public List<string> mates { get; private set; } = new();
+    public List<string> previousMates { get; private set; } = new();
     private int _timeskips = 0;
     public int timeskips
     {
@@ -148,27 +94,10 @@ public partial class Cat : IEquatable<Cat>
         get { return _apprentices; }
         private set { _apprentices = value; }
     }
-
-    /// <summary>
-    /// List of previous apprentices.
-    /// </summary>
-    public List<string> previousApprentice { get; set; } = new();
     
-    /// <summary>
-    /// List of current mates. 
-    /// </summary>
-    public List<string> mates { get; private set; } = new();
+    public List<string> previousApprentices { get; set; } = new();
     
-    /// <summary>
-    /// List of previous mates. 
-    /// </summary>
-    public List<string> previousMates { get; private set; }
-
     private int _experience;
-    
-    /// <summary>
-    /// Cat experience. 
-    /// </summary>
     public int experience
     {
         get { return _experience; }
@@ -185,49 +114,33 @@ public partial class Cat : IEquatable<Cat>
     /// </summary>
     public ExpLevel experienceLevel { get; set; }
     
-    /// <summary>
-    /// Cat pronouns, to be used for text replacement purposes. 
-    /// </summary>
-    public List<Pronoun> pronouns { get; set; }
-    
     // TODO - figure out how to handle sprites. IDEA - use SKSharp. 
     //public SKBitmap sprite { get; set; }
-
-
-    public string fullName
-    {
-        get { return name.fullName; }
-    }
-
-    // Reference to the group the cat is part off (figure out how to save this correctly...
-    public Group? belongGroup;
+    
+    // Group the cat belongs too. 
+    public Group? belongGroup { get; set; }
 
     public Cat(CatStatus status = CatStatus.Newborn, int timeskips = 0, CatSex sex = CatSex.Female,
         List<string>? bioParents = null, List<string>? adoptiveParents = null, string? prefix = null,
-        string? gender = null, string? suffix = null, int experience = 0, Group? belongGroup = null,
-        World? world = null)
+        string? gender = null, string? suffix = null, int experience = 0)
     {
-        gender ??= sex.ToString();
-        adoptiveParents ??= new();
-        bioParents ??= new();
         
-        this.Id = GetValidId();
         this.Sex = sex;
-        this.gender = gender;
+        this.gender = gender == null ? sex.ToString() : gender;
         this.status = status;
         this.timeskips = timeskips;
-        this.bioParents = bioParents;
-        this.adoptiveParents = adoptiveParents;
+        if (bioParents != null)
+        {
+            this.bioParents = bioParents;
+        }
+
+        if (adoptiveParents != null)
+        {
+            this.adoptiveParents = adoptiveParents;
+        }
         this.experience = experience;
 
         name = new Name(prefix, suffix, cat: this);
-
-        if (belongGroup != null)
-        {
-            this.belongGroup = belongGroup;
-            this.belongGroup.AddMember(this);
-        }
-
         
     }
 
@@ -290,22 +203,7 @@ public partial class Cat : IEquatable<Cat>
     {
         timeskips += 1;
     }
-
-    public bool IsPotentialMate(Cat otherCat)
-    {
-        if (this == otherCat)
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    public bool IsRelated(Cat otherCat)
-    {
-        return false;
-    }
-
+    
     /// <summary>
     /// Kills the kitty
     /// </summary>
@@ -325,24 +223,41 @@ public partial class Cat : IEquatable<Cat>
 
         return output;
     }
+    
+    public bool IsPotentialMate(Cat otherCat)
+    {
+        if (this == otherCat)
+        {
+            return false;
+        }
 
+        return true;
+    }
+    
     /// <summary>
     /// Makes the cat a mate
     /// </summary>
     /// <param name="otherCat"></param>
     public void SetMate(Cat otherCat)
     {
-
+        throw new NotImplementedException();
     }
 
     public void UnSetMate(Cat otherCat)
     {
-
+        throw new NotImplementedException();
     }
 
     public void SetApprentice(Cat apprentice)
     {
-        
+        throw new NotImplementedException();
+    }
+    
+    // Relation Functions
+
+    public bool IsRelated(Cat otherCat)
+    {
+        throw new NotImplementedException();
     }
 
 }

@@ -4,6 +4,11 @@ using Clangen.Models.CatStuff;
 using System.Text.Json;
 using System.IO;
 
+
+//Remove at some point, testing
+using Clangen.Models.CatStuff;
+using Clangen.Models.CatGroups;
+
 namespace Clangen.Models;
 
 
@@ -11,6 +16,11 @@ public class GameConfig
 {
     public Dictionary<Cat.CatAge, int[]> ageMoons { get; set; }
 
+}
+
+public class GameSettings
+{
+    public bool darkMode { get; set; } = false;
 }
 
 public static class Game
@@ -29,7 +39,24 @@ public static class Game
     /// </summary>
     public static void LoadSave()
     {
-        currentWorld = new World();
+        currentWorld = new World("New");
+
+        for (int i = 0; i < 10; i++)
+        {
+            
+        }
+        
+        
+        Console.WriteLine($"Current Clan ID {currentWorld.currentClan.ID}");
+        Console.WriteLine(currentWorld.starClan.ID);
+        Console.WriteLine(currentWorld.darkForest.ID);
+
+        foreach (string x in currentWorld.currentClan.members)
+        {
+            Console.WriteLine(x);
+            Console.WriteLine(currentWorld.FetchCat(x)?.fullName);
+        }
+        
     }
 
     /// <summary>
@@ -39,6 +66,8 @@ public static class Game
     {
         //Sprite.LoadResources();
         //TODO --> Needs to be run once at startup. 
+        
+        Sprites.LoadSprites();
         LoadSave();
         Console.WriteLine("Game-Start Tasks Complete");
     }

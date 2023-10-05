@@ -7,7 +7,7 @@ public abstract class Group
 {
     public readonly string ID = GetValidId();
 
-    private static int _lastId = 1;
+    private static int _lastId = 0;
     
     private static string GetValidId()
     {

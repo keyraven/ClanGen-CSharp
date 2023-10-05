@@ -29,9 +29,9 @@ public class World
 {
     
     public Dictionary<string, Cat> AllCats = new();
-    
     public List<string> FadedIds = new();
-    
+
+    public WorldSettings worldSettings { get; set; } = new();
     
     public Season season { get; private set; } = Season.Newleaf;
     private readonly Season StartingSeason = Season.Newleaf;
@@ -60,10 +60,49 @@ public class World
 
     public List<OtherClan> otherClans { get; set; } = new();
 
-    public World(Clan? currentClan = null)
+    public World(List<Cat> allCats, Clan? currentClan = null, Afterlife? starClan = null, Afterlife? darkForest = null,
+        Afterlife? unknownRes = null, Outsiders? outsiders = null, List<OtherClan>? otherClans = null)
     {
+        foreach (Cat kitty in allCats)
+        {
+            AllCats.Add(kitty.Id, kitty);
+        }
+        
         currentClan ??= new("New");
         this.currentClan = currentClan;
+        allGroups.Add(this.currentClan.ID, this.currentClan);
+        
+        // Create the afterlives
+        starClan ??= new("StarClan");
+        this.starClan = starClan;
+        allGroups.Add(this.starClan.ID, this.starClan);
+        
+        darkForest ??= new("Dark Forest");
+        this.darkForest = darkForest;
+        allGroups.Add(this.darkForest.ID, this.darkForest);
+        
+        unknownRes ??= new("Unknown Residence");
+        this.unknownRes = unknownRes;
+        allGroups.Add(this.unknownRes.ID, this.unknownRes);
+        
+        // Outsiders
+        outsiders ??= new();
+        this.outsiders = outsiders; 
+        allGroups.Add(this.outsiders.ID, this.outsiders);
+        
+        // Two Other Clans
+        otherClans ??= new List<OtherClan>() { new OtherClan("Clan1"), new OtherClan("Clan2") };
+        this.otherClans = otherClans;
+        
+        foreach (OtherClan clan in this.otherClans)
+        {
+            allGroups.Add(clan.ID, clan);
+        }
+    }
+    
+    public World(string clanName)
+    {
+        this.currentClan = new(clanName);
         allGroups.Add(currentClan.ID, currentClan);
         
         // Create the afterlives
@@ -81,21 +120,41 @@ public class World
             allGroups.Add(otherClans.Last().ID, otherClans.Last());
         }
     }
+
+    /// <summary>
+    /// Adds a cat to the world, both the AllCats Dictionary and to
+    /// a group
+    /// </summary>
+    /// <param name="addCat"> The cat to add </param>
+    /// <param name="belongGroup"> The group the cat belongs too. If left null, will add the cat to the base clan. </param>
+    public void AddCatToWorld(Cat addCat, Group? belongGroup = null)
+    {
+        AllCats.Add(addCat.Id, addCat);
+        if (belongGroup != null)
+        {
+            belongGroup.AddMember(addCat);
+        }
+        else
+        {
+            currentClan.AddMember(addCat);
+        }
+    }
     
+    /// <summary>
+    /// Fetches a cat object based on the cat ID.
+    /// Will load faded cats if needed.
+    /// </summary>
+    /// <param name="catID"></param>
+    /// <returns></returns>
     public Cat? FetchCat(string catID)
     {
         if (AllCats.ContainsKey(catID))
         {
             return AllCats[catID];
         }
-
+        
         Cat? faded = LoadFadedCat(catID);
-        if (faded != null)
-        {
-            return faded;
-        };
-
-        return null;
+        return faded == null ? null : faded;
     }
     
     public Cat? LoadFadedCat(string catID)
@@ -104,4 +163,9 @@ public class World
         return null;
     }
 
+}
+
+public class WorldSettings
+{
+    
 }
