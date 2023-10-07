@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+
 namespace Clangen.Models;
 
 public static class Utilities
@@ -15,6 +17,10 @@ public static class Utilities
         return list[Game.Rnd.Next(0, list.Count)];
     }
     
+    /// <summary>
+    /// Add multiple dictionaries together. If there are duplicate keys,
+    /// this uses the value from the new dictionary. 
+    /// </summary>
     public static void AddRange<T, S>(this Dictionary<T, S> source, Dictionary<T, S> collection)
     {
         if (collection == null)
@@ -29,8 +35,20 @@ public static class Utilities
             }
             else
             {
-                // handle duplicate key issue here
+                source[item.Key] = item.Value;
             }  
         } 
+    }
+    
+    /// <summary>
+    /// Break a list of items into chunks of a specific size
+    /// </summary>
+    public static IEnumerable<IEnumerable<T>> Chunk<T>(this IEnumerable<T> source, int chunksize)
+    {
+        while (source.Any())
+        {
+            yield return source.Take(chunksize);
+            source = source.Skip(chunksize);
+        }
     }
 }

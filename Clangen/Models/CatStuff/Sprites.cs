@@ -25,6 +25,17 @@ public static class Sprites
     //TODO - something to store the fading effect in. 
     //TODO - something to store tints in. 
 
+    /// <summary>
+    /// Generates a single "group" of sprites with the same name, but with different
+    /// {i} pose-type. 
+    /// </summary>
+    /// <param name="spritesheet"></param>
+    /// <param name="name"></param>
+    /// <param name="xOffset"></param>
+    /// <param name="yOffset"></param>
+    /// <param name="spritesX"></param>
+    /// <param name="spritesY"></param>
+    /// <returns></returns>
     private static Dictionary<string, SKBitmap> CreateGroup(SKBitmap spritesheet, string name, int xOffset = 0, 
         int yOffset = 0, int spritesX = 3, int spritesY = 7 )
     {
@@ -59,6 +70,14 @@ public static class Sprites
         return output;
     }
 
+    /// <summary>
+    /// Divides up an entire spritesheet into smaller, named chunks.
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="groupNames"> List of list of sub-group names. Each list is a row of sprite groups. </param>
+    /// <param name="spritesX"> Number of rows in a sprite-group </param>
+    /// <param name="spritesY"> Number of rows in a sprite-group </param>
+    /// <returns></returns>
     private static Dictionary<string, SKBitmap> ParseSpritesheet(string path, List<List<string>> groupNames, int spritesX = 3, int spritesY = 7 )
     {
         
@@ -74,7 +93,9 @@ public static class Sprites
             for (int col = 0; col < colNumber; col++)
             {
                 
+                Console.WriteLine($"Starting Group {groupNames[row][col]}");
                 var group = CreateGroup(spritesheet, groupNames[row][col], col, row, spritesX, spritesY);
+                Console.WriteLine("End Group");
                 output.AddRange(group);
             }
         }
@@ -108,7 +129,45 @@ public static class Sprites
         lineart.AddRange(ParseSpritesheet($"{basepath}lineartdf.png", groupNames));
         
         //Shading
+        groupNames = new()
+        {
+            new() {"shade"}
+        };
+        shading.AddRange(ParseSpritesheet($"{basepath}shadersnewwhite.png", groupNames));
+        groupNames = new()
+        {
+            new() {"light"}
+        };
+        shading.AddRange(ParseSpritesheet($"{basepath}lightingnew.png", groupNames));
         
+        Console.WriteLine("Starting White Patches");
+        // White Patches 
+        groupNames = new()
+        {
+            new() {"FULLWHITE", "ANY", "TUXEDO", "LITTLE", "COLOURPOINT", "VAN", "ANYTWO",
+                "MOON", "PHANTOM", "POWDER", "BLEACHED", "SAVANNAH", "FADESPOTS", "PEBBLESHINE"},
+            new() {"EXTRA", "ONEEAR", "BROKEN", "LIGHTTUXEDO", "BUZZARDFANG", "RAGDOLL", 
+                "LIGHTSONG", "VITILIGO", "BLACKSTAR", "PIEBALD", "CURVED", "PETAL", "SHIBAINU", "OWL"},
+            new() {"TIP", "FANCY", "FRECKLES", "RINGTAIL", "HALFFACE", "PANTSTWO", "GOATEE", "VITILIGOTWO",
+                "PAWS", "MITAINE", "BROKENBLAZE", "SCOURGE", "DIVA", "BEARD"},
+            new() {"TAIL", "BLAZE", "PRINCE", "BIB", "VEE", "UNDERS", "HONEY",
+                "FAROFA", "DAMIEN", "MISTER", "BELLY", "TAILTIP", "TOES", "TOPCOVER"},
+            new() {"APRON", "CAPSADDLE", "MASKMANTLE", "SQUEAKS", "STAR", "TOESTAIL", "RAVENPAW",
+                "PANTS", "REVERSEPANTS", "SKUNK", "KARPATI", "HALFWHITE", "APPALOOSA", "DAPPLEPAW"},
+            new() {"HEART", "LILTWO", "GLASS", "MOORISH", "SEPIAPOINT", "MINKPOINT", "SEALPOINT",
+                "MAO", "LUNA", "CHESTSPECK", "WINGS", "PAINTED", "HEARTTWO", "WOODPECKER"},
+            new () {"BOOTS", "MISS", "COW", "COWTWO", "BUB", "BOWTIE", "MUSTACHE", "REVERSEHEART",
+                "SPARROW", "VEST", "LOVEBUG", "TRIXIE", "SAMMY", "SPARKLE"},
+            new() {"RIGHTEAR", "LEFTEAR", "ESTRELLA", "SHOOTINGSTAR", "EYESPOT", "REVERSEEYE",
+                "FADEBELLY", "FRONT", "BLOSSOMSTEP", "PEBBLE", "TAILTWO", "BUDDY", "BACKSPOT", "EYEBAGS"},
+            new() {"BULLSEYE", "FINN", "DIGIT", "KROPKA", "FCTWO", "FCONE", "MIA", "SCAR", "BUSTER", "SMOKEY"}
+        };
+        whitePatches.AddRange(ParseSpritesheet($"{basepath}whitepatches.png", groupNames));
+        Console.WriteLine("Ending White Patches");
+        
+        // Single Color
+        
+
 
     }
 }
