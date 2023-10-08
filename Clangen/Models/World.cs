@@ -126,13 +126,15 @@ public class World
     /// a group
     /// </summary>
     /// <param name="addCat"> The cat to add </param>
-    /// <param name="belongGroup"> The group the cat belongs too. If left null, will add the cat to the base clan. </param>
-    public void AddCatToWorld(Cat addCat, Group? belongGroup = null)
+    /// <param name="belongGroup"> The ID of the group to add the cat too. If left null, will add the currentClan </param>
+    public void AddCatToWorld(Cat addCat, string? belongGroup = null)
     {
         AllCats.Add(addCat.Id, addCat);
-        if (belongGroup != null)
+        belongGroup ??= currentClan.ID;
+        
+        if (allGroups.ContainsKey(belongGroup))
         {
-            belongGroup.AddMember(addCat);
+            allGroups[belongGroup].AddMember(addCat);
         }
         else
         {

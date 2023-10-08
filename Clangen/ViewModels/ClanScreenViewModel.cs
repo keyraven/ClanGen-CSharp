@@ -1,12 +1,23 @@
-﻿namespace Clangen.ViewModels;
+﻿using Avalonia.Media.Imaging;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Avalonia.SimpleRouter;
+using Avalonia.Media.Imaging;
+using Clangen.Models;
+
+namespace Clangen.ViewModels;
 
 public partial class ClanScreenViewModel : ViewModelBase
 {
-    public string Greeting => "Clan Screen!";
-
+    [ObservableProperty] 
+    private Bitmap? _catImage;
+    
     public ClanScreenViewModel(HistoryRouter<ViewModelBase> router) : base(router)
     {
         
+        foreach (var item in Game.currentWorld.AllCats)
+        {
+            _catImage = item.Value.sprite.ConvertToAvaloniaBitmap();
+            break;
+        }
     }
 }

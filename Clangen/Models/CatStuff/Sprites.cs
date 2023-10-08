@@ -9,18 +9,19 @@ namespace Clangen.Models.CatStuff;
 /// </summary>
 public static class Sprites
 {
-    public static int spriteSize = 50;
+    private static int spriteSize = 50;
     
-    public static Dictionary<string, SKBitmap> lineart { get; set; } = new();
-    public static Dictionary<string, SKBitmap> colorPattern { get; set; } = new();
-    public static Dictionary<string, SKBitmap> eye1 { get; set; } = new();
-    public static Dictionary<string, SKBitmap> eye2 { get; set; } = new();
-    public static Dictionary<string, SKBitmap> whitePatches { get; set; } = new();
-    public static Dictionary<string, SKBitmap> tortiePattern { get; set; } = new();
-    public static Dictionary<string, SKBitmap> scars { get; set; } = new(); 
-    public static Dictionary<string, SKBitmap> accessories { get; set; } = new();
-    public static Dictionary<string, SKBitmap> fadedCats { get; set; } = new();
-    public static Dictionary<string, SKBitmap> shading { get; set; } = new();
+    private static Dictionary<string, SKImage> lineart { get; set; } = new();
+    private static Dictionary<string, SKImage> colorPattern { get; set; } = new();
+    private static Dictionary<string, SKImage> eye1 { get; set; } = new();
+    private static Dictionary<string, SKImage> eye2 { get; set; } = new();
+    private static Dictionary<string, SKImage> whitePatches { get; set; } = new();
+    private static Dictionary<string, SKImage> tortiePattern { get; set; } = new();
+    private static Dictionary<string, SKImage> scars { get; set; } = new();
+    private static Dictionary<string, SKImage> skins { get; set; } = new();
+    private static Dictionary<string, SKImage> accessories { get; set; } = new();
+    private static Dictionary<string, SKImage> fadedCats { get; set; } = new();
+    private static Dictionary<string, SKImage> shading { get; set; } = new();
 
     //TODO - something to store the fading effect in. 
     //TODO - something to store tints in. 
@@ -36,10 +37,10 @@ public static class Sprites
     /// <param name="spritesX"></param>
     /// <param name="spritesY"></param>
     /// <returns></returns>
-    private static Dictionary<string, SKBitmap> CreateGroup(SKBitmap spritesheet, string name, int xOffset = 0, 
+    private static Dictionary<string, SKImage> CreateGroup(SKImage spritesheet, string name, int xOffset = 0, 
         int yOffset = 0, int spritesX = 3, int spritesY = 7 )
     {
-        Dictionary<string, SKBitmap> output = new();
+        Dictionary<string, SKImage> output = new();
         int groupXOfs = xOffset * spritesX * spriteSize;
         int groupYOfs = yOffset * spritesY * spriteSize;
         
@@ -48,21 +49,11 @@ public static class Sprites
         {
             for (int col = 0; col < spritesX; col++)
             {
-                // Create new SkBitMap for sprite
-                SKBitmap sprite = new SKBitmap(spriteSize, spriteSize);
-                
-                //Extract the area of interest
-                SKRect sourceRect = SKRect.Create(groupXOfs + (row * spriteSize), groupYOfs + (col * spriteSize), 
+                //
+                SKRectI sourceRect = SKRectI.Create(groupXOfs + (row * spriteSize), groupYOfs + (col * spriteSize), 
                     spriteSize, spriteSize);
-                SKRect desRect = SKRect.Create(sprite.Width, sprite.Width);
 
-                using (SKCanvas canvas = new SKCanvas(sprite))
-                {
-                    canvas.Clear(SKColors.Transparent);
-                    canvas.DrawBitmap(spritesheet, sourceRect, desRect);
-                }
-
-                output[$"{name}{i}"] = sprite;
+                output[$"{name}{i}"] = spritesheet.Subset(sourceRect);
                 i++;
             }
         }
@@ -78,13 +69,11 @@ public static class Sprites
     /// <param name="spritesX"> Number of rows in a sprite-group </param>
     /// <param name="spritesY"> Number of rows in a sprite-group </param>
     /// <returns></returns>
-    private static Dictionary<string, SKBitmap> ParseSpritesheet(string path, List<List<string>> groupNames, int spritesX = 3, int spritesY = 7 )
+    private static Dictionary<string, SKImage> ParseSpritesheet(string path, List<List<string>> groupNames, int spritesX = 3, int spritesY = 7 )
     {
         
-        
-
-        SKBitmap spritesheet = SKBitmap.Decode(path);
-        Dictionary<string, SKBitmap> output = new();
+        SKImage spritesheet = SKImage.FromBitmap(SKBitmap.Decode(path));
+        Dictionary<string, SKImage> output = new();
         int rowNumber = groupNames.Count;
         
         for (int row = 0; row < rowNumber; row++)
@@ -93,9 +82,7 @@ public static class Sprites
             for (int col = 0; col < colNumber; col++)
             {
                 
-                Console.WriteLine($"Starting Group {groupNames[row][col]}");
                 var group = CreateGroup(spritesheet, groupNames[row][col], col, row, spritesX, spritesY);
-                Console.WriteLine("End Group");
                 output.AddRange(group);
             }
         }
@@ -140,7 +127,6 @@ public static class Sprites
         };
         shading.AddRange(ParseSpritesheet($"{basepath}lightingnew.png", groupNames));
         
-        Console.WriteLine("Starting White Patches");
         // White Patches 
         groupNames = new()
         {
@@ -163,11 +149,122 @@ public static class Sprites
             new() {"BULLSEYE", "FINN", "DIGIT", "KROPKA", "FCTWO", "FCONE", "MIA", "SCAR", "BUSTER", "SMOKEY"}
         };
         whitePatches.AddRange(ParseSpritesheet($"{basepath}whitepatches.png", groupNames));
-        Console.WriteLine("Ending White Patches");
         
-        // Single Color
+        // PELTS
+        groupNames = new()
+        {
+            new() {"WHITE", "PALEGREY", "SILVER", "GREY", "DARKGREY", "GHOST", "BLACK"},
+            new() {"CREAM", "PALEGINGER", "GOLDEN", "GINGER", "DARKGINGER", "SIENNA"},
+            new() {"LIGHTBROWN", "LILAC", "BROWN", "GOLDEN-BROWN", "DARKBROWN", "CHOCOLATE"}
+        };
+
+        List<string> pelts = new()
+        {
+            "single", "tabby", "marbled", "rosette", "smoke", "ticked", "speckled", "bengal", 
+            "mackerel", "classic", "sokoke", "agouti", "singlestripe"
+        };
         
-
-
+        foreach (string name in pelts)
+        {
+            //  Generate a list of names
+            List<List<string>> peltNames = new();
+            foreach (var sublist in groupNames)
+            {
+                List<string> newSublist = new();
+                foreach (var colorname in sublist)
+                {
+                    newSublist.Add($"{name}{colorname}");
+                }
+                peltNames.Add(newSublist);
+            }
+            
+            colorPattern.AddRange(ParseSpritesheet($"{basepath}{name}colours.png", peltNames));
+        }
+        
+        // Torties
+        groupNames = new()
+        {
+            new List<string>() {"ONE", "TWO", "THREE", "FOUR", "REDTAIL", "DELILAH", "HALF", "STREAK", "MASK", "SMOKE"},
+            new List<string>() {"MINIMALONE", "MINIMALTWO", "MINIMALTHREE", "MINIMALFOUR", "OREO", "SWOOP", "CHIMERA", "CHEST", "ARMTAIL", "GRUMPYFACE"},
+            new List<string>() {"MOTTLED", "SIDEMASK", "EYEDOT", "BANDANA", "PACMAN", "STREAMSTRIKE", "SMUDGED", "DAUB", "EMBER", "BRIE"},
+            new List<string>() {"ORIOLE", "ROBIN", "BRINDLE", "PAIGE", "ROSETAIL", "SAFI", "DAPPLENIGHT", "BLANKET", "BELOVED", "BODY"},
+            new List<string>() {"SHILOH"}
+        };
+        tortiePattern.AddRange(ParseSpritesheet($"{basepath}tortiepatchesmasks.png", groupNames));
+        
+        //Skins
+        groupNames = new()
+        {
+            new() { "BLACK", "RED", "PINK", "DARKBROWN", "BROWN", "LIGHTBROWN" },
+            new() { "DARK", "DARKGREY", "GREY", "DARKSALMON", "SALMON", "PEACH" },
+            new() { "DARKMARBLED", "MARBLED", "LIGHTMARBLED", "DARKBLUE", "BLUE", "LIGHTBLUE" }
+        };
+        skins.AddRange(ParseSpritesheet($"{basepath}skin.png", groupNames));
+        
+        
+        // Accessories
+        groupNames = new()
+        {
+            new() { "MAPLE LEAF", "HOLLY", "BLUE BERRIES", "FORGET ME NOTS", "RYE STALK", "LAUREL" },
+            new() { "BLUEBELLS", "NETTLE", "POPPY", "LAVENDER", "HERBS", "PETALS" },
+            new() {"RED FEATHERS", "BLUE FEATHERS", "JAY FEATHERS", "MOTH WINGS", "CICADA WINGS", "DRY HERBS"},
+            new() { "OAK LEAVES", "CATMINT", "MAPLE SEED", "JUNIPER" }
+        };
+        accessories.AddRange(ParseSpritesheet($"{basepath}medcatherbs.png", groupNames));
+        
+        groupNames = new()
+        {
+            new() { "CRIMSON", "BLUE", "YELLOW", "CYAN", "RED", "LIME" },
+            new() { "GREEN", "RAINBOW", "BLACK", "SPIKES", "WHITE" },
+            new() { "PINK", "PURPLE", "MULTI", "INDIGO" }
+        };
+        accessories.AddRange(ParseSpritesheet($"{basepath}collars.png", groupNames));
+        
+        groupNames = new()
+        {
+            new() { "CRIMSONBELL", "BLUEBELL", "YELLOWBELL", "CYANBELL", "REDBELL", "LIMEBELL" },
+            new() { "GREENBELL", "RAINBOWBELL", "BLACKBELL", "SPIKESBELL", "WHITEBELL" },
+            new() { "PINKBELL", "PURPLEBELL", "MULTIBELL", "INDIGOBELL" }
+        };
+        accessories.AddRange(ParseSpritesheet($"{basepath}bellcollars.png", groupNames));
+        
+        groupNames = new()
+        {
+            new() { "CRIMSONBOW", "BLUEBOW", "YELLOWBOW", "CYANBOW", "REDBOW", "LIMEBOW" },
+            new() { "GREENBOW", "RAINBOWBOW", "BLACKBOW", "SPIKESBOW", "WHITEBOW" },
+            new() { "PINKBOW", "PURPLEBOW", "MULTIBOW", "INDIGOBOW" }
+        };
+        accessories.AddRange(ParseSpritesheet($"{basepath}bowcollars.png", groupNames));
+        
+        groupNames = new()
+        {
+            new() { "CRIMSONNYLON", "BLUENYLON", "YELLOWNYLON", "CYANNYLON", "REDNYLON", "LIMENYLON" },
+            new() { "GREENNYLON", "RAINBOWNYLON", "BLACKNYLON", "SPIKESNYLON", "WHITENYLON" },
+            new() { "PINKNYLON", "PURPLENYLON", "MULTINYLON", "INDIGONYLON" }
+        };
+        accessories.AddRange(ParseSpritesheet($"{basepath}nyloncollars.png", groupNames));
+        
+        // TODO - SCARS
     }
+    
+    
+    public static SKImage GenerateSprite(Cat cat)
+    {
+        SKBitmap sprite = new SKBitmap(spriteSize, spriteSize);
+        
+        //Placeholder for testing
+        string spriteNumber = "1";
+        
+        using (SKCanvas canvas = new SKCanvas(sprite))
+        {
+            canvas.Clear(SKColors.Transparent);
+            
+            canvas.DrawImage(colorPattern[$"singleWHITE{spriteNumber}"], 0, 0);
+            canvas.DrawImage(lineart[$"alive{spriteNumber}"], 0, 0);
+            
+        }
+
+        return SKImage.FromBitmap(sprite);
+    }
+    
 }

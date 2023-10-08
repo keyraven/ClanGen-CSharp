@@ -40,22 +40,8 @@ public static class Game
     public static void LoadSave()
     {
         currentWorld = new World("New");
-
-        for (int i = 0; i < 10; i++)
-        {
-            
-        }
         
-        
-        Console.WriteLine($"Current Clan ID {currentWorld.currentClan.ID}");
-        Console.WriteLine(currentWorld.starClan.ID);
-        Console.WriteLine(currentWorld.darkForest.ID);
-
-        foreach (string x in currentWorld.currentClan.members)
-        {
-            Console.WriteLine(x);
-            Console.WriteLine(currentWorld.FetchCat(x)?.fullName);
-        }
+        currentWorld.AddCatToWorld(Cat.GenerateRandomCat());
         
     }
 

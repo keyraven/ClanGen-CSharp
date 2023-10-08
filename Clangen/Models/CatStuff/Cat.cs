@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Clangen.Models.CatGroups;
+using SkiaSharp;
 
 namespace Clangen.Models.CatStuff;
 
@@ -51,6 +52,7 @@ public partial class Cat : IEquatable<Cat>
             Console.WriteLine("ToDo- Set Age");
         }
     }
+    public SKImage sprite { get; set; }
 
     /// <summary>
     /// Age of the cat, in moons. Readonly, increment timeskips instead. 
@@ -141,7 +143,8 @@ public partial class Cat : IEquatable<Cat>
         this.experience = experience;
 
         name = new Name(prefix, suffix, cat: this);
-        
+
+        this.sprite = Sprites.GenerateSprite(this);
     }
 
     //NEW CAT FUNCTIONS
