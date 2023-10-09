@@ -20,9 +20,12 @@ public class Pelt
     public string paraAdultSprite { get; private set; } = "12";
     public string peltLength { get; private set; }= "short";
     public List<string> scars { get; set; } = new();
+    public bool paralyzed { get; set; } = false;
 
     // Optional/Nullable
     public string? whitePatches { get; private set; }
+    public string? points { get; private set; }
+    public string? vitiligo { get; private set; }
     public string? accessory { get; private set; }
     public string? eyeColor2 { get; private set; }
     public string? tint { get; private set; }
@@ -50,5 +53,10 @@ public class Pelt
     public Pelt(Cat par1, Cat? par2 = null)
     {
         
+    }
+
+    public string GetSpriteNumber(Cat.CatAge age)
+    {
+        throw new NotImplementedException("Need to do this");
     }
 }
