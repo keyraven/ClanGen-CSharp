@@ -19,8 +19,7 @@ public abstract class Group
                 break;
             }
 
-            if (Game.currentWorld.AllCats.ContainsKey(_lastId.ToString()) |
-                Game.currentWorld.FadedIds.Contains(_lastId.ToString()))
+            if (Game.currentWorld.allGroups.ContainsKey(_lastId.ToString()))
             {
                 _lastId += 1;
             }
@@ -42,7 +41,7 @@ public abstract class Group
         newCat.belongGroup = this;
     }
 
-    public void RemoveMember(Cat removeCat)
+    private void RemoveMember(Cat removeCat)
     {
         members.Remove(removeCat.Id);
         removeCat.belongGroup = null;

@@ -107,8 +107,7 @@ public partial class Cat : IEquatable<Cat>
                 break;
             }
 
-            if (Game.currentWorld.AllCats.ContainsKey(_lastId.ToString()) |
-                    Game.currentWorld.FadedIds.Contains(_lastId.ToString()))
+            if (Game.currentWorld.CatIdTaken(_lastId))
             {
                 _lastId += 1;
             }

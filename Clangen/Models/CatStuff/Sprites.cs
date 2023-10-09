@@ -16,7 +16,7 @@ public static class Sprites
     private static Dictionary<string, SKImage> eye1 { get; set; } = new();
     private static Dictionary<string, SKImage> eye2 { get; set; } = new();
     private static Dictionary<string, SKImage> whitePatches { get; set; } = new();
-    private static Dictionary<string, SKImage> tortiePattern { get; set; } = new();
+    private static Dictionary<string, SKImage> tortiePatches { get; set; } = new();
     private static Dictionary<string, SKImage> scars { get; set; } = new();
     private static Dictionary<string, SKImage> skins { get; set; } = new();
     private static Dictionary<string, SKImage> accessories { get; set; } = new();
@@ -190,7 +190,7 @@ public static class Sprites
             new List<string>() {"ORIOLE", "ROBIN", "BRINDLE", "PAIGE", "ROSETAIL", "SAFI", "DAPPLENIGHT", "BLANKET", "BELOVED", "BODY"},
             new List<string>() {"SHILOH"}
         };
-        tortiePattern.AddRange(ParseSpritesheet($"{basepath}tortiepatchesmasks.png", groupNames));
+        tortiePatches.AddRange(ParseSpritesheet($"{basepath}tortiepatchesmasks.png", groupNames));
         
         //Skins
         groupNames = new()

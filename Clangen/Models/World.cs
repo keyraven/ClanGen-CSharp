@@ -28,8 +28,8 @@ public enum Season
 public class World
 {
     
-    public Dictionary<string, Cat> AllCats = new();
-    public List<string> FadedIds = new();
+    private Dictionary<string, Cat> _allCats = new();
+    private List<string> _fadedIds = new();
 
     public WorldSettings worldSettings { get; set; } = new();
     
@@ -65,7 +65,7 @@ public class World
     {
         foreach (Cat kitty in allCats)
         {
-            AllCats.Add(kitty.Id, kitty);
+            _allCats.Add(kitty.Id, kitty);
         }
         
         currentClan ??= new("New");
@@ -129,7 +129,7 @@ public class World
     /// <param name="belongGroup"> The ID of the group to add the cat too. If left null, will add the currentClan </param>
     public void AddCatToWorld(Cat addCat, string? belongGroup = null)
     {
-        AllCats.Add(addCat.Id, addCat);
+        _allCats.Add(addCat.Id, addCat);
         belongGroup ??= currentClan.ID;
         
         if (allGroups.ContainsKey(belongGroup))
@@ -150,19 +150,34 @@ public class World
     /// <returns></returns>
     public Cat? FetchCat(string catID)
     {
-        if (AllCats.ContainsKey(catID))
+        if (_allCats.ContainsKey(catID))
         {
-            return AllCats[catID];
+            return _allCats[catID];
         }
         
-        Cat? faded = LoadFadedCat(catID);
-        return faded == null ? null : faded;
+        return LoadFadedCat(catID);
     }
     
     public Cat? LoadFadedCat(string catID)
     {
         // Load a faded cat, if they are faded.
         return null;
+    }
+
+    public bool CatIdTaken(string id)
+    {
+        return _allCats.ContainsKey(id) || _fadedIds.Contains(id);
+    }
+
+    public bool CatIdTaken(int id)
+    {
+        string stringID = id.ToString();
+        return CatIdTaken(stringID);
+    }
+
+    public List<Cat> GetAllCats()
+    {
+        return _allCats.Values.ToList();
     }
 
 }
