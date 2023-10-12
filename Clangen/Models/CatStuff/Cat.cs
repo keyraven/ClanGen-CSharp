@@ -24,7 +24,8 @@ public partial class Cat : IEquatable<Cat>
     {
         get { return name.fullName; }
     }
-    public Pelt pelt { get; set; }
+
+    public Pelt pelt { get; set; } = new();
     public Personality personality { get; set; }
     public CatSkills skills { get; set; }
     public readonly CatSex Sex;
@@ -39,7 +40,13 @@ public partial class Cat : IEquatable<Cat>
     public Dictionary<string, Relationship> relationships { get; set; } = new();
     public List<string> mates { get; private set; } = new();
     public List<string> previousMates { get; private set; } = new();
+    public CatAge age { get; private set; }
+    
     private int _timeskips = 0;
+    /// <summary>
+    /// Number of timeskips a cat has gone through
+    /// 1 Timeskip = 1/2 moon.
+    /// </summary>
     public int timeskips
     {
         get
@@ -49,11 +56,26 @@ public partial class Cat : IEquatable<Cat>
         set
         {
             _timeskips = value;
-            Console.WriteLine("ToDo- Set Age");
+            
+            // Set Age
+            bool found = false;
+            foreach (var item in Cat.AgeTimeskips)
+            {
+                if (item.Value[0] <= _timeskips && _timeskips <= item.Value[1])
+                {
+                    age = item.Key;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found)
+            {
+                // If not found, it is above the possible ranges. 
+                // Set to senior
+                age = CatAge.Senior;
+            }
         }
     }
-    public SKImage sprite { get; set; }
-
     /// <summary>
     /// Age of the cat, in moons. Readonly, increment timeskips instead. 
     /// </summary>
@@ -61,10 +83,20 @@ public partial class Cat : IEquatable<Cat>
     {
         get
         {
-            return (float)timeskips / 4;
+            return (float)timeskips / 2;
         }
     }
     
+    public SKImage sprite { get; set; }
+
+    public bool canWork
+    {
+        get
+        {
+            return true;
+        }
+    }
+
     
     /// <summary>
     /// Status or Rank of the cat. 

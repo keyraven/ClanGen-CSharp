@@ -86,6 +86,21 @@ public partial class Cat : IEquatable<Cat>
         [Description("master")]
         Master
     }
+    
+    //Reference
+
+    public static readonly IReadOnlyDictionary<CatAge, int[]> AgeTimeskips = new Dictionary<CatAge, int[]>()
+    {
+        [CatAge.Newborn] = new int[] {0, 1},
+        [CatAge.Kitten] = new int[] {2, 11},
+        [CatAge.Adolescent] = new int[] {12, 23},
+        [CatAge.YoungAdult] = new int[] {24, 95},
+        [CatAge.Adult] = new int[] {96, 191},
+        [CatAge.SeniorAdult] = new int[] {192, 239},
+        [CatAge.Senior] = new int[] {240, 600}
+     };
+    
+    
 
     // ID Stuff
 

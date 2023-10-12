@@ -10,7 +10,8 @@ public class Pronoun
         Plural = 1,
         Singular = 2
     }
-
+    
+    //Default pronouns.
     public static readonly Pronoun theyThem = new
         Pronoun("they", "them", "their", "theirs", "themself", Conjugation.Plural);
     public static readonly Pronoun sheHer = new Pronoun(
@@ -20,6 +21,7 @@ public class Pronoun
     public static readonly List<Pronoun> DefaultPronouns = new() { theyThem, sheHer, heHim };
 
 
+    // this isn't a type. Can't name a variable object, so objectt it is. 
     public string objectt { get; set; }
     public string subject { get; set; }
     public string possessive { get; set; }
@@ -58,8 +60,8 @@ public class Pronoun
                 return inPossessive;
             case "self":
                 return reflexive;
+            default:
+                return $"error--\"{type}\"";
         }
-
-        return $"error--\"{type}\"";
     }
 }

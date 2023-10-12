@@ -10,7 +10,6 @@ namespace Clangen.Models.CatStuff;
 public static class Sprites
 {
     private static int spriteSize = 50;
-    
     private static Dictionary<string, SKImage> lineart { get; set; } = new();
     private static Dictionary<string, SKImage> colorPattern { get; set; } = new();
     private static Dictionary<string, SKImage> eye1 { get; set; } = new();
@@ -22,7 +21,9 @@ public static class Sprites
     private static Dictionary<string, SKImage> accessories { get; set; } = new();
     private static Dictionary<string, SKImage> fadedCats { get; set; } = new();
     private static Dictionary<string, SKImage> shading { get; set; } = new();
-
+    private static Dictionary<string, byte[]?> peltTints { get; set; } = new();
+    private static Dictionary<string, byte[]?> whitePatchTint { get; set; } = new();
+    
     //TODO - something to store the fading effect in. 
     //TODO - something to store tints in. 
 
@@ -45,9 +46,9 @@ public static class Sprites
         int groupYOfs = yOffset * spritesY * spriteSize;
         
         int i = 0;
-        for (int row = 0; row < spritesY; row++)
+        for (int col = 0; col < spritesY; col++)
         {
-            for (int col = 0; col < spritesX; col++)
+            for (int row = 0; row < spritesX; row++)
             {
                 //
                 SKRectI sourceRect = SKRectI.Create(groupXOfs + (row * spriteSize), groupYOfs + (col * spriteSize), 
@@ -201,6 +202,22 @@ public static class Sprites
         };
         skins.AddRange(ParseSpritesheet($"{basepath}skin.png", groupNames));
         
+        // Eye
+        groupNames = new()
+        {
+            new()
+            {
+                "YELLOW", "AMBER", "HAZEL", "PALEGREEN", "GREEN", "BLUE",
+                "DARKBLUE", "GREY", "CYAN", "EMERALD", "HEATHERBLUE", "SUNLITICE"
+            },
+            new()
+            {
+                "COPPER", "SAGE", "COBALT", "PALEBLUE", "BRONZE", "SILVER",
+                "PALEYELLOW", "GOLD", "GREENYELLOW"
+            }
+        };
+        eye1.AddRange(ParseSpritesheet($"{basepath}eyes.png", groupNames));
+        eye2.AddRange(ParseSpritesheet($"{basepath}eyes2.png", groupNames));
         
         // Accessories
         groupNames = new()
@@ -244,27 +261,124 @@ public static class Sprites
         };
         accessories.AddRange(ParseSpritesheet($"{basepath}nyloncollars.png", groupNames));
         
+        //TINTS
+        // TODO -- LOAD TINTS FROM FILE
+        whitePatchTint = new Dictionary<string, byte[]?>()
+        {
+            ["darkcream"] = new byte[] {236, 229, 208},
+            ["cream"] = new byte[] {247, 241, 225},
+            ["offwhite"] = new byte[] {238, 249, 252},
+            ["gray"] = new byte[] {208, 225, 229},
+            ["pink"] = new byte[] {254, 248, 249},
+            ["black"] = new byte[] {255, 0, 0},
+            ["none"] = null
+        };
+        
+        peltTints = new Dictionary<string, byte[]?>()
+        {
+            ["pink"] = new byte[] {253, 237, 237},
+            ["gray"] = new byte[] {225, 225, 225},
+            ["red"] = new byte[] {248, 226, 228},
+            ["black"] = new byte[] {195, 195, 195},
+            ["orange"] = new byte[] {255, 247, 235},
+            ["yellow"] = new byte[] {250, 248, 225},
+            ["purple"] = new byte[] {235, 225, 244},
+            ["blue"] = new byte[] {218, 237, 245},
+            ["none"] = null
+        };
+        
         // TODO - SCARS
     }
-    
-    
+
+    /// <summary>
+    /// Applies a tint the source image. Does not effect transparency. 
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="color"></param>
+    /// <param name="blendMode"></param>
+    /// <returns></returns>
+    private static SKBitmap ApplyTint(SKImage source, SKBlendMode blendMode)
+    {
+        // this is almost certainly the worst way to do this. 
+        SKColor color = new SKColor(0, 0, 0, 0);
+        SKBitmap output = SKBitmap.FromImage(source);
+        using (SKCanvas canvas = new SKCanvas(output))
+        {
+            SKPaint paint = new SKPaint()
+            {
+                ColorFilter = SKColorFilter.CreateBlendMode(SKColors.Aqua, blendMode),
+                BlendMode = SKBlendMode.SrcATop
+            };
+            
+            canvas.DrawImage(source, 0, 0, paint: paint);
+        }
+
+        return output;
+    }
+
     public static SKImage GenerateSprite(Cat cat)
     {
         SKBitmap sprite = new SKBitmap(spriteSize, spriteSize);
+        SKColor color;
         
         //Placeholder for testing
-        string spriteNumber = "1";
+        string spriteNumber = cat.pelt.GetSpriteNumber(cat.age, cat.canWork);
+        spriteNumber = "8";
         
-        using (SKCanvas canvas = new SKCanvas(sprite))
+        // TODO - Figure out a nice way to do tints. 
+        try
         {
-            canvas.Clear(SKColors.Transparent);
-            
-            canvas.DrawImage(colorPattern[$"singleWHITE{spriteNumber}"], 0, 0);
-            canvas.DrawImage(lineart[$"alive{spriteNumber}"], 0, 0);
-            
+            using (SKCanvas canvas = new SKCanvas(sprite))
+            {
+                canvas.Clear(SKColors.Transparent);
+                
+                //PATTERN
+                canvas.DrawImage(colorPattern[$"{cat.pelt.peltPattern}{cat.pelt.peltColor}{spriteNumber}"], 0, 0);
+                
+                
+                //WHITE PATCHES
+                if (cat.pelt.whitePatches != null)
+                {
+                    
+                    canvas.DrawImage(whitePatches[$"{cat.pelt.whitePatches}{spriteNumber}"], 0, 0);
+                }
+                
+                // Eyes
+                canvas.DrawImage(eye1[$"{cat.pelt.eyeColor}{spriteNumber}"], 0, 0);
+                if (cat.pelt.eyeColor2 != null)
+                {
+                    canvas.DrawImage(eye2[$"{cat.pelt.eyeColor2}{spriteNumber}"], 0, 0);
+                }
+                
+                // Lineart
+                if (!cat.dead)
+                {
+                    canvas.DrawImage(lineart[$"alive{spriteNumber}"], 0, 0);
+                }
+                else if (cat.darkForest)
+                {
+                    canvas.DrawImage(lineart[$"df{spriteNumber}"], 0, 0);
+                }
+                else
+                {
+                    canvas.DrawImage(lineart[$"dead{spriteNumber}"], 0, 0);
+                }
+                
+                // Accessory
+                if (cat.pelt.accessory != null)
+                {
+                    canvas.DrawImage(accessories[$"{cat.pelt.accessory}{spriteNumber}"], 0, 0);
+                }
+                
+            }
         }
-
+        catch (KeyNotFoundException)
+        {
+            Console.WriteLine("ERROR WITH SPRITE");
+        }
+        
         return SKImage.FromBitmap(sprite);
     }
     
 }
+
