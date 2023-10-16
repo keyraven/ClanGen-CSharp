@@ -1,11 +1,19 @@
-﻿namespace Clangen.Models.CatGroups;
+﻿using System.Collections.Generic;
+using Clangen.Models.CatStuff;
+
+namespace Clangen.Models.CatGroups;
 
 public class Outsiders : Group
 {
-    public override string name { get; }
+    private string _name;
 
-    public Outsiders(string name = "Cats Outside the Clan")
+    public override string GetName()
     {
-        this.name = name;
+        return _name;
+    }
+
+    public Outsiders(IReadOnlyDictionary<string, Cat> allCats, string name = "Cats Outside the Clan") : base(allCats)
+    {
+        this._name = name;
     }
 }

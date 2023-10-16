@@ -1,14 +1,19 @@
 ﻿using System.Collections.Generic;
+using Clangen.Models.CatStuff;
 
 namespace Clangen.Models.CatGroups;
 
 public class Afterlife : Group
 {
-    public override string name { get; }
+    private string _name; 
     
-    public Afterlife(string name = "Afterlife", SortedSet<string>? cats = null)
+    public override string GetName()
     {
-        this.name = name;
-        this.members = cats == null ? new SortedSet<string>() : cats;
+        return _name;
+    }
+    
+    public Afterlife(IReadOnlyDictionary<string, Cat> allCats,  string name = "Afterlife", SortedSet<string>? cats = null) : base(allCats)
+    {
+        this._name = name;
     }
 }

@@ -65,33 +65,33 @@ public class World
     {
         foreach (Cat kitty in allCats)
         {
-            _allCats.Add(kitty.Id, kitty);
+            _allCats.Add(kitty);
         }
         
-        currentClan ??= new("New");
+        currentClan ??= new(_allCats, "New");
         this.currentClan = currentClan;
         allGroups.Add(this.currentClan.ID, this.currentClan);
         
         // Create the afterlives
-        starClan ??= new("StarClan");
+        starClan ??= new(_allCats, "StarClan");
         this.starClan = starClan;
         allGroups.Add(this.starClan.ID, this.starClan);
         
-        darkForest ??= new("Dark Forest");
+        darkForest ??= new(_allCats, "Dark Forest");
         this.darkForest = darkForest;
         allGroups.Add(this.darkForest.ID, this.darkForest);
         
-        unknownRes ??= new("Unknown Residence");
+        unknownRes ??= new(_allCats,"Unknown Residence");
         this.unknownRes = unknownRes;
         allGroups.Add(this.unknownRes.ID, this.unknownRes);
         
         // Outsiders
-        outsiders ??= new();
+        outsiders ??= new(_allCats);
         this.outsiders = outsiders; 
         allGroups.Add(this.outsiders.ID, this.outsiders);
         
         // Two Other Clans
-        otherClans ??= new List<OtherClan>() { new OtherClan("Clan1"), new OtherClan("Clan2") };
+        otherClans ??= new List<OtherClan>() { new OtherClan(_allCats,"Clan1"), new OtherClan(_allCats,"Clan2") };
         this.otherClans = otherClans;
         
         foreach (OtherClan clan in this.otherClans)
@@ -102,21 +102,21 @@ public class World
     
     public World(string clanName)
     {
-        this.currentClan = new(clanName);
+        this.currentClan = new(_allCats, clanName);
         allGroups.Add(currentClan.ID, currentClan);
         
         // Create the afterlives
-        starClan = new("StarClan");
+        starClan = new(_allCats,"StarClan");
         allGroups.Add(starClan.ID, starClan);
-        darkForest = new("Dark Forest");
+        darkForest = new(_allCats,"Dark Forest");
         allGroups.Add(darkForest.ID, darkForest);
-        unknownRes = new("Unknown Residence");
+        unknownRes = new(_allCats,"Unknown Residence");
         allGroups.Add(unknownRes.ID, unknownRes);
         
         // Two Other Clans
         for (int i = 0; i < 2; i++)
         {
-            otherClans.Add(new OtherClan($"Other{i}"));
+            otherClans.Add(new OtherClan(_allCats,$"Other{i}"));
             allGroups.Add(otherClans.Last().ID, otherClans.Last());
         }
     }
@@ -126,20 +126,9 @@ public class World
     /// a group
     /// </summary>
     /// <param name="addCat"> The cat to add </param>
-    /// <param name="belongGroup"> The ID of the group to add the cat too. If left null, will add the currentClan </param>
-    public void AddCatToWorld(Cat addCat, string? belongGroup = null)
+    public void AddCatToWorld(Cat addCat)
     {
         _allCats.Add(addCat.Id, addCat);
-        belongGroup ??= currentClan.ID;
-        
-        if (allGroups.ContainsKey(belongGroup))
-        {
-            allGroups[belongGroup].AddMember(addCat);
-        }
-        else
-        {
-            currentClan.AddMember(addCat);
-        }
     }
     
     /// <summary>
@@ -186,3 +175,4 @@ public class WorldSettings
 {
     
 }
+

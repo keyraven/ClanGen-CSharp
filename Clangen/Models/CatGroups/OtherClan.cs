@@ -1,18 +1,14 @@
 ﻿using System.Collections.Generic;
+using Clangen.Models.CatStuff;
 
 namespace Clangen.Models.CatGroups;
 
 public class OtherClan : Group
 {
-    public OtherClan(string prefix, SortedSet<string>? cats = null, string? leader = null, string? deputy = null,
-        List<string>? medicineCats = null)
+    public OtherClan(IReadOnlyDictionary<string, Cat> allCats, string prefix, string? leader = null, string? deputy = null,
+        List<string>? medicineCats = null) : base(allCats)
     {
         this.prefix = prefix;
-        if (cats != null)
-        {
-            this.members = cats;
-        }
-
         this.leader = leader;
         this.deputy = deputy;
         if (medicineCats != null)
@@ -24,13 +20,10 @@ public class OtherClan : Group
     public string prefix { get; set; }
     public string suffix { get; set; } = "Clan";
 
-    public override string name
+    public override string GetName()
     {
-        get
-        {
-            return $"{prefix}{suffix}";
-        }
-    } 
+        return $"{prefix}{suffix}";
+    }
 
     public string? leader { get; set; }
     public string? deputy { get; set; }

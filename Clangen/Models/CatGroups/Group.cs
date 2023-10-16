@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Clangen.Models.CatStuff;
 
 namespace Clangen.Models.CatGroups;
@@ -6,8 +7,18 @@ namespace Clangen.Models.CatGroups;
 public abstract class Group
 {
     public readonly string ID = GetValidId();
-
     private static int _lastId = 0;
+    private IReadOnlyDictionary<string, Cat> _allCats { get; }
+
+    protected Group(IReadOnlyDictionary<string, Cat> allCats)
+    {
+        _allCats = allCats;
+    }
+
+    public IReadOnlyCollection<Cat> GetMembers()
+    {
+        return _allCats.Values.Where(cat => cat.belongGroup == this).ToList().AsReadOnly();
+    }
     
     private static string GetValidId()
     {
@@ -31,21 +42,7 @@ public abstract class Group
 
         return _lastId.ToString();
     }
-    
-    public abstract string name { get; }
 
-    public void AddMember(Cat newCat)
-    {
-        newCat.belongGroup?.RemoveMember(newCat);
-        members.Add(newCat.Id);
-        newCat.belongGroup = this;
-    }
+    public abstract string GetName();
 
-    private void RemoveMember(Cat removeCat)
-    {
-        members.Remove(removeCat.Id);
-        removeCat.belongGroup = null;
-    }
-
-    public SortedSet<string> members { get; set; } = new();
 }
