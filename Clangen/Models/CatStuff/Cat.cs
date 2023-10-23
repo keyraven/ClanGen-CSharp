@@ -86,9 +86,21 @@ public partial class Cat : IEquatable<Cat>
             return (float)timeskips / 2;
         }
     }
+
+    public int deadForTimeSkips { get; set; } = 0;
+
+    public float deadForMoons
+    {
+        get
+        {
+            return (float)deadForTimeSkips / 2;
+        }
+    }
     
     public SKImage sprite { get; set; }
 
+    // Bool if the cat is able to work
+    // Injuries are not yet implemented, so always return true.
     public bool canWork
     {
         get
@@ -106,6 +118,7 @@ public partial class Cat : IEquatable<Cat>
         get { return _status; }
         set
         {
+            // TODO --> Extra set-status actions.
             _status = value;
         }
     }
@@ -187,7 +200,7 @@ public partial class Cat : IEquatable<Cat>
     }
 
 
-    // EQ-OVERRIDES
+    // EQ-OVERRIDES (And HASH)
 
     public override bool Equals(object? obj) => this.Equals(obj as Cat);
 

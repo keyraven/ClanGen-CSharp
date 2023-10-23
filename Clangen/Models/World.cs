@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Collections.Generic;
 using System.Linq;
 using Clangen.Models.Events;
@@ -25,7 +26,7 @@ public enum Season
 /// <summary>
 /// Holds information on a single save. 
 /// </summary>
-public class World
+public partial class World
 {
     
     private Dictionary<string, Cat> _allCats = new();
@@ -35,6 +36,8 @@ public class World
     
     public Season season { get; private set; } = Season.Newleaf;
     private readonly Season StartingSeason = Season.Newleaf;
+    public int timeskips { get; set; }
+    public int moons { get; }
     
     public List<SingleEvent> currentEvents { get; set; } = new();
     public List<SingleEvent> medicineDenEvents { get; set; } = new();
@@ -65,7 +68,7 @@ public class World
     {
         foreach (Cat kitty in allCats)
         {
-            _allCats.Add(kitty);
+            _allCats.Add(kitty.Id, kitty);
         }
         
         currentClan ??= new(_allCats, "New");
@@ -137,20 +140,20 @@ public class World
     /// </summary>
     /// <param name="catID"></param>
     /// <returns></returns>
-    public Cat? FetchCat(string catID)
+    public Cat? FetchCat(string catId)
     {
-        if (_allCats.ContainsKey(catID))
+        if (_allCats.ContainsKey(catId))
         {
-            return _allCats[catID];
+            return _allCats[catId];
         }
         
-        return LoadFadedCat(catID);
+        return LoadFadedCat(catId);
     }
     
-    public Cat? LoadFadedCat(string catID)
+    public Cat LoadFadedCat(string catID)
     {
         // Load a faded cat, if they are faded.
-        return null;
+        throw new Exception("Faded Cat Loading not Implemented. ");
     }
 
     public bool CatIdTaken(string id)
@@ -164,9 +167,14 @@ public class World
         return CatIdTaken(stringID);
     }
 
-    public List<Cat> GetAllCats()
+    public IReadOnlyCollection<Cat> GetAllCats()
     {
-        return _allCats.Values.ToList();
+        return _allCats.Values.ToList().AsReadOnly();
+    }
+
+    public IReadOnlyCollection<string> GetAllCatIds()
+    {
+        return _allCats.Keys.ToList().AsReadOnly();
     }
 
 }

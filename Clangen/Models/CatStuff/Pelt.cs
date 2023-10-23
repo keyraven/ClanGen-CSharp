@@ -11,7 +11,6 @@ public class Pelt
 {
     private static readonly IReadOnlyList<string> PeltPattern = new List<string>() { "single", "tabby", "mackeral" }; 
     
-    
     // Needed
     public string peltColor { get; private set; } = "BROWN";
     public string peltPattern { get; private set; } = "tabby";

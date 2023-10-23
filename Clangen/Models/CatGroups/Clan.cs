@@ -15,6 +15,21 @@ public class Clan : Group
         return $"{prefix}{suffix}";
     }
 
+    public override void UpdateCatStatus(Cat cat)
+    {
+        if (cat.status == Cat.CatStatus.Leader)
+        {
+            leader = cat.Id;
+        }
+
+        if (cat.status == Cat.CatStatus.Deputy)
+        {
+            deputy = cat.Id;
+        }
+        
+        if (cat.status == Cat.)
+    }
+
     // PLACE TO EASILY HOLD IDs FOR THE LEADER
     // DEPUTY, MEDICINE CATS, EXT
     public string? leader { get; set; }
