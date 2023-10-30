@@ -100,41 +100,6 @@ public partial class Cat : IEquatable<Cat>
         [CatAge.Senior] = new int[] {240, 600}
      };
     
-    
-
-    // ID Stuff
-
-    private static int _lastId = 0;
-
-    /// <summary>
-    /// Returns a valid, open ID. If a currentClan is set in Game,
-    /// it will check that that ID is not current held by a cat in that clan.
-    /// Otherwise, simply increments get the next integer from private integer _lastID
-    /// </summary>
-    /// <returns>String, a valid ID. </returns>
-    private static string GetValidId()
-    {
-        _lastId += 1;
-        while (true)
-        {
-            if (Game.currentWorld == null)
-            {
-                break;
-            }
-
-            if (Game.currentWorld.CatIdTaken(_lastId))
-            {
-                _lastId += 1;
-            }
-            else
-            {
-                break;
-            }
-        }
-
-        return _lastId.ToString();
-    }
-
 
     // STATIC PROPERTIES
     public static readonly Dictionary<CatAge, int[]> AgeMoons = Game.gameConfig.ageMoons;

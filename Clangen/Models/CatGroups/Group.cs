@@ -6,12 +6,12 @@ namespace Clangen.Models.CatGroups;
 
 public abstract class Group
 {
-    public readonly string ID = GetValidId();
-    private static int _lastId = 0;
+    public readonly string ID;
     private IReadOnlyDictionary<string, Cat> _allCats { get; }
 
-    protected Group(IReadOnlyDictionary<string, Cat> allCats)
+    protected Group(string id, IReadOnlyDictionary<string, Cat> allCats)
     {
+        ID = id;
         _allCats = allCats;
     }
 
@@ -20,30 +20,7 @@ public abstract class Group
         return _allCats.Values.Where(cat => cat.belongGroup == this).ToList().AsReadOnly();
     }
     
-    private static string GetValidId()
-    {
-        _lastId += 1;
-        while (true)
-        {
-            if (Game.currentWorld == null)
-            {
-                break;
-            }
-
-            if (Game.currentWorld.allGroups.ContainsKey(_lastId.ToString()))
-            {
-                _lastId += 1;
-            }
-            else
-            {
-                break;
-            }
-        }
-
-        return _lastId.ToString();
-    }
-
     public abstract string GetName();
 
-    public abstract void UpdateCatStatus(Cat cat);
+    public abstract void UpdateCatStatus(Cat cat, Cat.CatStatus oldStatus);
 }

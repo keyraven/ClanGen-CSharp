@@ -12,7 +12,13 @@ public class Outsiders : Group
         return _name;
     }
 
-    public Outsiders(IReadOnlyDictionary<string, Cat> allCats, string name = "Cats Outside the Clan") : base(allCats)
+    public override void UpdateCatStatus(Cat cat, Cat.CatStatus oldStatus)
+    {
+        throw new System.NotImplementedException();
+    }
+    
+    public Outsiders(string id, IReadOnlyDictionary<string, Cat> allCats, 
+        string name = "Cats Outside the Clan") : base(id, allCats)
     {
         this._name = name;
     }

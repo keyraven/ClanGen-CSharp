@@ -14,68 +14,11 @@ public class Relationship
 
     // Difference from python version --- NOTE
     // Relationship catFrom and catTo are now stored as private IDs. 
-    private string _catFrom;
-    private string _catTo;
-
-    public Cat catFrom
-    {
-        get
-        {
-            Cat? output = Game.currentWorld?.FetchCat(_catFrom);
-            if (output == null)
-            {
-                throw new Exception($"Null World or invalid _catFrom in relationship: {_catFrom}");
-            }
-
-            return output;
-        }
-        private set
-        {
-            _catFrom = value.Id;
-        }
-    }
-
-    public Cat catTo
-    {
-        get
-        {
-            Cat? output = Game.currentWorld?.FetchCat(_catTo);
-            if (output == null)
-            {
-                throw new Exception($"Null World or invalid _catTo in relationships: {_catFrom}");
-            }
-
-            return output;
-        }
-        set
-        {
-            _catTo = value.Id;
-        }
-    }
-    public bool mates
-    {
-        get { return catFrom.mates.Contains(catTo.Id); }
-    }
-    public bool family
-    {
-        get { return catFrom.IsRelated(catTo); }
-    }
+    public string catFrom { get; set; }
+    public string catTo { get; set; }
+    
     public List<string> log { get; set; }
-
-    private Relationship? _oppositeRelationship;
-    public Relationship oppositeRelationship
-    {
-        get
-        {
-            if (_oppositeRelationship != null)
-            {
-                return _oppositeRelationship;
-            }
-
-            return LinkRelationship();
-        }
-    }
-
+    
     private int _romanticLove;
     private int _platonicLike;
     private int _dislike;
@@ -119,13 +62,13 @@ public class Relationship
         set { _trust = AdjustToRange(value); }
     }
 
-    public Relationship(Cat catFrom, Cat catTo, int romanticLove = 0, int platonicLike = 0, int dislike = 0,
+    public Relationship(string catFrom, string catTo, int romanticLove = 0, int platonicLike = 0, int dislike = 0,
         int admiration = 0, int comfortable = 0, int jealousy = 0, int trust = 0, List<string>? log = null)
     {
         log ??= new();
 
-        this._catFrom = catFrom.Id;
-        this._catTo = catTo.Id;
+        this.catFrom = catFrom;
+        this.catTo = catTo;
         this.romanticLove = romanticLove;
         this.platonicLike = platonicLike;
         this.dislike = dislike;
@@ -135,23 +78,7 @@ public class Relationship
         this.jealousy = jealousy;
         this.log = log;
     }
-
-    private Relationship LinkRelationship()
-    {
-        if (catTo.relationships.ContainsKey(catFrom.Id))
-        {
-            _oppositeRelationship = catTo.relationships[catFrom.Id];
-        }
-        else
-        {
-            _oppositeRelationship = new Relationship(catTo, catFrom);
-            catTo.relationships.Add(catFrom.Id, _oppositeRelationship);
-
-        }
-
-        return _oppositeRelationship;
-    }
-
+    
     private int AdjustToRange(int value)
     {
         if (value > ValueMax)

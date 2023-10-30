@@ -17,7 +17,7 @@ public partial class Cat : IEquatable<Cat>
 
     //PUBLIC ATTRIBUTES and PROPERTIES
 
-    public readonly string Id = GetValidId();
+    public readonly string ID;
     
     public Name name { get; set; }
     public string fullName
@@ -118,8 +118,9 @@ public partial class Cat : IEquatable<Cat>
         get { return _status; }
         set
         {
-            // TODO --> Extra set-status actions.
+            CatStatus oldStatus = _status;
             _status = value;
+            belongGroup?.UpdateCatStatus(this, oldStatus);
         }
     }
 
@@ -167,11 +168,11 @@ public partial class Cat : IEquatable<Cat>
     // Group the cat belongs too. 
     public Group? belongGroup { get; set; }
 
-    public Cat(CatStatus status = CatStatus.Newborn, int timeskips = 0, CatSex sex = CatSex.Female,
+    public Cat(string id, CatStatus status = CatStatus.Newborn, int timeskips = 0, CatSex sex = CatSex.Female,
         List<string>? bioParents = null, List<string>? adoptiveParents = null, string? prefix = null,
         string? gender = null, string? suffix = null, int experience = 0)
     {
-        
+        this.ID = id;
         this.Sex = sex;
         this.gender = gender == null ? sex.ToString() : gender;
         this.status = status;
@@ -196,7 +197,7 @@ public partial class Cat : IEquatable<Cat>
 
     public static Cat GenerateRandomCat()
     {
-        return new Cat();
+        throw new NotImplementedException();
     }
 
 
@@ -222,10 +223,10 @@ public partial class Cat : IEquatable<Cat>
         }
 
         // Cat is the same if the IDs are equal. 
-        return this.Id == p.Id;
+        return this.ID == p.ID;
     }
 
-    public override int GetHashCode() => Id.GetHashCode();
+    public override int GetHashCode() => ID.GetHashCode();
 
     public static bool operator ==(Cat? lhs, Cat? rhs)
     {

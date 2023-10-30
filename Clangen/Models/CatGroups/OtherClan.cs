@@ -5,8 +5,8 @@ namespace Clangen.Models.CatGroups;
 
 public class OtherClan : Group
 {
-    public OtherClan(IReadOnlyDictionary<string, Cat> allCats, string prefix, string? leader = null, string? deputy = null,
-        List<string>? medicineCats = null) : base(allCats)
+    public OtherClan(string id, IReadOnlyDictionary<string, Cat> allCats, string prefix, string? leader = null, string? deputy = null,
+        List<string>? medicineCats = null) : base(id, allCats)
     {
         this.prefix = prefix;
         this.leader = leader;
@@ -23,6 +23,11 @@ public class OtherClan : Group
     public override string GetName()
     {
         return $"{prefix}{suffix}";
+    }
+
+    public override void UpdateCatStatus(Cat cat, Cat.CatStatus oldStatus)
+    {
+        throw new System.NotImplementedException();
     }
 
     public string? leader { get; set; }
