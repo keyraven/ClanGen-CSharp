@@ -42,6 +42,9 @@ public partial class Cat : IEquatable<Cat>
     public List<string> previousMates { get; private set; } = new();
     public CatAge age { get; private set; }
     
+    // True if the cat worked in the last timeskip, false if not. 
+    public bool worked { get; set; } = false;
+    
     private int _timeskips = 0;
     /// <summary>
     /// Number of timeskips a cat has gone through
@@ -162,13 +165,10 @@ public partial class Cat : IEquatable<Cat>
     /// </summary>
     public ExpLevel experienceLevel { get; set; }
     
-    // TODO - figure out how to handle sprites. IDEA - use SKSharp. 
-    //public SKBitmap sprite { get; set; }
-    
     // Group the cat belongs too. 
-    public Group? belongGroup { get; set; }
+    public Group belongGroup { get; set; }
 
-    public Cat(string id, CatStatus status = CatStatus.Newborn, int timeskips = 0, CatSex sex = CatSex.Female,
+    public Cat(string id, Group belongGroup, CatStatus status = CatStatus.Newborn, int timeskips = 0, CatSex sex = CatSex.Female,
         List<string>? bioParents = null, List<string>? adoptiveParents = null, string? prefix = null,
         string? gender = null, string? suffix = null, int experience = 0)
     {
@@ -177,6 +177,8 @@ public partial class Cat : IEquatable<Cat>
         this.gender = gender == null ? sex.ToString() : gender;
         this.status = status;
         this.timeskips = timeskips;
+        this.belongGroup = belongGroup;
+        
         if (bioParents != null)
         {
             this.bioParents = bioParents;
@@ -192,15 +194,7 @@ public partial class Cat : IEquatable<Cat>
 
         this.sprite = Sprites.GenerateSprite(this);
     }
-
-    //NEW CAT FUNCTIONS
-
-    public static Cat GenerateRandomCat()
-    {
-        throw new NotImplementedException();
-    }
-
-
+    
     // EQ-OVERRIDES (And HASH)
 
     public override bool Equals(object? obj) => this.Equals(obj as Cat);

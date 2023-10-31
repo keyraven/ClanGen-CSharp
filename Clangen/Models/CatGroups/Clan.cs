@@ -15,8 +15,20 @@ public class Clan : Group
         return $"{prefix}{suffix}";
     }
     
+    /// <summary>
+    /// Updates any group variables when a cat's status chances. Meant to be called
+    /// from the cat status property, in set;. This should never need to called outside of that
+    /// context. 
+    /// </summary>
+    /// <param name="cat"> The cat whose status updated. The status property of the cat should already be chanced. </param>
+    /// <param name="oldStatus"> The old status of the cat. </param>
     public override void UpdateCatStatus(Cat cat, Cat.CatStatus oldStatus)
     {
+        if (oldStatus == Cat.CatStatus.MedicineCat && medicineCats.Contains(cat.ID))
+        {
+            medicineCats.Remove(cat.ID);
+        }
+        
         if (cat.status == Cat.CatStatus.Leader)
         {
             leader = cat.ID;

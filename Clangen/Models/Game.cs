@@ -41,8 +41,6 @@ public static class Game
     {
         currentWorld = new World("New");
         
-        currentWorld.AddCatToWorld(Cat.GenerateRandomCat());
-        
     }
 
     /// <summary>

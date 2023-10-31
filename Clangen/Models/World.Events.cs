@@ -12,7 +12,6 @@ public partial class World
         mediated.Clear();
         currentEvents.Clear();
         medicineDenEvents.Clear();
-        patrolled.Clear();
         
         for (int i = 0; i < number; i++)
         {
