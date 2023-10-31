@@ -20,24 +20,23 @@ public class Pronoun
         "he", "him", "his", "his", "himself", Conjugation.Singular);
     public static readonly List<Pronoun> DefaultPronouns = new() { theyThem, sheHer, heHim };
 
-
-    // this isn't a type. Can't name a variable object, so objectt it is. 
-    public string objectt { get; set; }
-    public string subject { get; set; }
-    public string possessive { get; set; }
-    public string inPossessive { get; set; }
-    public string reflexive { get; set; }
+    
+    public string objectVersion { get; set; }
+    public string subjectVersion { get; set; }
+    public string possessiveVersion { get; set; }
+    public string inPossessiveVersion { get; set; }
+    public string reflexiveVersion { get; set; }
     public Conjugation conjugation { get; set; }
 
 
     public Pronoun(string objectt, string subject, string possessive, string inPossessive, string reflexive,
         Conjugation conjugation)
     {
-        this.objectt = objectt;
-        this.subject = subject;
-        this.possessive = possessive;
-        this.inPossessive = inPossessive;
-        this.reflexive = reflexive;
+        this.objectVersion = objectt;
+        this.subjectVersion = subject;
+        this.possessiveVersion = possessive;
+        this.inPossessiveVersion = inPossessive;
+        this.reflexiveVersion = reflexive;
         this.conjugation = conjugation;
     }
 
@@ -51,15 +50,15 @@ public class Pronoun
         switch (type)
         {
             case "object":
-                return objectt;
+                return objectVersion;
             case "subject":
-                return subject;
+                return subjectVersion;
             case "poss":
-                return possessive;
+                return possessiveVersion;
             case "inposs":
-                return inPossessive;
+                return inPossessiveVersion;
             case "self":
-                return reflexive;
+                return reflexiveVersion;
             default:
                 return $"error--\"{type}\"";
         }

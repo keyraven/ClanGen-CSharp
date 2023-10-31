@@ -12,11 +12,6 @@ public class Afterlife : Group
         return _name;
     }
 
-    public override void UpdateCatStatus(Cat cat, Cat.CatStatus oldStatus)
-    {
-        throw new System.NotImplementedException();
-    }
-
     public Afterlife(string id, IReadOnlyDictionary<string, Cat> allCats,  string name = "Afterlife", 
         SortedSet<string>? cats = null) : base(id, allCats)
     {

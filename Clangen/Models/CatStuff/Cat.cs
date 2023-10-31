@@ -123,7 +123,6 @@ public partial class Cat : IEquatable<Cat>
         {
             CatStatus oldStatus = _status;
             _status = value;
-            belongGroup?.UpdateCatStatus(this, oldStatus);
         }
     }
 

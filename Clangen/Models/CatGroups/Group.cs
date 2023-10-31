@@ -21,6 +21,5 @@ public abstract class Group
     }
     
     public abstract string GetName();
-
-    public abstract void UpdateCatStatus(Cat cat, Cat.CatStatus oldStatus);
+    
 }
