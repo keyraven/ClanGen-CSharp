@@ -100,8 +100,4 @@ public partial class Cat : IEquatable<Cat>
         [CatAge.Senior] = new int[] {240, 600}
      };
     
-
-    // STATIC PROPERTIES
-    public static readonly Dictionary<CatAge, int[]> AgeMoons = Game.gameConfig.ageMoons;
-
 }

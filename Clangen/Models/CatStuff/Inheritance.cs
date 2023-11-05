@@ -67,11 +67,12 @@ public class Inheritance
 
     public void Update()
     {
-
+        /*
         if (Game.currentWorld == null)
         {
             throw new Exception("Can't update inheritance without world loaded.");
         }
+        */
 
         parents.Clear();
         mates.Clear();
@@ -91,6 +92,7 @@ public class Inheritance
 
     private void InitParents()
     {
+        /*
         Cat? current;
         //Blood
         foreach (var id in cat.bioParents)
@@ -117,6 +119,7 @@ public class Inheritance
             parents.Add(id, new RelationInfo(type: RelationType.Adoptive));
             allInvolved.Add(id);
         }
+        */
     }
 
     private void InitMates()

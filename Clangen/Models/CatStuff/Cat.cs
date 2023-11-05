@@ -33,7 +33,6 @@ public partial class Cat : IEquatable<Cat>
     public List<Pronoun> pronouns { get; set; } = new() {Pronoun.theyThem};
     public readonly List<string> bioParents;
     public List<string> adoptiveParents { get; set; }
-    public bool outside { get; set; }
     public bool darkForest { get; set; }
     public bool dead { get; private set; }
     public int lives { get; private set; } = 1;

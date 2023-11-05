@@ -6,6 +6,8 @@ namespace Clangen.Models;
 
 public static class Utilities
 {
+    private static readonly Random Rnd = new();
+    
     /// <summary>
     /// Choose a random entry from a list. 
     /// </summary>
@@ -14,7 +16,28 @@ public static class Utilities
     /// <returns>A random entry from the passed list.</returns>
     public static T ChoseRandom<T>(List<T> list)
     {
-        return list[Game.Rnd.Next(0, list.Count)];
+        return list[Rnd.Next(0, list.Count)];
+    }
+
+    /// <summary>
+    /// Makes a roll where the chance of success (true return) is 1/inverseChance
+    /// If inverseChance == 0, chance is 1. 
+    /// </summary>
+    /// <param name="inverseChance"> Inverse Chance of true return </param>
+    /// <returns></returns>
+    public static bool InverseChanceRoll(int inverseChance)
+    {
+        return Rnd.Next(0, inverseChance) == 0;
+    }
+
+    /// <summary>
+    /// Makes a roll where the percentage chance of success if chanceOfSuccess
+    /// </summary>
+    /// <param name="chanceOfSuccess"> percentage chance of success. </param>
+    /// <returns></returns>
+    public static bool PercentageRoll(int chanceOfSuccess)
+    {
+        return Rnd.Next(1, 100) <= chanceOfSuccess;
     }
     
     /// <summary>

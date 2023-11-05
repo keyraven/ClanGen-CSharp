@@ -25,9 +25,10 @@ public partial class App : Application
         // Without this line you will get duplicate validations from both Avalonia and CT
         BindingPlugins.DataValidators.RemoveAt(0);
         
-        // Run all startup activities related to the game itself. 
-        // Maybe move this somewhere else to allow for a loading screen, at some point.
-        Game.GameStart();
+        // Create Game Object
+        // Where can I keep this?? I can't set it as dataContext because we are
+        // using MMVM. 
+        var game = new Game();
         
         IServiceProvider services = ConfigureServices();
         var mainViewModel = services.GetRequiredService<MainViewModel>();

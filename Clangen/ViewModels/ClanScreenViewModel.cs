@@ -14,10 +14,5 @@ public partial class ClanScreenViewModel : ViewModelBase
     public ClanScreenViewModel(HistoryRouter<ViewModelBase> router) : base(router)
     {
         
-        foreach (var item in Game.currentWorld.GetAllCats())
-        {
-            _catImage = item.sprite.ConvertToAvaloniaBitmap();
-            break;
-        }
     }
 }

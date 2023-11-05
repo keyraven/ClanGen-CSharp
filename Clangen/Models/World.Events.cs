@@ -6,6 +6,12 @@ namespace Clangen.Models;
 
 public partial class World
 {
+    
+    /// <summary>
+    /// Preform TimeSkips. Allows multiple timeskips to be done back-to-back.
+    /// Each TimeSkip in half a moon. 
+    /// </summary>
+    /// <param name="number"></param>
     public void PreformTimeSkips(int number = 1)
     {
         // Clear Event Dictionaries
@@ -17,6 +23,8 @@ public partial class World
         {
             TimeSkip();
         }
+        
+        //TODO - Set cat thoughts, 
     }
     
     /// <summary>

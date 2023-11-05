@@ -23,21 +23,21 @@ public class GameSettings
     public bool darkMode { get; set; } = false;
 }
 
-public static class Game
+public class Game
 {
-    public static readonly Random Rnd = new();
-    public static World? currentWorld { get; set; }
-    // TODO --> Fix the nullable warning that shows up here. 
-    // TODO --> It also might be helpful to have a check to ensure this got 
-    // TODO ---> everything that's needed. 
-    public static GameConfig gameConfig = JsonSerializer.Deserialize<GameConfig>(
-        File.ReadAllText("Resources/game_config.json"));
+    public World? currentWorld { get; set; }
+    public GameConfig gameConfig { get; set; }
+
+    public Game()
+    {
+        
+    }
 
     /// <summary>
     /// Load a save, creating a Clan Object and putting it as
     /// the current clan. 
     /// </summary>
-    public static void LoadSave()
+    public void LoadSave()
     {
         currentWorld = new World("New");
         
@@ -46,7 +46,7 @@ public static class Game
     /// <summary>
     /// Runs any tasks that need to be run at game startup.
     /// </summary>
-    public static void GameStart()
+    public void GameStart()
     {
         //Sprite.LoadResources();
         //TODO --> Needs to be run once at startup. 

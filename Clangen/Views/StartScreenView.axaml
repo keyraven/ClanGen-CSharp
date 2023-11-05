@@ -12,10 +12,6 @@
     <vm:StartScreenViewModel />
   </Design.DataContext>
     <StackPanel>
-        <StackPanel.Background>
-            <ImageBrush Source="/Assets/menu.png" Stretch="UniformToFill"/>
-        </StackPanel.Background>
-        
         <Button Content="Start" Command="{Binding PressStart}"/>
         <Button Content="Settings" Command="{Binding PressSettings}"/>
     </StackPanel>
