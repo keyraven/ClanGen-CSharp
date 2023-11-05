@@ -43,6 +43,8 @@ public partial class Cat : IEquatable<Cat>
     
     // True if the cat worked in the last timeskip, false if not. 
     public bool worked { get; set; } = false;
+
+    public string thought { get; set; } = "is a cat.";
     
     private int _timeskips = 0;
     /// <summary>

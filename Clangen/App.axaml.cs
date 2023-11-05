@@ -28,10 +28,11 @@ public partial class App : Application
         // Create Game Object
         // Where can I keep this?? I can't set it as dataContext because we are
         // using MMVM. 
-        var game = new Game();
-        
         IServiceProvider services = ConfigureServices();
         var mainViewModel = services.GetRequiredService<MainViewModel>();
+
+        var game = services.GetRequiredService<Game>();
+        game.GameStart();
         
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
@@ -57,9 +58,12 @@ public partial class App : Application
     private static ServiceProvider ConfigureServices()
     {
         var services = new ServiceCollection();
+        //Add game as a service
+        services.AddSingleton<Game>();
+        
         // Add the HistoryRouter as a service
         services.AddSingleton<HistoryRouter<ViewModelBase>>(s => new HistoryRouter<ViewModelBase>(t => (ViewModelBase)s.GetRequiredService(t)));
-
+        
         // Add the ViewModels as a service (Main as singleton, others as transient)
         services.AddSingleton<MainViewModel>();
         services.AddTransient<ClanScreenViewModel>();
