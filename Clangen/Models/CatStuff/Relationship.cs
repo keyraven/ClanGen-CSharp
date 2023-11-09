@@ -9,126 +9,91 @@ namespace Clangen.Models.CatStuff;
 
 public class Relationship
 {
-    private const int ValueMin = 0;
-    private const int ValueMax = 100;
-
+    
+    // Various min and max values. Public, so they can be used 
+    // in other functions. 
+    public const int MinRomantic = 0;
+    public const int MaxRomantic = 100;
+    public const int MinLike = -100;
+    public const int MaxLike = 100;
+    public const int MinLoyalty = -100;
+    public const int MaxLoyalty = 100;
+    
+    
     // Difference from python version --- NOTE
-    // Relationship catFrom and catTo are now stored as private IDs. 
+    // Relationship catFrom and catTo are now stored as IDs.
     public string catFrom { get; set; }
     public string catTo { get; set; }
     
     public List<string> log { get; set; }
     
-    private int _romanticLove;
-    private int _platonicLike;
-    private int _dislike;
-    private int _admiration;
-    private int _comfortable;
-    private int _jealousy;
-    private int _trust;
-    public int romanticLove
+    private int _romantic;
+    private int _like;
+    private int _loyalty;
+    
+    // You may notice this is significantly simplified. That is intentional. 
+    // Although a variety of values is nice, they tend towards max-out "good"
+    // or maxed-out "bad". Only these three concepts are ever really used to determine
+    // behavior. 
+    // And three is a better number for the brain. 7 is too much for the brain, and
+    // too much detail to build a story around, I think. And most of the previous concepts
+    // were non-orthogonal. These are designed to be mostly independent.  
+    // ( 1 ) romantic is the same as before. 
+    // ( 2 ) platonicLike and dislike have now been compressed into a single value, 
+    //       with negative values for dislike and positive for like. 
+    // ( 3 ) loyalty replaces trust and respect. It is similar, but more actionable, and can go negative
+    //       for distrust/disrespect.
+    // Jealousy and comfort have been removed.  They were never really used much. 
+    // - keyraven
+    
+    
+    /// <summary>
+    /// A catFrom's romantic interest in catTo. 0 is none, 100 is max. 
+    /// </summary>
+    public int romantic
     {
-        get { return _romanticLove; }
-        set { _romanticLove = AdjustToRange(value); }
+        get { return _romantic; }
+        set { _romantic = AdjustToRange(value, MinRomantic, MaxRomantic); }
     }
-    public int platonicLike
+    
+    /// <summary>
+    /// Generally, how catFrom feels about catTo. Ranges from -100 to 100.
+    /// Negative values indicate negative feelings (hate/enemies), and positive values positive feelings (friends). 
+    /// </summary>
+    public int like
     {
-        get { return _platonicLike; }
-        set { _platonicLike = AdjustToRange(value); }
+        get { return _like; }
+        set { _like = AdjustToRange(value, MinLike, MaxLike); }
     }
-    public int dislike
+    
+    /// <summary>
+    /// How loyal catFrom is to catTo. Ranges from -100 to 100.  At negative values,
+    /// catFrom may be willing to betray catTo. At high positive values,
+    /// catFrom will follow catTo to the ends of the earth, and trusts them with their life.
+    /// </summary>
+    public int loyalty
     {
-        get { return _dislike; }
-        set { _dislike = AdjustToRange(value); }
+        get { return _loyalty; }
+        set { _loyalty = AdjustToRange(value, MinLoyalty, MaxLoyalty); }
     }
-    public int admiration
-    {
-        get { return _admiration; }
-        set { _admiration = AdjustToRange(value); }
-    }
-    public int comfortable
-    {
-        get { return _comfortable; }
-        set { _comfortable = AdjustToRange(value); }
-    }
-    public int jealousy
-    {
-        get { return _jealousy; }
-        set { _jealousy = AdjustToRange(value); }
-    }
-    public int trust
-    {
-        get { return _trust; }
-        set { _trust = AdjustToRange(value); }
-    }
-
-    public Relationship(string catFrom, string catTo, int romanticLove = 0, int platonicLike = 0, int dislike = 0,
-        int admiration = 0, int comfortable = 0, int jealousy = 0, int trust = 0, List<string>? log = null)
+    
+    public Relationship(string catFrom, string catTo, int romantic = 0, int like = 0, int loyalty = 0, List<string>? log = null)
     {
         log ??= new();
 
         this.catFrom = catFrom;
         this.catTo = catTo;
-        this.romanticLove = romanticLove;
-        this.platonicLike = platonicLike;
-        this.dislike = dislike;
-        this.admiration = admiration;
-        this.comfortable = comfortable;
-        this.trust = trust;
-        this.jealousy = jealousy;
+        this.romantic = romantic;
+        this.like = like;
+        this.loyalty = loyalty;
         this.log = log;
     }
     
-    private int AdjustToRange(int value)
+    private static int AdjustToRange(int value, int minVal, int maxVal)
     {
-        if (value > ValueMax)
-        {
-            value = ValueMax;
-        }
-        else if (value < ValueMin)
-        {
-            value = ValueMin;
-        }
+        if (value > maxVal) { value = maxVal; }
+        else if (value < minVal) { value = minVal; }
 
         return value;
     }
-
-    // COMPLEX ADDS
-
-    public void ComplexRomantic(int addValue, int buff)
-    {
-        buff = Math.Abs(buff);
-        romanticLove += addValue;
-        var sign = Math.Sign(addValue);
-        platonicLike += sign * buff;
-        comfortable += sign * buff;
-        dislike += -sign * buff;
-    }
-
-    public void ComplexPlatonic(int addValue, int buff)
-    {
-        buff = Math.Abs(buff);
-        platonicLike += addValue;
-        var sign = Math.Sign(addValue);
-        comfortable += sign * buff;
-        dislike += -sign * buff;
-    }
-
-    public void ComplexDislike(int addValue, int buff)
-    {
-        buff = Math.Abs(buff);
-        dislike += addValue;
-        var sign = Math.Sign(addValue);
-        platonicLike += -sign * buff;
-        switch (sign)
-        {
-            case -1:
-                romanticLove -= buff;
-                break;
-            case 1:
-                comfortable += buff;
-                break;
-        }
-    }
-
 }
