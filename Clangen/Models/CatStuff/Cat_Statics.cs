@@ -22,9 +22,7 @@ public partial class Cat : IEquatable<Cat>
         [Description("apprentice")]
         Apprentice,
         [Description("kitten")]
-        Kitten,
-        [Description("newborn")]
-        Newborn,
+        Kit,
         [Description("deputy")]
         Deputy,
         [Description("elder")]

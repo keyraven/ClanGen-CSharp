@@ -148,13 +148,77 @@ public partial class World
     }
 
     /// <summary>
-    /// Adds a cat to the world, both the AllCats Dictionary and to
-    /// a group
+    /// Generates a random cat, and adds them to the world and current clan. 
+    /// </summary>
+    /// <returns> Created Cat Object. </returns>
+    public Cat GenerateRandomCat(Cat.CatStatus status)
+    {
+        Cat.CatSex sex = Utilities.InverseChanceRoll(2) ? Cat.CatSex.Female : Cat.CatSex.Male;
+
+        int timeskips = 0;
+        switch (status)
+        {
+            case Cat.CatStatus.Kit:
+                timeskips = Utilities.RandomInt(Cat.AgeTimeskips[Cat.CatAge.Newborn][0], 
+                    Cat.AgeTimeskips[Cat.CatAge.Kitten][1]);
+                break;
+            case Cat.CatStatus.Apprentice:
+                // Fallthrough
+            case Cat.CatStatus.MedicineCatApprentice:
+                // Fallthrough
+            case Cat.CatStatus.MediatorApprentice:
+                timeskips = Utilities.RandomInt(Cat.AgeTimeskips[Cat.CatAge.Adolescent]);
+                break;
+            case Cat.CatStatus.Elder:
+                timeskips = Utilities.RandomInt(Cat.AgeTimeskips[Cat.CatAge.Senior]);
+                break;
+            default:
+                timeskips = Utilities.RandomInt(Cat.AgeTimeskips[Cat.CatAge.YoungAdult][0], 
+                    Cat.AgeTimeskips[Cat.CatAge.SeniorAdult][1]);
+                break;
+            
+        }
+        
+        Cat newCat = new(GetNextCatId(), belongWorld: this, belongGroup: currentClan, timeskips: timeskips, sex: sex,
+            status: status);
+        return newCat;
+    }
+    
+    public void PopulateClan()
+    {
+        // Generate a clan for testing purposes. 
+        GenerateRandomCat(Cat.CatStatus.Leader);
+        GenerateRandomCat(Cat.CatStatus.Deputy);
+        GenerateRandomCat(Cat.CatStatus.MedicineCat);
+
+        for (int i = 0; i < 10; i++)
+        {
+            GenerateRandomCat(Cat.CatStatus.Warrior);
+        }
+
+        GenerateRandomCat(Cat.CatStatus.Apprentice);
+        GenerateRandomCat(Cat.CatStatus.Apprentice);
+        GenerateRandomCat(Cat.CatStatus.Kit);
+        GenerateRandomCat(Cat.CatStatus.Kit);
+    }
+    
+    
+    /// <summary>
+    /// Adds a cat to the collection of all cats in the world
+    /// Mostly called in the cat constructor. 
     /// </summary>
     /// <param name="addCat"> The cat to add </param>
     public void AddCatToWorld(Cat addCat)
     {
         _allCats.Add(addCat.ID, addCat);
+    }
+    
+    /// <summary>
+    /// Remove all the cats from the world. 
+    /// </summary>
+    public void ClearWorld()
+    {
+        _allCats.Clear();
     }
     
     /// <summary>

@@ -1,6 +1,7 @@
 ﻿using Avalonia.Media.Imaging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Clangen.Models.CatGroups;
 using SkiaSharp;
 
@@ -14,6 +15,7 @@ public partial class Cat : IEquatable<Cat>
     private int _moons;
     private string? _mentor;
     private List<string> _apprentices = new();
+    
 
     //PUBLIC ATTRIBUTES and PROPERTIES
 
@@ -25,7 +27,7 @@ public partial class Cat : IEquatable<Cat>
         get { return name.fullName; }
     }
 
-    public Pelt pelt { get; set; } = new();
+    public Pelt pelt { get; set; }
     public Personality personality { get; set; }
     public CatSkills skills { get; set; }
     public readonly CatSex Sex;
@@ -160,24 +162,26 @@ public partial class Cat : IEquatable<Cat>
         }
     }
     
-    /// <summary>
-    /// Current experience level, as an enum. 
-    /// </summary>
     public ExpLevel experienceLevel { get; set; }
-    
-    // Group the cat belongs too. 
     public Group belongGroup { get; set; }
+    public readonly World belongWorld;
 
-    public Cat(string id, Group belongGroup, CatStatus status = CatStatus.Newborn, int timeskips = 0, CatSex sex = CatSex.Female,
-        List<string>? bioParents = null, List<string>? adoptiveParents = null, string? prefix = null,
-        string? gender = null, string? suffix = null, int experience = 0)
+    public Cat(string id, World belongWorld, Group? belongGroup = null, CatStatus status = CatStatus.Kit, 
+        int timeskips = 0, CatSex sex = CatSex.Female, List<string>? bioParents = null, List<string>? adoptiveParents = null, 
+        string? prefix = null, string? gender = null, string? suffix = null, int experience = 0)
     {
         this.ID = id;
         this.Sex = sex;
         this.gender = gender == null ? sex.ToString() : gender;
         this.status = status;
         this.timeskips = timeskips;
-        this.belongGroup = belongGroup;
+        this.belongWorld = belongWorld;
+        // ToDo - Add protection to prevent putting a cat in group that doesn't belong to it's world. 
+        this.belongGroup = belongGroup == null ? belongWorld.currentClan : belongGroup;
+
+        pelt = new();
+        
+        belongWorld.AddCatToWorld(this);
         
         if (bioParents != null)
         {
@@ -190,8 +194,15 @@ public partial class Cat : IEquatable<Cat>
         }
         this.experience = experience;
 
-        name = new Name(prefix, suffix, cat: this);
-
+        if (prefix == null && suffix == null)
+        {
+            name = Name.GenerateRandomName(this);
+        }
+        else
+        {
+            name = new Name(prefix, suffix, cat: this);
+        }
+        
         this.sprite = Sprites.GenerateSprite(this);
     }
     
@@ -277,10 +288,6 @@ public partial class Cat : IEquatable<Cat>
         return true;
     }
     
-    /// <summary>
-    /// Makes the cat a mate
-    /// </summary>
-    /// <param name="otherCat"></param>
     public void SetMate(Cat otherCat)
     {
         throw new NotImplementedException();
@@ -296,11 +303,57 @@ public partial class Cat : IEquatable<Cat>
         throw new NotImplementedException();
     }
     
-    // Relation Functions
+    // RELATION CHECKING FUNCTIONS
 
     public bool IsRelated(Cat otherCat)
     {
         throw new NotImplementedException();
     }
+    
+    /// <summary>
+    /// Check if this cat is the parent of otherCat.
+    /// </summary>
+    /// <param name="otherCat"></param>
+    public bool IsParentOf(Cat otherCat)
+    {
+        return otherCat.IsChildOf(this);
+    }
+
+    /// <summary>
+    /// Check if this cat is the child of otherCat
+    /// </summary>
+    /// <param name="otherCat"></param>
+    /// <returns></returns>
+    public bool IsChildOf(Cat otherCat)
+    {
+        return (this.bioParents.Contains(otherCat.ID) || this.adoptiveParents.Contains(otherCat.ID));
+    }
+    
+    /// <summary>
+    /// Check is this cat and otherCat are siblings. 
+    /// </summary>
+    /// <param name="otherCat"></param>
+    /// <returns></returns>
+    public bool IsSibling(Cat otherCat)
+    {
+        IEnumerable<string> allParents = bioParents.Concat(adoptiveParents);
+        return allParents.Intersect(otherCat.bioParents.Concat(otherCat.adoptiveParents)).Any();
+    }
+
+    
+    public bool IsSiblingsChildOf(Cat otherCat)
+    {
+        foreach (string parentID in bioParents.Concat(adoptiveParents))
+        {
+            Cat parent = belongWorld.FetchCat(parentID);
+            if (parent.IsSibling(otherCat))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    
 
 }

@@ -41,6 +41,27 @@ public static class Utilities
     }
     
     /// <summary>
+    /// Generate a random integer. 
+    /// </summary>
+    /// <param name="min"></param>
+    /// <param name="max"></param>
+    /// <returns></returns>
+    public static int RandomInt(int min, int max)
+    {
+        return Rnd.Next(min, max);
+    }
+
+    public static int RandomInt(int[] range)
+    {
+        if (range.Length < 2)
+        {
+            throw new ArgumentException("RandomInt: range must have a length of at least 2.");
+        }
+
+        return Rnd.Next(range[0], range[1]);
+    }
+    
+    /// <summary>
     /// Add multiple dictionaries together. If there are duplicate keys,
     /// this uses the value from the new dictionary. 
     /// </summary>

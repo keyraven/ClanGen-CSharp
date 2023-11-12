@@ -42,7 +42,7 @@ public class Game
     public void LoadSave()
     {
         currentWorld = new World("New");
-        
+        currentWorld.PopulateClan();
     }
 
     /// <summary>
