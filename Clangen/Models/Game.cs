@@ -27,12 +27,10 @@ public class Game
 {
     public World? currentWorld { get; set; }
     public GameConfig gameConfig { get; set; }
-    public string test;
 
     public Game()
     {
         Console.WriteLine("creating game");
-        test = "game!!";
     }
 
     /// <summary>

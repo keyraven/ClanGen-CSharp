@@ -13,6 +13,6 @@ public partial class ClanScreenViewModel : ViewModelBase
     
     public ClanScreenViewModel(Game game, HistoryRouter<ViewModelBase> router) : base(game, router)
     {
-        Console.WriteLine(game.test);
+        _catImage = _game.currentWorld?.currentClan.leader?.sprite.ConvertToAvaloniaBitmap();
     }
 }

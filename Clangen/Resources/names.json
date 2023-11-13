@@ -1,8 +1,7 @@
 ﻿{
   "specialSuffixes": {
     "Leader": "star",
-    "Newborn": "kit",
-    "Kitten": "kit",
+    "Kit": "kit",
     "Apprentice": "paw",
     "MedicineCatApprentice": "paw",
     "MediatorApprentice": "paw"
