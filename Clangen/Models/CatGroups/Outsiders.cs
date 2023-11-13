@@ -13,7 +13,7 @@ public class Outsiders : Group
     }
     
     public Outsiders(string id, IReadOnlyDictionary<string, Cat> allCats, 
-        string name = "Cats Outside the Clan") : base(id, allCats)
+        string name = "Cats Outside the Clan") : base(id, false, allCats)
     {
         this._name = name;
     }

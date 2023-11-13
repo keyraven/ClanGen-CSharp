@@ -355,10 +355,10 @@ public static class Sprites
                 {
                     canvas.DrawImage(lineart[$"alive{spriteNumber}"], 0, 0);
                 }
-                else if (cat.darkForest)
-                {
-                    canvas.DrawImage(lineart[$"df{spriteNumber}"], 0, 0);
-                }
+                //else if (cat.darkForest)
+                //{
+                //    canvas.DrawImage(lineart[$"df{spriteNumber}"], 0, 0);
+                //}
                 else
                 {
                     canvas.DrawImage(lineart[$"dead{spriteNumber}"], 0, 0);

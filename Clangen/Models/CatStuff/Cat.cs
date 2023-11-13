@@ -35,9 +35,13 @@ public partial class Cat : IEquatable<Cat>
     public List<Pronoun> pronouns { get; set; } = new() {Pronoun.theyThem};
     public readonly List<string> bioParents;
     public List<string> adoptiveParents { get; set; }
-    public bool darkForest { get; set; }
-    public bool dead { get; private set; }
-    public int lives { get; private set; } = 1;
+
+    public bool dead
+    {
+        get { return belongGroup.dead; }
+    }
+
+    public int lives { get; set; } = 1;
     public Dictionary<string, Relationship> relationships { get; set; } = new();
     public List<string> mates { get; private set; } = new();
     public List<string> previousMates { get; private set; } = new();
@@ -268,7 +272,7 @@ public partial class Cat : IEquatable<Cat>
         lives -= 1;
         if (lives < 1)
         {
-            dead = true;
+            belongGroup = belongGroup == belongWorld.currentClan ? belongWorld.starClan : belongWorld.unknownRes;
         }
         else
         {

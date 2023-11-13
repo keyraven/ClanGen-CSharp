@@ -44,7 +44,7 @@ public class Clan : Group
     
     // For creating a new clan, not loading them. 
     public Clan(string id, IReadOnlyDictionary<string, Cat> allCats, string prefix, string? leader = null, string? deputy = null,
-        List<string>? medicineCats = null) : base(id, allCats)
+        List<string>? medicineCats = null) : base(id, false, allCats)
     {
         this.prefix = prefix;
     }

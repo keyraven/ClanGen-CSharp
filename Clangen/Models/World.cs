@@ -201,6 +201,14 @@ public partial class World
         GenerateRandomCat(Cat.CatStatus.Kit);
         GenerateRandomCat(Cat.CatStatus.Kit);
     }
+
+    /// <summary>
+    /// Kills a cat, sorting them into an afterlife. 
+    /// </summary>
+    public void KillCat()
+    {
+        
+    }
     
     
     /// <summary>
