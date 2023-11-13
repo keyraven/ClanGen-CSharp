@@ -13,7 +13,7 @@ public class Afterlife : Group
     }
 
     public Afterlife(string id, IReadOnlyDictionary<string, Cat> allCats,  string name = "Afterlife", 
-        SortedSet<string>? cats = null) : base(id, false, allCats)
+        SortedSet<string>? cats = null) : base(id, true, allCats)
     {
         this._name = name;
     }

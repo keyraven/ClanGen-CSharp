@@ -34,8 +34,6 @@ public class Pelt
     public string? accessory { get; private set; }
     public string? eyeColor2 { get; private set; }
     
-    
-    
     /// <summary>
     /// The shape of the tortie patches --> The mask
     /// </summary>

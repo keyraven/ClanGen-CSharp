@@ -15,12 +15,12 @@ public partial class Cat : IEquatable<Cat>
     private int _moons;
     private string? _mentor;
     private List<string> _apprentices = new();
+    private Dictionary<string, Relationship> _relationships { get; set; } = new();
     
 
     //PUBLIC ATTRIBUTES and PROPERTIES
 
     public readonly string ID;
-    
     public Name name { get; set; }
     public string fullName
     {
@@ -33,8 +33,8 @@ public partial class Cat : IEquatable<Cat>
     public readonly CatSex Sex;
     public string gender { get; set; }
     public List<Pronoun> pronouns { get; set; } = new() {Pronoun.theyThem};
-    public readonly List<string> bioParents;
-    public List<string> adoptiveParents { get; set; }
+    public readonly IReadOnlyList<string> bioParents = new List<string>();
+    public List<string> adoptiveParents { get; set; } = new();
 
     public bool dead
     {
@@ -42,7 +42,6 @@ public partial class Cat : IEquatable<Cat>
     }
 
     public int lives { get; set; } = 1;
-    public Dictionary<string, Relationship> relationships { get; set; } = new();
     public List<string> mates { get; private set; } = new();
     public List<string> previousMates { get; private set; } = new();
     public CatAge age { get; private set; }
@@ -196,6 +195,7 @@ public partial class Cat : IEquatable<Cat>
         {
             this.adoptiveParents = adoptiveParents;
         }
+        
         this.experience = experience;
 
         if (prefix == null && suffix == null)
@@ -357,6 +357,16 @@ public partial class Cat : IEquatable<Cat>
         }
 
         return false;
+    }
+    
+    public Relationship GetRelationship(string otherCatId)
+    {
+        if (!_relationships.ContainsKey(otherCatId))
+        {
+            _relationships.Add(otherCatId, new Relationship(this.ID, otherCatId));
+        }
+
+        return _relationships[otherCatId];
     }
     
 
