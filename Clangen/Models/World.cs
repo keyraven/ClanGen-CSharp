@@ -22,6 +22,16 @@ public enum Season
 
 }
 
+public enum GameMode
+{
+    [Description("Classic Mode")]
+    Classic = 0,
+    [Description("Expanded Mode")]
+    Expanded = 1,
+    [Description("Cruel Season")]
+    CruelSeason= 2,
+}
+
 
 /// <summary>
 /// Holds information on a single save. 
@@ -52,12 +62,16 @@ public partial class World
     
     public Season season { get; private set; } = Season.Newleaf;
     private readonly Season StartingSeason = Season.Newleaf;
-    public int timeskips { get; set; }
-    public int moons { get; }
-    
+    public int timeskips { get; set; } = 0;
+    public float moons
+    {
+        get { return (float)timeskips / 2; }
+    }
+
     public List<SingleEvent> currentEvents { get; set; } = new();
     public List<SingleEvent> medicineDenEvents { get; set; } = new();
     public List<string[]> mediated { get; set; } = new();
+    public readonly GameMode WorldGameMode = GameMode.Expanded; 
     
     
     // Groups
@@ -78,9 +92,9 @@ public partial class World
 
     public List<OtherClan> otherClans { get; set; } = new();
 
-    public World(List<Cat> allCats, int lastCatId = 0, int lastGroupId = 0, Clan? currentClan = null, 
-        Afterlife? starClan = null, Afterlife? darkForest = null, Afterlife? unknownRes = null, 
-        Outsiders? outsiders = null, List<OtherClan>? otherClans = null)
+    public World(List<Cat> allCats, GameMode worldGameMode, int lastCatId = 0, int lastGroupId = 0, 
+        Clan? currentClan = null, Afterlife? starClan = null, Afterlife? darkForest = null, 
+        Afterlife? unknownRes = null, Outsiders? outsiders = null, List<OtherClan>? otherClans = null)
     {
 
         _lastCatId = lastCatId;
@@ -90,6 +104,8 @@ public partial class World
         {
             _allCats.Add(kitty.ID, kitty);
         }
+
+        this.WorldGameMode = worldGameMode;
         
         currentClan ??= new(GetNextGroupId(), _allCats, "New");
         this.currentClan = currentClan;
@@ -184,6 +200,9 @@ public partial class World
         return newCat;
     }
     
+    /// <summary>
+    /// TESTING FUNCTION
+    /// </summary>
     public void PopulateClan()
     {
         // Generate a clan for testing purposes. 
@@ -201,19 +220,10 @@ public partial class World
         GenerateRandomCat(Cat.CatStatus.Kit);
         GenerateRandomCat(Cat.CatStatus.Kit);
     }
-
-    /// <summary>
-    /// Kills a cat, sorting them into an afterlife. 
-    /// </summary>
-    public void KillCat()
-    {
-        
-    }
-    
     
     /// <summary>
     /// Adds a cat to the collection of all cats in the world
-    /// Mostly called in the cat constructor. 
+    /// Called in the cat constructor. 
     /// </summary>
     /// <param name="addCat"> The cat to add </param>
     public void AddCatToWorld(Cat addCat)
