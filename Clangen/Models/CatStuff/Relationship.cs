@@ -12,8 +12,8 @@ public class Relationship
     
     // Various min and max values. Public, so they can be used 
     // in other functions. 
-    public const int MinRomantic = 0;
-    public const int MaxRomantic = 100;
+    public const int MinCloseness = 0;
+    public const int MaxCloseness = 100;
     public const int MinSentiment = -100;
     public const int MaxSentiment = 100;
     public const int MinLoyalty = -100;
@@ -27,7 +27,7 @@ public class Relationship
     
     public List<string> log { get; set; }
     
-    private int _romantic;
+    private int _closeness;
     private int _sentiment;
     private int _loyalty;
     
@@ -38,7 +38,8 @@ public class Relationship
     // And three is a better number for the brain. 7 is too much to get your brain around, and
     // too much detail to build a story around, I think. And most of the previous concepts
     // were non-orthogonal (thus the complex adds). These are designed to be mostly independent.  
-    // ( 1 ) romantic is the same as before. 
+    // ( 1 ) closeness replaces romantic. Romantic has been removed, for many reasons. This can be closeness in the 
+    //       romantic sense, but also in the platonic sense. 
     // ( 2 ) platonicLike and dislike have now been compressed into a single value, sentiment,
     //       with negative values for dislike and positive for like. 
     // ( 3 ) loyalty replaces trust and respect. It is similar, but more actionable, and can go negative
@@ -48,12 +49,12 @@ public class Relationship
     
     
     /// <summary>
-    /// A catFrom's romantic interest in catTo. 0 is none, 100 is max. 
+    /// How close / enmeshed cat1 and cat2 are. 0 is none, 100 is max. 
     /// </summary>
-    public int romantic
+    public int closeness
     {
-        get { return _romantic; }
-        set { _romantic = AdjustToRange(value, MinRomantic, MaxRomantic); }
+        get { return _closeness; }
+        set { _closeness = AdjustToRange(value, MinCloseness, MaxCloseness); }
     }
     
     /// <summary>
@@ -77,13 +78,13 @@ public class Relationship
         set { _loyalty = AdjustToRange(value, MinLoyalty, MaxLoyalty); }
     }
     
-    public Relationship(string catFrom, string catTo, int romantic = 0, int sentiment = 0, int loyalty = 0, List<string>? log = null)
+    public Relationship(string catFrom, string catTo, int closeness = 0, int sentiment = 0, int loyalty = 0, List<string>? log = null)
     {
         log ??= new();
 
         this.catFrom = catFrom;
         this.catTo = catTo;
-        this.romantic = romantic;
+        this.closeness = closeness;
         this.sentiment = sentiment;
         this.loyalty = loyalty;
         this.log = log;
