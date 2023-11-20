@@ -195,8 +195,9 @@ public partial class World
             
         }
         
-        Cat newCat = new(GetNextCatId(), belongWorld: this, belongGroup: currentClan, timeskips: timeskips, sex: sex,
+        Cat newCat = new(GetNextCatId(), belongGroup: currentClan, timeskips: timeskips, sex: sex,
             status: status);
+        AddCatToWorld(newCat);
         return newCat;
     }
     
