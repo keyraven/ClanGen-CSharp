@@ -32,6 +32,4 @@
             </DataTemplate>
         </ItemsControl.ItemTemplate>
     </ItemsControl>
-    
-    <!-- <Image Source="{Binding CatImage}" RenderOptions.BitmapInterpolationMode="None"/>: -->
 </UserControl>
