@@ -5,7 +5,7 @@ using Clangen.Views;
 
 namespace Clangen.ViewModels;
 
-public partial class MainViewModel : ViewModelBase
+public partial class MainViewModel : MainViewModelBase
 {
     [ObservableProperty]
     private ViewModelBase _content = default!;

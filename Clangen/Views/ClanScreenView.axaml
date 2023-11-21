@@ -11,6 +11,9 @@
          to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) - ->
         <vm:ClanScreenViewModel />
     </Design.DataContext>  -->
-
-    <Image Source="{Binding CatImage}" RenderOptions.BitmapInterpolationMode="None"/>
+    
+    <ItemsControl ItemsSource="{Binding CatTiles}">
+    </ItemsControl>
+    
+    <!-- <Image Source="{Binding CatImage}" RenderOptions.BitmapInterpolationMode="None"/>: -->
 </UserControl>

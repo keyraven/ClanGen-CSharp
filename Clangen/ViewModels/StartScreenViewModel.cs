@@ -5,7 +5,7 @@ using Clangen.Models;
 
 namespace Clangen.ViewModels;
 
-public partial class StartScreenViewModel : ViewModelBase
+public partial class StartScreenViewModel : MainViewModelBase
 {
     public string Greeting => "Start Screen!";
     

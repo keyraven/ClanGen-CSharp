@@ -9,13 +9,5 @@ namespace Clangen.ViewModels;
 
 public class ViewModelBase : ObservableObject
 {
-    protected HistoryRouter<ViewModelBase> _router;
-    protected Game _game;
-
-    public ViewModelBase(Game game, HistoryRouter<ViewModelBase> router)
-    {
-        _router = router;
-        _game = game;
-    }
     
 }

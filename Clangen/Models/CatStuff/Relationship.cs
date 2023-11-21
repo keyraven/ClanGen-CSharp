@@ -25,7 +25,7 @@ public class Relationship
     public string catFrom { get; set; }
     public string catTo { get; set; }
     
-    public List<string> log { get; set; }
+    public List<RelationshipLog> log { get; set; }
     
     private int _closeness;
     private int _sentiment;
@@ -49,7 +49,7 @@ public class Relationship
     
     
     /// <summary>
-    /// How close / enmeshed cat1 and cat2 are. 0 is none, 100 is max. 
+    /// How close/enmeshed cat1 and cat2 are. 0 is none, 100 is max. 
     /// </summary>
     public int closeness
     {
@@ -78,7 +78,7 @@ public class Relationship
         set { _loyalty = AdjustToRange(value, MinLoyalty, MaxLoyalty); }
     }
     
-    public Relationship(string catFrom, string catTo, int closeness = 0, int sentiment = 0, int loyalty = 0, List<string>? log = null)
+    public Relationship(string catFrom, string catTo, int closeness = 0, int sentiment = 0, int loyalty = 0, List<RelationshipLog>? log = null)
     {
         log ??= new();
 
@@ -96,5 +96,35 @@ public class Relationship
         else if (value < minVal) { value = minVal; }
 
         return value;
+    }
+}
+
+
+
+public class RelationshipLog
+{
+    
+    [Flags]
+    public enum RelationshipLogType
+    {
+        Romantic = 0,
+        Closeness = 1 << 0,
+        Sentiment = 1 << 2,
+        Loyalty = 1 << 3,
+        Negative = 1 << 4,
+        Positive = 1 << 5,
+    }
+    
+    public string text { get; private set; }
+    public string[] involved { get; private set; }
+    public RelationshipLogType types { get; private set; }
+    public int timeskip { get; private set; }
+
+    public RelationshipLog(string text, RelationshipLogType types, int timeskip, params string[] involved)
+    {
+        this.text = text;
+        this.types = types;
+        this.timeskip = timeskip;
+        this.involved = involved;
     }
 }

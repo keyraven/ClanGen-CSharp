@@ -5,7 +5,7 @@ using Clangen.Models;
 
 namespace Clangen.ViewModels;
 
-public partial class MainWindowViewModel : ViewModelBase
+public partial class MainWindowViewModel : MainViewModelBase
 {
     public MainWindowViewModel(Game game, HistoryRouter<ViewModelBase> router) : base(game, router)
     {
