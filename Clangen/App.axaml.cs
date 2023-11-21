@@ -25,9 +25,6 @@ public partial class App : Application
         // Without this line you will get duplicate validations from both Avalonia and CT
         BindingPlugins.DataValidators.RemoveAt(0);
         
-        // Create Game Object
-        // Where can I keep this?? I can't set it as dataContext because we are
-        // using MMVM. 
         IServiceProvider services = ConfigureServices();
         var mainViewModel = services.GetRequiredService<MainViewModel>();
 

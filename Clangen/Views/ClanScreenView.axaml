@@ -13,6 +13,24 @@
     </Design.DataContext>  -->
     
     <ItemsControl ItemsSource="{Binding CatTiles}">
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <WrapPanel />
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <Button Background="Transparent"  Command="{Binding ((vm:ClanScreenViewModel)DataContext).PressCatButtonCommand, 
+                        RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                        CommandParameter="{Binding CatId}">
+                    <StackPanel>
+                        <Image Source="{Binding CatImage}" Width="100" RenderOptions.BitmapInterpolationMode="None"/>
+                        <TextBlock Text="{Binding CatName}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
     </ItemsControl>
     
     <!-- <Image Source="{Binding CatImage}" RenderOptions.BitmapInterpolationMode="None"/>: -->
