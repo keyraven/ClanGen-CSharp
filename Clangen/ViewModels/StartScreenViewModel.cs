@@ -5,11 +5,11 @@ using Clangen.Models;
 
 namespace Clangen.ViewModels;
 
-public partial class StartScreenViewModel : MainViewModelBase
+public partial class StartScreenViewModel : PageViewModelBase
 {
     public string Greeting => "Start Screen!";
     
-    public StartScreenViewModel(Game game, HistoryRouter<ViewModelBase> router) : base(game, router)
+    public StartScreenViewModel(Game game, HistoryRouter<PageViewModelBase> router) : base(game, router)
     {
         _router = router;
     }

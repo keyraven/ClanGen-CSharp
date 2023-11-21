@@ -8,7 +8,8 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="700"
         x:Class="Clangen.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
-        Title="ClanGen">
+        Title="ClanGen"
+        Background="Bisque">
         <Viewbox Name="MainViewBox" Stretch="Uniform">
                 <views:MainView />
         </Viewbox>

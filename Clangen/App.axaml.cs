@@ -59,7 +59,7 @@ public partial class App : Application
         services.AddSingleton<Game>();
         
         // Add the HistoryRouter as a service
-        services.AddSingleton<HistoryRouter<ViewModelBase>>(s => new HistoryRouter<ViewModelBase>(t => (ViewModelBase)s.GetRequiredService(t)));
+        services.AddSingleton<HistoryRouter<PageViewModelBase>>(s => new HistoryRouter<PageViewModelBase>(t => (PageViewModelBase)s.GetRequiredService(t)));
         
         // Add the ViewModels as a service (Main as singleton, others as transient)
         services.AddSingleton<MainViewModel>();

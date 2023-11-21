@@ -5,12 +5,12 @@ using Clangen.Views;
 
 namespace Clangen.ViewModels;
 
-public partial class MainViewModel : MainViewModelBase
+public partial class MainViewModel : PageViewModelBase
 {
     [ObservableProperty]
-    private ViewModelBase _content = default!;
+    private PageViewModelBase _content = default!;
 
-    public MainViewModel(Game game, HistoryRouter<ViewModelBase> router) : base(game, router)
+    public MainViewModel(Game game, HistoryRouter<PageViewModelBase> router) : base(game, router)
     {
         // register route changed event to set content to viewModel, whenever 
         // a route changes

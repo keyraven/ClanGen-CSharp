@@ -8,7 +8,7 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace Clangen.ViewModels;
 
-public partial class ClanScreenViewModel : MainViewModelBase
+public partial class ClanScreenViewModel : PageViewModelBase
 {
 
     public class DisplayCat
@@ -32,12 +32,12 @@ public partial class ClanScreenViewModel : MainViewModelBase
     [RelayCommand]
     public void PressCatButton(string catID)
     {
-        var catName = _game.currentWorld?.FetchCat(catID).fullName;
-        Console.WriteLine(catName);
+        var cat = _game.currentWorld?.FetchCat(catID);
+        Console.WriteLine(cat.fullName);
         Console.WriteLine("Button Pressed");
     }
     
-    public ClanScreenViewModel(Game game, HistoryRouter<ViewModelBase> router) : base(game, router)
+    public ClanScreenViewModel(Game game, HistoryRouter<PageViewModelBase> router) : base(game, router)
     {
         GenerateCatTiles();
     }

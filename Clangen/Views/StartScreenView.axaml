@@ -13,7 +13,7 @@
   </Design.DataContext> -->
   
     <StackPanel>
-        <TextBox>ClanGen : Clan Generator </TextBox>
+        <TextBlock>ClanGen : Clan Generator </TextBlock>
         <Button Content="Start" Command="{Binding PressStart}"/>
         <Button Content="Settings" Command="{Binding PressSettings}"/>
     </StackPanel>
