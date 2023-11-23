@@ -12,8 +12,8 @@ public class Afterlife : Group
         return _name;
     }
 
-    public Afterlife(string id, IReadOnlyDictionary<string, Cat> allCats,  string name = "Afterlife", 
-        SortedSet<string>? cats = null) : base(id, true, allCats)
+    public Afterlife(IReadOnlyDictionary<string, Cat> allCats,  string name = "Afterlife", 
+        SortedSet<string>? cats = null) : base(true, allCats)
     {
         this._name = name;
     }

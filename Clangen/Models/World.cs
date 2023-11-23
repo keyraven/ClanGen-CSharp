@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using Clangen.Models.Events;
 using Clangen.Models.CatStuff;
 using Clangen.Models.CatGroups;
@@ -39,9 +40,12 @@ public enum GameMode
 public partial class World
 {
     
-    // GENERATE NEW IDs
+    private const int TimeskipsPerSeason = 6; 
+    
     private int _lastCatId = 0;
-    private int _lastGroupId = 0;
+    //private int _lastGroupId = 0;
+    private readonly Season _startingSeason = Season.Newleaf;
+    private int _timeskips = 0;
     
     public string GetNextCatId()
     {
@@ -49,34 +53,45 @@ public partial class World
         return _lastCatId.ToString();
     }
 
+    /*
     public string GetNextGroupId()
     {
         _lastGroupId++;
         return _lastGroupId.ToString();
     }
+    */
+    
     
     private Dictionary<string, Cat> _allCats = new();
+    
     private List<string> _fadedIds = new();
-
+    
     public WorldSettings worldSettings { get; set; } = new();
     
     public Season season { get; private set; } = Season.Newleaf;
-    private readonly Season StartingSeason = Season.Newleaf;
-    public int timeskips { get; set; } = 0;
+    
+    public int timeskips
+    {
+        get
+        {
+            return _timeskips;
+        }
+        set
+        {
+            _timeskips = value;
+            season = (Season)((_timeskips / TimeskipsPerSeason + (int)_startingSeason) % Enum.GetValues(typeof(Season)).Length);
+        }
+    }
     public float moons
     {
         get { return (float)timeskips / 2; }
     }
-
+    
     public List<SingleEvent> currentEvents { get; set; } = new();
     public List<SingleEvent> medicineDenEvents { get; set; } = new();
     public List<string[]> mediated { get; set; } = new();
     public readonly GameMode WorldGameMode = GameMode.Expanded; 
     
-    
-    // Groups
-    // Groups by ID
-    public Dictionary<string, Group> allGroups { get; set; } = new();
     
     // Variables holding groups for easy reference. 
     // Main clan of living cats
@@ -91,14 +106,13 @@ public partial class World
     public Outsiders outsiders { get; set; }
 
     public List<OtherClan> otherClans { get; set; } = new();
-
-    public World(List<Cat> allCats, GameMode worldGameMode, int lastCatId = 0, int lastGroupId = 0, 
+    
+    public World(List<Cat> allCats, GameMode worldGameMode, int lastCatId = 0,  
         Clan? currentClan = null, Afterlife? starClan = null, Afterlife? darkForest = null, 
         Afterlife? unknownRes = null, Outsiders? outsiders = null, List<OtherClan>? otherClans = null)
     {
 
         _lastCatId = lastCatId;
-        _lastGroupId = lastGroupId;
         
         foreach (Cat kitty in allCats)
         {
@@ -107,59 +121,44 @@ public partial class World
 
         this.WorldGameMode = worldGameMode;
         
-        currentClan ??= new(GetNextGroupId(), _allCats, "New");
+        currentClan ??= new(_allCats, "New");
         this.currentClan = currentClan;
-        allGroups.Add(this.currentClan.ID, this.currentClan);
         
         // Create the afterlives
-        starClan ??= new(GetNextGroupId(), _allCats, "StarClan");
+        starClan ??= new(_allCats, "StarClan");
         this.starClan = starClan;
-        allGroups.Add(this.starClan.ID, this.starClan);
         
-        darkForest ??= new(GetNextGroupId(), _allCats, "Dark Forest");
+        darkForest ??= new( _allCats, "Dark Forest");
         this.darkForest = darkForest;
-        allGroups.Add(this.darkForest.ID, this.darkForest);
         
-        unknownRes ??= new(GetNextGroupId(), _allCats,"Unknown Residence");
+        unknownRes ??= new(_allCats,"Unknown Residence");
         this.unknownRes = unknownRes;
-        allGroups.Add(this.unknownRes.ID, this.unknownRes);
         
         // Outsiders
-        outsiders ??= new("4", _allCats);
+        outsiders ??= new( _allCats);
         this.outsiders = outsiders; 
-        allGroups.Add(this.outsiders.ID, this.outsiders);
         
         // Two Other Clans
-        otherClans ??= new List<OtherClan>() { new OtherClan(GetNextGroupId(), _allCats,"Clan1"), new OtherClan(GetNextGroupId(), _allCats,"Clan2") };
+        otherClans ??= new List<OtherClan>() { new OtherClan(_allCats,"Clan1"), new OtherClan(_allCats,"Clan2") };
         this.otherClans = otherClans;
         
-        foreach (OtherClan clan in this.otherClans)
-        {
-            allGroups.Add(clan.ID, clan);
-        }
     }
     
-    public World(string clanName, int lastCatId = 0, int lastGroupId = 0)
+    public World(string clanName, int lastCatId = 0)
     {
         _lastCatId = lastCatId;
-        _lastGroupId = lastGroupId;
         
-        this.currentClan = new(GetNextGroupId(), _allCats, clanName);
-        allGroups.Add(currentClan.ID, currentClan);
+        this.currentClan = new(_allCats, clanName);
         
         // Create the afterlives
-        starClan = new(GetNextGroupId(), _allCats,"StarClan");
-        allGroups.Add(starClan.ID, starClan);
-        darkForest = new(GetNextGroupId(), _allCats,"Dark Forest");
-        allGroups.Add(darkForest.ID, darkForest);
-        unknownRes = new(GetNextGroupId(), _allCats,"Unknown Residence");
-        allGroups.Add(unknownRes.ID, unknownRes);
+        starClan = new(_allCats,"StarClan");
+        darkForest = new( _allCats,"Dark Forest");
+        unknownRes = new( _allCats,"Unknown Residence");
         
         // Two Other Clans
         for (int i = 0; i < 2; i++)
         {
-            otherClans.Add(new OtherClan(GetNextGroupId(), _allCats,$"Other{i}"));
-            allGroups.Add(otherClans.Last().ID, otherClans.Last());
+            otherClans.Add(new OtherClan(_allCats,$"Other{i}"));
         }
     }
 

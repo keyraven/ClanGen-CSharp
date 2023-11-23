@@ -12,8 +12,8 @@ public class Outsiders : Group
         return _name;
     }
     
-    public Outsiders(string id, IReadOnlyDictionary<string, Cat> allCats, 
-        string name = "Cats Outside the Clan") : base(id, false, allCats)
+    public Outsiders(IReadOnlyDictionary<string, Cat> allCats, 
+        string name = "Cats Outside the Clan") : base(false, allCats)
     {
         this._name = name;
     }
