@@ -15,6 +15,13 @@ namespace Clangen.Models;
 public partial class World
 {
     // Relation Checking Function
+
+    public bool CheckRelated(Cat cat1, Cat cat2)
+    {
+        return CheckParent(cat1, cat2) || CheckParent(cat2, cat1) || CheckGrandparent(cat1, cat2) ||
+               CheckGrandparent(cat2, cat1) || CheckSiblings(cat1, cat2) || CheckParentsSibling(cat1, cat2) ||
+               CheckParentsSibling(cat2, cat1) || CheckFirstCousin(cat1, cat2);
+    }
     
     public bool CheckParent(Cat parent, Cat child)
     {
@@ -74,6 +81,26 @@ public partial class World
 
         return grandparents1.Intersect(grandparents2).Any();
     }
+
+    public bool IsPotentialMate(Cat cat1, Cat cat2, bool applyAgeGapRestriction = false, bool notAdultAlwaysFalse = true)
+    {
+        if (cat1 == cat2) { return false; }
+        
+        if (CheckRelated(cat1, cat2)) { return false; }
+
+        if (cat1.dead != cat2.dead) { return false; }
+
+        if (!cat1.age.IsAdult() || !cat1.age.IsAdult())
+        {
+            if (notAdultAlwaysFalse) { return false; }
+
+            if (cat1.age != cat2.age) { return false; }
+        }
+
+        if (cat1.ID == cat2.mentor || cat2.ID == cat1.mentor) { return false; }
+        
+        return true;
+    }
     
     // Assigning Mentors. 
 
@@ -119,7 +146,7 @@ public partial class World
     {
         targetAfterlife ??= catToKill.belongGroup == currentClan ? starClan : unknownRes;
         
-        CatsDeadOnCurrentTimeSkip.Add(catToKill.ID);
+        catsDeadOnCurrentTimeSkip.Add(catToKill.ID);
         catToKill.belongGroup = targetAfterlife;
 
     }

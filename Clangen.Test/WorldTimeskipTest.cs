@@ -3,11 +3,11 @@ using Clangen.Models.CatStuff;
 
 namespace Clangen.Tests;
 
-public class WorldTimeskipTests
+public class WorldTimeskipTest
 {
     public World _testWorld = new("Test");
 
-    public WorldTimeskipTests()
+    public WorldTimeskipTest()
     {
     }
 

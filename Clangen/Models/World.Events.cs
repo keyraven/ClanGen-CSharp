@@ -10,7 +10,7 @@ namespace Clangen.Models;
 public partial class World
 {
 
-    public List<string> CatsDeadOnCurrentTimeSkip { get; set; } = new();
+    public List<string> catsDeadOnCurrentTimeSkip { get; set; } = new();
     
     /// <summary>
     /// Preform TimeSkips. Allows multiple timeskips to be done back-to-back.
@@ -37,7 +37,7 @@ public partial class World
     /// </summary>
     private void TimeSkip()
     {
-        CatsDeadOnCurrentTimeSkip.Clear();
+        catsDeadOnCurrentTimeSkip.Clear();
         timeskips += 1;
         
         
@@ -77,7 +77,7 @@ public partial class World
 
     private void DeadCatTimeSkip(Cat currentCat)
     {
-        if (CatsDeadOnCurrentTimeSkip.Contains(currentCat.ID))
+        if (catsDeadOnCurrentTimeSkip.Contains(currentCat.ID))
         {
             currentCat.timeskips++;
         }

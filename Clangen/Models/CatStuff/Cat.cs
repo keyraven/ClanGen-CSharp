@@ -53,6 +53,8 @@ public partial class Cat : IEquatable<Cat>
     
     public CatAge age { get; private set; }
     
+    public Backstory backstory { get; }
+    
     public bool worked { get; set; } = false;
     
     public Group belongGroup { get; set; }
@@ -170,7 +172,7 @@ public partial class Cat : IEquatable<Cat>
     /// </summary>
     public CatStatus status { get; set; }
     
-    public Cat(string id, Group belongGroup = null, CatStatus status = CatStatus.Kit, Pelt? pelt = null,
+    public Cat(string id, Group belongGroup, CatStatus status = CatStatus.Kit, Pelt? pelt = null, Backstory? backstory = null,
         int timeskips = 0, CatSex sex = CatSex.Female, List<string>? bioParents = null, List<string>? adoptiveParents = null, 
         string? prefix = null, string? gender = null, string? suffix = null, int experience = 0)
     {
@@ -179,9 +181,9 @@ public partial class Cat : IEquatable<Cat>
         this.gender = gender == null ? sex.ToString() : gender;
         this.status = status;
         this.timeskips = timeskips;
-        // ToDo - Add protection to prevent putting a cat in group that doesn't belong to it's world. 
         this.belongGroup = belongGroup;
         this.pelt = pelt == null ? new() : pelt;
+        this.backstory = backstory == null ? new Backstory(Backstory.BackstoryType.Clanborn) : backstory;
         
         if (bioParents != null)
         {

@@ -21,5 +21,10 @@ public static class CatEnumExtensions
     {
         return (status is Cat.CatStatus.MedicineCatApprentice or Cat.CatStatus.MedicineCat);
     }
+
+    public static bool IsAdult(this Cat.CatAge age)
+    {
+        return !(age is Cat.CatAge.Kitten or Cat.CatAge.Adolescent);
+    }
     
 }
