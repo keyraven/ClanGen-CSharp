@@ -8,10 +8,9 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup dotnet 7.0
         uses: actions/setup-dotnet@v3
-      - name: Display dotnet version
-        run: dotnet --version
+        with:
+          dotnet-version: '7.x'
       - name: Install Workloads
         run: dotnet workload restore 
       - name: Build and Run Tests
