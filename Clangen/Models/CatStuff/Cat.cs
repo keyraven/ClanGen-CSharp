@@ -14,11 +14,11 @@ public partial class Cat : IEquatable<Cat>
 {
 
     // PRIVATE INSTANCE ATTRIBUTES
-    private CatStatus _status = new();
     private Dictionary<string, Relationship> _relationships { get; set; } = new();
+    private List<string> _previousApprentices = new();
     private int _timeskips = 0;
     private int _experience;
-    
+    private List<string> _apprentices = new();
 
     //PUBLIC ATTRIBUTES and PROPERTIES
     
@@ -96,15 +96,23 @@ public partial class Cat : IEquatable<Cat>
     /// <summary>
     /// Cat's mentor. Can be null to indicate that a cat doesn't have a mentor
     /// </summary>
-    public string? mentor { get; private set; }
+    public string? mentor { get; protected set; }
 
     /// <summary>
     /// List of current apprentices. 
     /// </summary>
-    public List<string> apprentice { get; private set; } = new();
-    
-    public List<string> previousApprentices { get; set; } = new();
-    
+    public IReadOnlyCollection<string> apprentices {
+        get
+        {
+            return _apprentices.AsReadOnly();
+        }
+    }
+
+    public IReadOnlyCollection<string> previousApprentices
+    {
+        get => _previousApprentices.AsReadOnly();
+    }
+
     public int experience
     {
         get { return _experience; }
@@ -160,15 +168,7 @@ public partial class Cat : IEquatable<Cat>
     /// <summary>
     /// Status or Rank of the cat. 
     /// </summary>
-    public CatStatus status
-    {
-        get { return _status; }
-        set
-        {
-            CatStatus oldStatus = _status;
-            _status = value;
-        }
-    }
+    public CatStatus status { get; set; }
     
     public Cat(string id, Group belongGroup = null, CatStatus status = CatStatus.Kit, Pelt? pelt = null,
         int timeskips = 0, CatSex sex = CatSex.Female, List<string>? bioParents = null, List<string>? adoptiveParents = null, 
@@ -254,11 +254,6 @@ public partial class Cat : IEquatable<Cat>
 
     // END EQ OVERRIDES
     
-    public void TimeSkip()
-    {
-        timeskips += 1;
-    }
-    
     public bool IsPotentialMate(Cat otherCat)
     {
         if (this == otherCat)
@@ -279,9 +274,44 @@ public partial class Cat : IEquatable<Cat>
         throw new NotImplementedException();
     }
 
-    public void SetApprentice(Cat apprentice)
+    public void SetMentor(Cat newMentor)
     {
-        throw new NotImplementedException();
+        this.mentor = newMentor.ID;
+        newMentor._apprentices.Add(this.ID);
+    }
+    
+    public void RemoveMentor(World worldObject)
+    {
+        if (this.mentor is null)
+        {
+            return;
+        }
+        
+        // We need the worldObject here in order to get the mentor object. 
+        // If you can think of a better way to do this, feel free to change. 
+        var mentorObject = worldObject.FetchCat(this.mentor);
+        mentorObject._apprentices.Remove(this.ID);
+        this.mentor = null;
+    }
+    
+    public bool IsValidMentor(Cat possibleMentor)
+    {
+        if (this.belongGroup != possibleMentor.belongGroup)
+        {
+            return false;
+        }
+        
+        switch (status)
+        {
+            case Cat.CatStatus.Apprentice:
+                return possibleMentor.status is Cat.CatStatus.Warrior or Cat.CatStatus.Leader or Cat.CatStatus.Deputy;
+            case Cat.CatStatus.MedicineCatApprentice:
+                return possibleMentor.status is Cat.CatStatus.MedicineCat;
+            case Cat.CatStatus.MediatorApprentice:
+                return possibleMentor.status is Cat.CatStatus.Mediator;
+            default:
+                return false;
+        }
     }
     
     public Relationship GetRelationship(string otherCatId)
@@ -294,5 +324,4 @@ public partial class Cat : IEquatable<Cat>
         return _relationships[otherCatId];
     }
     
-
 }

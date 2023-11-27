@@ -1,11 +1,10 @@
 ﻿using System.IO;
-using Microsoft.CodeAnalysis;
-
-namespace Clangen.ViewModels;
 using Avalonia.Media.Imaging;
 using SkiaSharp;
 
-public static class ImageExtensions
+namespace Clangen.ViewModels;
+
+public static class Extensions
 {
     public static Bitmap ConvertToAvaloniaBitmap(this SKImage source)
     {
@@ -17,4 +16,6 @@ public static class ImageExtensions
 
         return output;
     }
+    
+    
 }

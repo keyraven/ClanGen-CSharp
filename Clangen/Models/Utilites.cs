@@ -18,6 +18,17 @@ public static class Utilities
     {
         return list[Rnd.Next(0, list.Count)];
     }
+    
+    /// <summary>
+    /// Choose a random entry from a list. 
+    /// </summary>
+    /// <param name="list"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns>A random entry from the passed list.</returns>
+    public static T ChoseRandom<T>(IReadOnlyList<T> list)
+    {
+        return list[Rnd.Next(0, list.Count)];
+    }
 
     /// <summary>
     /// Makes a roll where the chance of success (true return) is 1/inverseChance
@@ -82,17 +93,5 @@ public static class Utilities
                 source[item.Key] = item.Value;
             }  
         } 
-    }
-    
-    /// <summary>
-    /// Break a list of items into chunks of a specific size
-    /// </summary>
-    public static IEnumerable<IEnumerable<T>> Chunk<T>(this IEnumerable<T> source, int chunksize)
-    {
-        while (source.Any())
-        {
-            yield return source.Take(chunksize);
-            source = source.Skip(chunksize);
-        }
     }
 }

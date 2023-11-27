@@ -323,7 +323,6 @@ public static class Sprites
         
         //Placeholder for testing
         string spriteNumber = cat.pelt.GetSpriteNumber(cat.age, cat.canWork);
-        spriteNumber = "8";
         
         // TODO - Figure out a nice way to do tints. 
         try

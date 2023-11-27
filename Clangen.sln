@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clangen.Desktop", "Clangen.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clangen.Browser", "Clangen.Browser\Clangen.Browser.csproj", "{F2B9AF5D-873E-4A82-952E-55EE32A757CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject1", "TestProject1\TestProject1.csproj", "{454C67B0-2F7C-4778-BF2B-2BD61CBA1207}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clangen.Test", "Clangen.Test\Clangen.Test.csproj", "{48C50CA3-B5B8-4D8D-B744-11C18446ECC5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{F2B9AF5D-873E-4A82-952E-55EE32A757CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2B9AF5D-873E-4A82-952E-55EE32A757CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2B9AF5D-873E-4A82-952E-55EE32A757CD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{454C67B0-2F7C-4778-BF2B-2BD61CBA1207}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{454C67B0-2F7C-4778-BF2B-2BD61CBA1207}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{454C67B0-2F7C-4778-BF2B-2BD61CBA1207}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{454C67B0-2F7C-4778-BF2B-2BD61CBA1207}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48C50CA3-B5B8-4D8D-B744-11C18446ECC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48C50CA3-B5B8-4D8D-B744-11C18446ECC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48C50CA3-B5B8-4D8D-B744-11C18446ECC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48C50CA3-B5B8-4D8D-B744-11C18446ECC5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

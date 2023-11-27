@@ -4,17 +4,67 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Microsoft.CodeAnalysis.Scripting.Hosting;
 
 namespace Clangen.Models.CatStuff;
 
 public class Pelt
 {
-    private static readonly IReadOnlyList<string> PeltPattern = new List<string>() { "single", "tabby", "mackeral" }; 
+    private static readonly IReadOnlyList<string> AllWhitePatches = new List<string>()
+    {
+        "FULLWHITE", "ANY", "TUXEDO", "LITTLE", "COLOURPOINT", "VAN", "ANYTWO",
+        "MOON", "PHANTOM", "POWDER", "BLEACHED", "SAVANNAH", "FADESPOTS", "PEBBLESHINE",
+        "EXTRA", "ONEEAR", "BROKEN", "LIGHTTUXEDO", "BUZZARDFANG", "RAGDOLL",
+        "LIGHTSONG", "VITILIGO", "BLACKSTAR", "PIEBALD", "CURVED", "PETAL", "SHIBAINU", "OWL",
+        "TIP", "FANCY", "FRECKLES", "RINGTAIL", "HALFFACE", "PANTSTWO", "GOATEE", "VITILIGOTWO",
+        "PAWS", "MITAINE", "BROKENBLAZE", "SCOURGE", "DIVA", "BEARD",
+        "TAIL", "BLAZE", "PRINCE", "BIB", "VEE", "UNDERS", "HONEY",
+        "FAROFA", "DAMIEN", "MISTER", "BELLY", "TAILTIP", "TOES", "TOPCOVER",
+        "APRON", "CAPSADDLE", "MASKMANTLE", "SQUEAKS", "STAR", "TOESTAIL", "RAVENPAW",
+        "PANTS", "REVERSEPANTS", "SKUNK", "KARPATI", "HALFWHITE", "APPALOOSA", "DAPPLEPAW",
+        "HEART", "LILTWO", "GLASS", "MOORISH", "SEPIAPOINT", "MINKPOINT", "SEALPOINT",
+        "MAO", "LUNA", "CHESTSPECK", "WINGS", "PAINTED", "HEARTTWO", "WOODPECKER",
+        "BOOTS", "MISS", "COW", "COWTWO", "BUB", "BOWTIE", "MUSTACHE", "REVERSEHEART",
+        "SPARROW", "VEST", "LOVEBUG", "TRIXIE", "SAMMY", "SPARKLE",
+        "RIGHTEAR", "LEFTEAR", "ESTRELLA", "SHOOTINGSTAR", "EYESPOT", "REVERSEEYE",
+        "FADEBELLY", "FRONT", "BLOSSOMSTEP", "PEBBLE", "TAILTWO", "BUDDY", "BACKSPOT", "EYEBAGS",
+        "BULLSEYE", "FINN", "DIGIT", "KROPKA", "FCTWO", "FCONE", "MIA", "SCAR", "BUSTER", "SMOKEY"
+    };
+    
+    private static readonly IReadOnlyList<string> AllColorNames = new List<string>()
+    {
+        "WHITE", "PALEGREY", "SILVER", "GREY", "DARKGREY", "GHOST", "BLACK",
+        "CREAM", "PALEGINGER", "GOLDEN", "GINGER", "DARKGINGER", "SIENNA",
+        "LIGHTBROWN", "LILAC", "BROWN", "GOLDEN-BROWN", "DARKBROWN", "CHOCOLATE"
+    };
+
+    private static readonly IReadOnlyList<string> AllPeltPatterns = new List<string>()
+    {
+        "single", "tabby", "marbled", "rosette", "smoke", "ticked", "speckled", "bengal", 
+        "mackerel", "classic", "sokoke", "agouti", "singlestripe"
+    };
+    
+    private static readonly IReadOnlyList<string> AllEyeColors = new List<string>()
+    {
+        "YELLOW", "AMBER", "HAZEL", "PALEGREEN", "GREEN", "BLUE",
+        "DARKBLUE", "GREY", "CYAN", "EMERALD", "HEATHERBLUE", "SUNLITICE",
+        "COPPER", "SAGE", "COBALT", "PALEBLUE", "BRONZE", "SILVER",
+        "PALEYELLOW", "GOLD", "GREENYELLOW"
+    };
+
+    private static readonly IReadOnlyList<string> AllTortiePatches = new List<string>()
+    {
+        "ONE", "TWO", "THREE", "FOUR", "REDTAIL", "DELILAH", "HALF", "STREAK", "MASK", "SMOKE",
+        "MINIMALONE", "MINIMALTWO", "MINIMALTHREE", "MINIMALFOUR", "OREO", "SWOOP", "CHIMERA", "CHEST", 
+        "ARMTAIL", "GRUMPYFACE", "MOTTLED", "SIDEMASK", "EYEDOT", "BANDANA", "PACMAN", "STREAMSTRIKE", "SMUDGED", 
+        "DAUB", "EMBER", "BRIE", "ORIOLE", "ROBIN", "BRINDLE", "PAIGE", "ROSETAIL", "SAFI", "DAPPLENIGHT", 
+        "BLANKET", "BELOVED", "BODY", "SHILOH"
+    };
     
     // Needed
-    public string peltColor { get; private set; } = "BROWN";
-    public string peltPattern { get; private set; } = "tabby";
-    public string eyeColor { get; private set; } = "BLUE";
+    public string peltColor { get; private set; } = AllColorNames[0];
+    public string peltPattern { get; private set; } = AllPeltPatterns[0];
+    public string eyeColor { get; private set; } = AllEyeColors[0];
     public string skin { get; private set; } = "PINK";
     public string kittenSprite { get; private set; } = "0";
     public string adolSprite { get; private set; } = "3";
@@ -25,35 +75,54 @@ public class Pelt
     public List<string> scars { get; set; } = new();
     public bool paralyzed { get; set; } = false;
     public string tint { get; private set; } = "none";
-    public string whitePatchesTint { get; private set; } = "black";
+    public string whitePatchesTint { get; private set; } = "none";
 
-    // Optional/Nullable
-    public string? whitePatches { get; private set; } = "RAVENPAW";
-    public string? points { get; private set; }
-    public string? vitiligo { get; private set; }
-    public string? accessory { get; private set; }
-    public string? eyeColor2 { get; private set; }
-    
-    /// <summary>
-    /// The shape of the tortie patches --> The mask
-    /// </summary>
-    public string? tortiePatches { get; private set; }
     /// <summary>
     /// The pattern inside the tortie patches. IE, Tabby, Single, ext
     /// </summary>
-    public string? tortiePattern { get; private set; }
+    public string tortiePattern { get; private set; } = "single";
+
     /// <summary>
     /// The color of the tortie patches. 
     /// </summary>
-    public string? tortieColor { get; private set; }
-    
-    
+    public string tortieColor { get; private set; } = "white";
 
-    public Pelt(Cat? par1 = null, Cat? par2 = null)
+    // Optional/Nullable
+    public string? whitePatches { get; private set; } = null;
+    public string? points { get; private set; } = null;
+    public string? vitiligo { get; private set; } = null;
+    public string? accessory { get; private set; } = null;
+    public string? eyeColor2 { get; private set; } = null;
+    
+    /// <summary>
+    /// The shape of the tortie patches --> The mask
+    /// Non-null tortiePatches marks the cat as a tortie
+    /// </summary>
+    public string? tortiePatches { get; private set; }
+
+
+    public static Pelt GenerateRandomPelt(List<Cat>? parents = null)
     {
-        
-    }
+        Pelt newPelt = new Pelt();
+        newPelt.peltPattern = Utilities.ChoseRandom(AllPeltPatterns);
+        Console.WriteLine(newPelt.peltPattern);
+        newPelt.peltColor = Utilities.ChoseRandom(AllColorNames);
+        newPelt.eyeColor = Utilities.ChoseRandom(AllEyeColors);
 
+        if (Utilities.InverseChanceRoll(3))
+        {
+            newPelt.whitePatches = Utilities.ChoseRandom(AllWhitePatches);
+        }
+        
+        if (Utilities.InverseChanceRoll(4))
+        {
+            newPelt.tortiePatches = Utilities.ChoseRandom(AllTortiePatches);
+            newPelt.tortieColor = Utilities.ChoseRandom(AllColorNames);
+            newPelt.tortiePattern = Utilities.ChoseRandom(AllPeltPatterns);
+        }
+
+        return newPelt;
+    }
     
     public string GetSpriteNumber(Cat.CatAge age, bool canWork)
     {
@@ -102,7 +171,7 @@ public class Pelt
             return "two-color";
         }
 
-        if (peltPattern == "tortie")
+        if (tortiePatches != null)
         {
             if (whitePatches is null && points is null)
             {

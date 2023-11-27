@@ -2,7 +2,9 @@
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Linq;
+using Clangen.Models.CatGroups;
 using Clangen.Models.CatStuff;
+using SkiaSharp;
 
 namespace Clangen.Models;
 
@@ -72,6 +74,54 @@ public partial class World
 
         return grandparents1.Intersect(grandparents2).Any();
     }
+    
+    // Assigning Mentors. 
 
+    public void CheckAndAdjustMentor(Cat check)
+    {
+        if (!check.status.IsApprentice())
+        {
+            check.RemoveMentor(this);
+        }
+
+        if (check.mentor == null || !check.IsValidMentor(FetchCat(check.mentor)))
+        {
+            AssignMentor(check);
+        }
+    }
+    
+    public Cat? AssignMentor(Cat apprentice)
+    {
+        List<Cat> validMentors = new();
+        List<Cat> priorityMentors = new();
+        foreach (var checkMentor in apprentice.belongGroup.GetMembers())
+        {
+            if (!apprentice.IsValidMentor(checkMentor)) { continue; }
+            
+            validMentors.Add(checkMentor);
+            if (checkMentor.canWork && !checkMentor.apprentices.Any())
+            {
+                priorityMentors.Add(checkMentor);
+            }
+        }
+
+        if (!validMentors.Any())
+        {
+            return null;
+        }
+        
+        Cat chosenMentor = Utilities.ChoseRandom(priorityMentors.Any() ? priorityMentors : validMentors);
+        apprentice.SetMentor(chosenMentor);
+        return chosenMentor;
+    }
+
+    public void KillCat(Cat catToKill, Afterlife? targetAfterlife = null)
+    {
+        targetAfterlife ??= catToKill.belongGroup == currentClan ? starClan : unknownRes;
+        
+        CatsDeadOnCurrentTimeSkip.Add(catToKill.ID);
+        catToKill.belongGroup = targetAfterlife;
+
+    }
 }
 

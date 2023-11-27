@@ -6,6 +6,7 @@ using System.Text.Json.Serialization;
 using Clangen.Models.Events;
 using Clangen.Models.CatStuff;
 using Clangen.Models.CatGroups;
+using Microsoft.CodeAnalysis.Scripting.Hosting;
 
 namespace Clangen.Models;
 
@@ -195,7 +196,7 @@ public partial class World
         }
         
         Cat newCat = new(GetNextCatId(), belongGroup: currentClan, timeskips: timeskips, sex: sex,
-            status: status);
+            status: status, pelt: Pelt.GenerateRandomPelt());
         AddCatToWorld(newCat);
         return newCat;
     }
@@ -205,6 +206,7 @@ public partial class World
     /// </summary>
     public void PopulateClan()
     {
+        Console.WriteLine("Populating...");
         // Generate a clan for testing purposes. 
         GenerateRandomCat(Cat.CatStatus.Leader);
         GenerateRandomCat(Cat.CatStatus.Deputy);
@@ -219,6 +221,12 @@ public partial class World
         GenerateRandomCat(Cat.CatStatus.Apprentice);
         GenerateRandomCat(Cat.CatStatus.Kit);
         GenerateRandomCat(Cat.CatStatus.Kit);
+        
+        foreach (var value in _allCats)
+        {
+            Console.WriteLine($"{value.Value.fullName} {value.Value.pelt.peltPattern} {value.Value.pelt.peltColor}");
+        }
+        Console.WriteLine("Done");
     }
     
     /// <summary>

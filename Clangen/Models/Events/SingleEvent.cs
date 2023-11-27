@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Clangen.Models.Events;
@@ -10,11 +11,18 @@ namespace Clangen.Models.Events;
 /// </summary>
 public class SingleEvent
 {
+    [Flags]
+    public enum EventType
+    {
+        Ceremony = 0,
+        BirthAndDeath = 1 << 0,
+    }
+    
     public string text { get; private set; }
 
     public string[] involvedCats { get; private set; }
 
-    public SingleEvent(string text, List<string> involvedCats)
+    public SingleEvent(string text, EventType types, List<string> involvedCats)
     {
         this.text = text;
         this.involvedCats = involvedCats.ToArray();
