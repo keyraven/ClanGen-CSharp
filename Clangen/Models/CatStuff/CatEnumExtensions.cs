@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace Clangen.Models.CatStuff;
 
-static class CatEnumExtensions
+public static class CatEnumExtensions
 {
     public static bool IsApprentice(this Cat.CatStatus status)
     {

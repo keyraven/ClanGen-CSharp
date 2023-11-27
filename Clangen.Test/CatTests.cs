@@ -65,4 +65,14 @@ public class CatTests
         testCat.age.Should().Be(correctEndingAge, $"timeskips were set to the last value for {startingAge}, then " +
                                                $"incremented, {correctEndingAge} comes next");
     }
+
+    [Theory]
+    // Test both even and odd. 
+    [InlineData(11)]
+    [InlineData(12)]
+    public void MoonsShouldBeHalfOfTimeskips(int currentTimeskips)
+    {
+        Cat testCat = new Cat(GetNextId(), _dummyClan1, timeskips: currentTimeskips);
+        testCat.moons.Should().Be(((float)currentTimeskips) / 2);
+    }
 }

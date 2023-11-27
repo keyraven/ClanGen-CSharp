@@ -155,6 +155,7 @@ public partial class World
         starClan = new(_allCats,"StarClan");
         darkForest = new( _allCats,"Dark Forest");
         unknownRes = new( _allCats,"Unknown Residence");
+        outsiders = new (_allCats);
         
         // Two Other Clans
         for (int i = 0; i < 2; i++)
