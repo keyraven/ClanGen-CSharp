@@ -18,9 +18,7 @@ jobs:
       # You can test your matrix by printing the current dotnet version
       - name: Display dotnet version
         run: dotnet --version
-      - name: Install dependencies 
-        run: dotnet restore
-      - name: Build
-        run: dotnet build
-      - name: Run UnitTest
+      - name: Install Workloads
+        run: dotnet workload restore 
+      - name: Build and Run Tests
         run: dotnet test
