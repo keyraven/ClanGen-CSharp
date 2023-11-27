@@ -108,7 +108,7 @@ public partial class World
     {
         if (!check.status.IsApprentice())
         {
-            check.RemoveMentor(this);
+            check.RemoveMentor();
         }
 
         if (check.mentor == null || !check.IsValidMentor(FetchCat(check.mentor)))

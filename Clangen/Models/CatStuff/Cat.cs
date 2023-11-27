@@ -282,7 +282,7 @@ public partial class Cat : IEquatable<Cat>
         newMentor._apprentices.Add(this.ID);
     }
     
-    public void RemoveMentor(World worldObject)
+    public void RemoveMentor()
     {
         if (this.mentor is null)
         {
@@ -291,7 +291,7 @@ public partial class Cat : IEquatable<Cat>
         
         // We need the worldObject here in order to get the mentor object. 
         // If you can think of a better way to do this, feel free to change. 
-        var mentorObject = worldObject.FetchCat(this.mentor);
+        var mentorObject = belongGroup.FetchCat(this.mentor);
         mentorObject._apprentices.Remove(this.ID);
         this.mentor = null;
     }

@@ -12,7 +12,7 @@ public class Outsiders : Group
         return _name;
     }
     
-    public Outsiders(IReadOnlyDictionary<string, Cat> allCats, 
+    public Outsiders(IReadOnlyFetchableObject<string, Cat> allCats, 
         string name = "Cats Outside the Clan") : base(false, allCats)
     {
         this._name = name;

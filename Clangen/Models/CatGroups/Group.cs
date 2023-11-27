@@ -8,9 +8,9 @@ public abstract class Group
 {
     public readonly bool dead;
     
-    private IReadOnlyDictionary<string, Cat> _allCats { get; }
+    private IReadOnlyFetchableObject<string, Cat> _allCats { get; }
 
-    protected Group(bool dead, IReadOnlyDictionary<string, Cat> allCats)
+    protected Group(bool dead, IReadOnlyFetchableObject<string, Cat> allCats)
     {
         this.dead = dead;
         _allCats = allCats;
@@ -20,6 +20,8 @@ public abstract class Group
     {
         return _allCats.Values.Where(cat => cat.belongGroup == this).ToList().AsReadOnly();
     }
+
+    public Cat FetchCat(string catId) => _allCats.FetchCat(catId);
     
     public abstract string GetName();
     

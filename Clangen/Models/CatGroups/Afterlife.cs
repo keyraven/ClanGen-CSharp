@@ -12,7 +12,7 @@ public class Afterlife : Group
         return _name;
     }
 
-    public Afterlife(IReadOnlyDictionary<string, Cat> allCats,  string name = "Afterlife", 
+    public Afterlife(IReadOnlyFetchableObject<string, Cat> allCats,  string name = "Afterlife", 
         SortedSet<string>? cats = null) : base(true, allCats)
     {
         this._name = name;

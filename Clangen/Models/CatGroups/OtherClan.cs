@@ -7,7 +7,7 @@ namespace Clangen.Models.CatGroups;
 
 public class OtherClan : Group
 {
-    public OtherClan(IReadOnlyDictionary<string, Cat> allCats, string prefix) : base( false, allCats)
+    public OtherClan(IReadOnlyFetchableObject<string, Cat> allCats, string prefix) : base( false, allCats)
     {
         this.prefix = prefix;
     }

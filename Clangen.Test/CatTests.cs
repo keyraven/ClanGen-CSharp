@@ -6,17 +6,11 @@ namespace Clangen.Tests;
 
 public class CatTests
 {
-    private Group _dummyClan1;
+    private Group _dummyClan1 = new Clan(new CatDictionary(), "Dummy1");
     private int _lastId = 0;
 
     private string GetNextId() => _lastId++.ToString();
     
-    public CatTests()
-    {
-        Dictionary<string, Cat> allCats = new();
-        _dummyClan1 = new Clan(allCats, "Dummy1");
-    }
-
     [Fact]
     public void AgeTimeskipsShouldContainTwoValuesForEveryAge()
     {

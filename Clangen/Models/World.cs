@@ -63,7 +63,7 @@ public partial class World
     */
     
     
-    private Dictionary<string, Cat> _allCats = new();
+    private CatDictionary _allCats = new();
     
     private List<string> _fadedIds = new();
     
@@ -247,28 +247,14 @@ public partial class World
     {
         _allCats.Clear();
     }
-    
+
     /// <summary>
     /// Fetches a cat object based on the cat ID.
     /// Will load faded cats if needed.
     /// </summary>
     /// <param name="catID"></param>
     /// <returns></returns>
-    public Cat FetchCat(string catId)
-    {
-        if (_allCats.ContainsKey(catId))
-        {
-            return _allCats[catId];
-        }
-        
-        return LoadFadedCat(catId);
-    }
-    
-    public Cat LoadFadedCat(string catID)
-    {
-        // Load a faded cat, if they are faded.
-        throw new NotImplementedException("Faded Cat Loading not Implemented. ");
-    }
+    public Cat FetchCat(string catId) => _allCats.FetchCat(catId);
     
     public IReadOnlyCollection<Cat> GetAllCats()
     {
