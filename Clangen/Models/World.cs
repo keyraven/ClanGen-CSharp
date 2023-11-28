@@ -61,8 +61,8 @@ public partial class World
         return _lastGroupId.ToString();
     }
     */
-    
-    
+
+    [JsonInclude]
     private CatDictionary _allCats = new();
     
     private List<string> _fadedIds = new();
@@ -87,13 +87,13 @@ public partial class World
     {
         get { return (float)timeskips / 2; }
     }
-    
-    public List<SingleEvent> currentEvents { get; set; } = new();
+
+    public List<SingleEvent> currentEvents { get; set; } = new() { new SingleEvent("Test") };
     public List<SingleEvent> medicineDenEvents { get; set; } = new();
     public List<string[]> mediated { get; set; } = new();
-    public readonly GameMode WorldGameMode = GameMode.Expanded; 
-    
-    
+    public readonly GameMode WorldGameMode = GameMode.Expanded;
+
+
     // Variables holding groups for easy reference. 
     // Main clan of living cats
     public Clan currentClan { get; set; }
@@ -107,6 +107,18 @@ public partial class World
     public Outsiders outsiders { get; set; }
 
     public List<OtherClan> otherClans { get; set; } = new();
+
+    [JsonConstructor]
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    internal World() 
+    {
+        // for Json purposes ONLY. Not be to be used otherwise.  
+        currentClan = new(_allCats, "Clan");
+        starClan = new(_allCats);
+        darkForest = new(_allCats);
+        unknownRes = new(_allCats);
+        outsiders = new(_allCats);
+    }
     
     public World(List<Cat> allCats, GameMode worldGameMode, int lastCatId = 0,  
         Clan? currentClan = null, Afterlife? starClan = null, Afterlife? darkForest = null, 

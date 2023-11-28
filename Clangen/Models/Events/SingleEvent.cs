@@ -1,6 +1,9 @@
-﻿using System;
+﻿using SkiaSharp;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace Clangen.Models.Events;
 
@@ -14,24 +17,34 @@ public class SingleEvent
     [Flags]
     public enum EventType
     {
-        Ceremony = 0,
-        BirthAndDeath = 1 << 0,
+        General = 0,
+        Ceremony = 1 << 0,
     }
+
+    [JsonInclude]
+    public string text { get; private set; } = "";
+
+    [JsonInclude]
+    public List<string> involvedCats { get; } = new();
+
+    [JsonInclude]
+    public EventType types { get; } = EventType.General;
+
+    [JsonConstructor]
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    internal SingleEvent() { }
     
-    public string text { get; private set; }
-
-    public string[] involvedCats { get; private set; }
-
     public SingleEvent(string text, EventType types, List<string> involvedCats)
     {
         this.text = text;
-        this.involvedCats = involvedCats.ToArray();
+        this.involvedCats = new List<string>(involvedCats);
+        this.types = types;
     }
 
     public SingleEvent(string text, params string[] involvedCats)
     {
         this.text = text;
-        this.involvedCats = involvedCats;
+        this.involvedCats = involvedCats.ToList();
     }
     
 }

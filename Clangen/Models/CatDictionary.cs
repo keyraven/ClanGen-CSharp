@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using Clangen.Models.CatStuff;
 
 namespace Clangen.Models;
@@ -11,6 +12,9 @@ public interface IReadOnlyFetchableObject<TKey, TValue> : IReadOnlyDictionary<TK
 
 public class CatDictionary : Dictionary<string, Cat>, IReadOnlyFetchableObject<string, Cat>
 {
+    [JsonIgnore]
+    public string fadedCatPath { get; set; } = "";
+    
     public Cat FetchCat(string catId)
     {
         if (ContainsKey(catId))

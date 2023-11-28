@@ -1,16 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Clangen.Models.CatStuff;
-using System.Text.Json;
-using System.IO;
-
-
-//Remove at some point, testing
-using Clangen.Models.CatStuff;
-using Clangen.Models.CatGroups;
 
 namespace Clangen.Models;
-
 
 public class GameConfig
 {

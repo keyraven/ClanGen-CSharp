@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Clangen.Models.CatStuff;
 
@@ -22,33 +23,36 @@ public class Name
     // Not sure how to remove the "possible null reference" warning. 
     private static readonly NameDetails details = JsonSerializer.Deserialize<NameDetails>(File.ReadAllText("Resources/names.json"));
 
-    public string Prefix;
-    public string Suffix;
-    public bool SpecSuffixHidden;
-    public Cat? OwnerCat;
+    public string prefix { get; set; } = string.Empty;
+    public string suffix { get; set; } = string.Empty;
+    public bool specSuffixHidden { get; set; } = false;
+    public Cat? OwnerCat { get; set; }
 
     /// <summary>
     /// Returns the full name of the cat, with prefix, suffix, and any special
     /// suffixes attached. 
     /// </summary>
+    [JsonIgnore]
     public string fullName
     {
         get
         {
             if (OwnerCat is null)
             {
-                return $"{Prefix}{Suffix}";
+                return $"{prefix}{suffix}";
             }
-            if (!SpecSuffixHidden && details.specialSuffixes.ContainsKey(OwnerCat.status))
+            if (!specSuffixHidden && details.specialSuffixes.ContainsKey(OwnerCat.status))
             {
-                return $"{Prefix}{details.specialSuffixes[OwnerCat.status]}";
+                return $"{prefix}{details.specialSuffixes[OwnerCat.status]}";
             }
 
-            return $"{Prefix}{Suffix}";
+            return $"{prefix}{suffix}";
         }
     }
 
-    // CONSTRUCTOR
+    [JsonConstructor]
+    internal Name() { }
+
     /// <summary>
     /// Holds information on the name of a cat. Constructor, on it's own, does not check for name
     /// validity. 
@@ -63,9 +67,9 @@ public class Name
     {
         prefix ??= "";
         suffix ??= "";
-        this.Prefix = prefix;
-        this.Suffix = suffix;
-        this.SpecSuffixHidden = specSuffixHidden;
+        this.prefix = prefix;
+        this.suffix = suffix;
+        this.specSuffixHidden = specSuffixHidden;
         this.OwnerCat = cat;
     }
 

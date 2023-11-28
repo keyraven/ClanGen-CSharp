@@ -76,7 +76,7 @@ public static class Utilities
     /// Add multiple dictionaries together. If there are duplicate keys,
     /// this uses the value from the new dictionary. 
     /// </summary>
-    public static void AddRange<T, S>(this Dictionary<T, S> source, Dictionary<T, S> collection)
+    public static void AddRange<TKey, TValue>(this Dictionary<TKey, TValue> source, Dictionary<TKey, TValue> collection)
     {
         if (collection == null)
         {

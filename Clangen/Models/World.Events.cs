@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using Clangen.Models.CatStuff;
 using Clangen.Models.Events;
 
@@ -10,6 +11,7 @@ namespace Clangen.Models;
 public partial class World
 {
 
+    [JsonIgnore]
     public List<string> catsDeadOnCurrentTimeSkip { get; set; } = new();
     
     /// <summary>

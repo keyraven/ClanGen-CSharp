@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace Clangen.Models.CatStuff;
 
@@ -15,11 +17,18 @@ public class Backstory
         Loner = 1 << 4,
         Healer = 1 << 5
     }
-    
-    public BackstoryType types { get; }
-    public string longText { get; }
-    public string shortText { get; }
-    
+
+    [JsonInclude]
+    public BackstoryType types { get; private set; } = BackstoryType.Clanborn;
+    [JsonInclude]
+    public string longText { get; private set; } = string.Empty;
+    [JsonInclude]
+    public string shortText { get; private set; } = string.Empty;
+
+    [JsonConstructor]
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    internal Backstory() { }
+
     public Backstory(BackstoryType types)
     {
         GetDefaultText(types, out string defaultLongText, out string defaultShortText);

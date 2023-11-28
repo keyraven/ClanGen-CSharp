@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Clangen.Models.CatStuff;
 
@@ -21,13 +22,15 @@ public class Pronoun
     public static readonly List<Pronoun> DefaultPronouns = new() { theyThem, sheHer, heHim };
 
     
-    public string objectVersion { get; set; }
-    public string subjectVersion { get; set; }
-    public string possessiveVersion { get; set; }
-    public string inPossessiveVersion { get; set; }
-    public string reflexiveVersion { get; set; }
-    public Conjugation conjugation { get; set; }
+    public string objectVersion { get; set; } = string.Empty;
+    public string subjectVersion { get; set; } = string.Empty;
+    public string possessiveVersion { get; set; } = string.Empty;
+    public string inPossessiveVersion { get; set; } = string.Empty;
+    public string reflexiveVersion { get; set; } = string.Empty;
+    public Conjugation conjugation { get; set; } = Conjugation.Singular;
 
+    [JsonConstructor]
+    internal Pronoun() { }
 
     public Pronoun(string objectt, string subject, string possessive, string inPossessive, string reflexive,
         Conjugation conjugation)

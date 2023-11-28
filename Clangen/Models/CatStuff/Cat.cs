@@ -7,6 +7,7 @@ using Clangen.Models.CatGroups;
 using SkiaSharp;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.ComponentModel;
 
 namespace Clangen.Models.CatStuff;
 
@@ -14,6 +15,7 @@ public partial class Cat : IEquatable<Cat>
 {
 
     // PRIVATE INSTANCE ATTRIBUTES
+    [JsonInclude]
     private Dictionary<string, Relationship> _relationships { get; set; } = new();
     private List<string> _previousApprentices = new();
     private int _timeskips = 0;
@@ -25,7 +27,8 @@ public partial class Cat : IEquatable<Cat>
     public readonly string ID;
 
     public Name name { get; set; }
-    
+
+    [JsonIgnore]
     public string fullName
     {
         get { return name.fullName; }
@@ -40,21 +43,25 @@ public partial class Cat : IEquatable<Cat>
     public readonly CatSex Sex;
     
     public string gender { get; set; }
-    
-    public readonly IReadOnlyList<string> bioParents = new List<string>();
+
+    [JsonInclude]
+    public IReadOnlyList<string> bioParents { get; private set; } = new List<string>();
     
     public List<string> adoptiveParents { get; set; } = new();
     
     public int lives { get; set; } = 1;
-    
+
+    [JsonInclude]
     public List<string> mates { get; private set; } = new();
-    
+
+    [JsonInclude]
     public List<string> previousMates { get; private set; } = new();
     
     public CatAge age { get; private set; }
-    
-    public Backstory backstory { get; }
-    
+
+    [JsonInclude]
+    public Backstory backstory { get; private set; } = new(Backstory.BackstoryType.Clanborn);
+
     public bool worked { get; set; } = false;
     
     public Group belongGroup { get; set; }
@@ -94,11 +101,12 @@ public partial class Cat : IEquatable<Cat>
     }
     
     public int deadForTimeSkips { get; set; } = 0;
-    
+
     /// <summary>
     /// Cat's mentor. Can be null to indicate that a cat doesn't have a mentor
     /// </summary>
-    public string? mentor { get; protected set; }
+    [JsonInclude]
+    public string? mentor { get; private set; }
 
     /// <summary>
     /// List of current apprentices. 
@@ -154,8 +162,14 @@ public partial class Cat : IEquatable<Cat>
             return (float)deadForTimeSkips / 2;
         }
     }
-    
-    public SKImage sprite { get; set; }
+
+    [JsonIgnore]
+    public SKImage sprite { 
+        get
+        {
+            return Sprites.GenerateSprite(this);
+        }
+    }
 
     // Bool if the cat is able to work
     // Injuries are not yet implemented, so always return true.
@@ -171,7 +185,18 @@ public partial class Cat : IEquatable<Cat>
     /// Status or Rank of the cat. 
     /// </summary>
     public CatStatus status { get; set; }
-    
+
+    [JsonConstructor]
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    internal Cat()
+    {
+        ID = "0";
+        name = new("prefix", "suffix");
+        pelt = new();
+        belongGroup = new Outsiders(new CatDictionary());
+    }
+
+
     public Cat(string id, Group belongGroup, CatStatus status = CatStatus.Kit, Pelt? pelt = null, Backstory? backstory = null,
         int timeskips = 0, CatSex sex = CatSex.Female, List<string>? bioParents = null, List<string>? adoptiveParents = null, 
         string? prefix = null, string? gender = null, string? suffix = null, int experience = 0)
@@ -205,8 +230,6 @@ public partial class Cat : IEquatable<Cat>
         {
             name = new Name(prefix, suffix, cat: this);
         }
-        
-        this.sprite = Sprites.GenerateSprite(this);
     }
     
     // EQ-OVERRIDES (And HASH)

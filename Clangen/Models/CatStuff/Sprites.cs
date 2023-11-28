@@ -93,7 +93,6 @@ public static class Sprites
     
     public static void LoadSprites()
     {
-        SKBitmap spritesheet;
         string basepath = "Resources/sprites/";
         List<List<string>> groupNames;
         
@@ -319,7 +318,6 @@ public static class Sprites
     public static SKImage GenerateSprite(Cat cat)
     {
         SKBitmap sprite = new SKBitmap(spriteSize, spriteSize);
-        SKColor color;
         
         //Placeholder for testing
         string spriteNumber = cat.pelt.GetSpriteNumber(cat.age, cat.canWork);

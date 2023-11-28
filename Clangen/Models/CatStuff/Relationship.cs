@@ -22,14 +22,14 @@ public class Relationship
     
     // Difference from python version --- NOTE
     // Relationship catFrom and catTo are now stored as IDs.
-    public string catFrom { get; set; }
-    public string catTo { get; set; }
-    
-    public List<RelationshipLog> log { get; set; }
-    
-    private int _closeness;
-    private int _sentiment;
-    private int _loyalty;
+    public string catFrom { get; set; } = string.Empty;
+    public string catTo { get; set; } = string.Empty;
+
+    public List<RelationshipLog> log { get; set; } = new();
+
+    private int _closeness = 0;
+    private int _sentiment = 0;
+    private int _loyalty = 0;
     
     // You may notice this is significantly simplified. That is intentional. 
     // Although a variety of values is nice, they tend towards max-out "good"
@@ -78,6 +78,8 @@ public class Relationship
         set { _loyalty = AdjustToRange(value, MinLoyalty, MaxLoyalty); }
     }
     
+    public Relationship() { }
+
     public Relationship(string catFrom, string catTo, int closeness = 0, int sentiment = 0, int loyalty = 0, List<RelationshipLog>? log = null)
     {
         log ??= new();
