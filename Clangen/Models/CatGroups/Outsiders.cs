@@ -15,10 +15,13 @@ public class Outsiders : Group
     }
 
     [JsonConstructor]
-    internal Outsiders() : base(false, new CatDictionary()) { }
+    public Outsiders(string ID, bool dead) : base(ID, dead, new CatDictionary())
+    {
 
-    public Outsiders(IReadOnlyFetchableObject<string, Cat> allCats, 
-        string name = "Cats Outside the Clan") : base(false, allCats)
+    }
+
+    public Outsiders(string ID, IReadOnlyFetchableObject<string, Cat> allCats, 
+        string name = "Cats Outside the Clan") : base(ID, false, allCats)
     {
         this._name = name;
     }

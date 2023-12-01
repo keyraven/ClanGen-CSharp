@@ -26,7 +26,9 @@ public class Name
     public string prefix { get; set; } = string.Empty;
     public string suffix { get; set; } = string.Empty;
     public bool specSuffixHidden { get; set; } = false;
-    public Cat? OwnerCat { get; set; }
+
+    [JsonIgnore]
+    public Cat.CatStatus nameStatus { get; set; } = Cat.CatStatus.Warrior;
 
     /// <summary>
     /// Returns the full name of the cat, with prefix, suffix, and any special
@@ -37,13 +39,9 @@ public class Name
     {
         get
         {
-            if (OwnerCat is null)
+            if (!specSuffixHidden && details.specialSuffixes.ContainsKey(nameStatus))
             {
-                return $"{prefix}{suffix}";
-            }
-            if (!specSuffixHidden && details.specialSuffixes.ContainsKey(OwnerCat.status))
-            {
-                return $"{prefix}{details.specialSuffixes[OwnerCat.status]}";
+                return $"{prefix}{details.specialSuffixes[nameStatus]}";
             }
 
             return $"{prefix}{suffix}";
@@ -62,15 +60,14 @@ public class Name
     /// <param name="suffix"></param>
     /// <param name="specSuffixHidden"></param>
     /// <param name="nameStatus">  </param>
-    public Name(string? prefix, string? suffix, bool specSuffixHidden = false,
-        Cat? cat = null)
+    public Name(string? prefix, string? suffix, Cat.CatStatus nameStatus, bool specSuffixHidden = false)
     {
         prefix ??= "";
         suffix ??= "";
         this.prefix = prefix;
         this.suffix = suffix;
         this.specSuffixHidden = specSuffixHidden;
-        this.OwnerCat = cat;
+        this.nameStatus = nameStatus;
     }
 
     /// <summary>
@@ -79,7 +76,7 @@ public class Name
     /// <param name="cat"> Reference to cat object. Can be null </param>
     /// <param name="loner"> If true, will generate the loner-type name, where the suffix is blank and the prefix is chosen from the loner names list. </param>
     /// <returns></returns>
-    public static Name GenerateRandomName(Cat? cat, bool loner = false)
+    public static Name GenerateRandomName(Cat.CatStatus nameStatus, bool loner = false)
     {
         var chosenPrefix = loner ? Utilities.ChoseRandom(details.lonerNames) : Utilities.ChoseRandom(details.normalPrefixes);
         var chosenSuffix = loner ? "" : Utilities.ChoseRandom(details.normalSuffixes);
@@ -94,7 +91,7 @@ public class Name
             i++;
         }
         
-        return new Name(chosenPrefix, chosenSuffix, false, cat);
+        return new Name(chosenPrefix, chosenSuffix, nameStatus, false);
     }
     
     /// <summary>

@@ -25,11 +25,30 @@ public class Game
         Console.WriteLine("creating game");
     }
 
+    public bool SaveWorld()
+    {
+        if (currentWorld == null)
+        {
+            return false;
+        }
+
+        return SaveWorld(currentWorld);
+
+    }
+
+    public bool SaveWorld(World world)
+    {
+        
+        
+
+        return true;
+    }
+    
     /// <summary>
     /// Load a save, creating a Clan Object and putting it as
     /// the current clan. 
     /// </summary>
-    public void LoadSave()
+    public void LoadWorld()
     {
         currentWorld = new World("New");
         currentWorld.PopulateClan();
@@ -44,7 +63,7 @@ public class Game
         //TODO --> Needs to be run once at startup. 
         
         Sprites.LoadSprites();
-        LoadSave();
+        LoadWorld();
         Console.WriteLine("Game-Start Tasks Complete");
     }
 

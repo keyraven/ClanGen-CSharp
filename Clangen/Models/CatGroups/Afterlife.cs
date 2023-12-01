@@ -15,9 +15,13 @@ public class Afterlife : Group
     }
 
     [JsonConstructor]
-    internal Afterlife() : base(true, new CatDictionary()) { }
-    public Afterlife(IReadOnlyFetchableObject<string, Cat> allCats,  string name = "Afterlife", 
-        SortedSet<string>? cats = null) : base(true, allCats)
+    public Afterlife(string ID, bool dead) : base(ID, dead, new CatDictionary())
+    {
+
+    }
+
+    public Afterlife(string ID, IReadOnlyFetchableObject<string, Cat> allCats,  string name = "Afterlife", 
+        SortedSet<string>? cats = null) : base(ID, true, allCats)
     {
         this._name = name;
     }

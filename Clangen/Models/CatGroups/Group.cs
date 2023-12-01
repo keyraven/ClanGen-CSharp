@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using Clangen.Models.CatStuff;
 
 namespace Clangen.Models.CatGroups;
@@ -7,13 +8,20 @@ namespace Clangen.Models.CatGroups;
 public abstract class Group
 {
     public readonly bool dead;
-    
-    private IReadOnlyFetchableObject<string, Cat> _allCats { get; }
+    public readonly string ID;
 
-    protected Group(bool dead, IReadOnlyFetchableObject<string, Cat> allCats)
+    private IReadOnlyFetchableObject<string, Cat> _allCats;
+
+    protected Group(string ID, bool dead, IReadOnlyFetchableObject<string, Cat> allCats)
     {
+        this.ID = ID;
         this.dead = dead;
         _allCats = allCats;
+    }
+
+    public void SetAllCats(IReadOnlyFetchableObject<string, Cat> allCats)
+    {
+        _allCats = allCats; 
     }
 
     public IReadOnlyCollection<Cat> GetMembers()

@@ -17,7 +17,7 @@ public class Personality
         public Dictionary<Trait, List<int>>? kitten_traits;
     }
 
-    private static readonly TraitInfo? traitRanges = JsonSerializer.Deserialize<TraitInfo>(File.ReadAllText("file_name.json"));
+    //private static readonly TraitInfo? traitRanges = JsonSerializer.Deserialize<TraitInfo>(File.ReadAllText("file_name.json"));
 
     private static readonly int[] facetRange = new int[] { 0, 16 };
 

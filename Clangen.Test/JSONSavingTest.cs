@@ -25,7 +25,6 @@ public class JSONSavingTest
 
         var options = new JsonSerializerOptions
         {
-            ReferenceHandler = ReferenceHandler.Preserve,
             IncludeFields = true,
             Converters = { new JsonStringEnumConverter() }
         };
@@ -33,6 +32,16 @@ public class JSONSavingTest
         string json = JsonSerializer.Serialize(_testWorld, options);
         output.WriteLine(json);
         World? recoveredWorld = JsonSerializer.Deserialize<World>(json, options);
+        Assert.NotNull(recoveredWorld);
+
+        
+        
+        foreach (var cat in recoveredWorld.GetAllCats())
+        {
+            cat.SetGroupBasedOnDeseralizedGroupID(recoveredWorld.FetchGroup);
+        }
+        
+
 
         json = JsonSerializer.Serialize(recoveredWorld, options);
         output.WriteLine(json);

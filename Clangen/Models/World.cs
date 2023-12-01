@@ -44,31 +44,20 @@ public partial class World
     private const int TimeskipsPerSeason = 6; 
     
     private int _lastCatId = 0;
-    //private int _lastGroupId = 0;
+    private int _lastGroupId = 0;
     private readonly Season _startingSeason = Season.Newleaf;
     private int _timeskips = 0;
+    private readonly List<OtherClan> _otherClans = new List<OtherClan>();
     
-    public string GetNextCatId()
-    {
-        _lastCatId++;
-        return _lastCatId.ToString();
-    }
-
-    /*
-    public string GetNextGroupId()
-    {
-        _lastGroupId++;
-        return _lastGroupId.ToString();
-    }
-    */
+    private CatDictionary _allCats = new();
 
     [JsonInclude]
-    private CatDictionary _allCats = new();
-    
-    private List<string> _fadedIds = new();
-    
+    [JsonPropertyName("allCats")]
+    private IReadOnlyCollection<Cat> _allCatsForSerialize => GetAllCats();
+
     public WorldSettings worldSettings { get; set; } = new();
-    
+
+    [JsonIgnore]
     public Season season { get; private set; } = Season.Newleaf;
     
     public int timeskips
@@ -83,41 +72,33 @@ public partial class World
             season = (Season)((_timeskips / TimeskipsPerSeason + (int)_startingSeason) % Enum.GetValues(typeof(Season)).Length);
         }
     }
+    
     public float moons
     {
         get { return (float)timeskips / 2; }
     }
 
-    public List<SingleEvent> currentEvents { get; set; } = new() { new SingleEvent("Test") };
-    public List<SingleEvent> medicineDenEvents { get; set; } = new();
-    public List<string[]> mediated { get; set; } = new();
+    public List<SingleEvent> currentEvents { get; } = new() { new SingleEvent("Test") };
+    public List<SingleEvent> medicineDenEvents { get; } = new();
+    public List<string[]> mediated { get; } = new();
     public readonly GameMode WorldGameMode = GameMode.Expanded;
 
 
     // Variables holding groups for easy reference. 
     // Main clan of living cats
-    public Clan currentClan { get; set; }
+    public Clan currentClan { get; }
     
     // Afterlives
-    public Afterlife starClan { get; set; }
-    public Afterlife darkForest { get; set; }
-    public Afterlife unknownRes { get; set; }
+    public Afterlife starClan { get; }
+    public Afterlife darkForest { get; }
+    public Afterlife unknownRes { get; }
     
     // Outsiders
-    public Outsiders outsiders { get; set; }
-
-    public List<OtherClan> otherClans { get; set; } = new();
-
-    [JsonConstructor]
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    internal World() 
+    public Outsiders outsiders { get; }
+    
+    public IReadOnlyList<OtherClan> otherClans
     {
-        // for Json purposes ONLY. Not be to be used otherwise.  
-        currentClan = new(_allCats, "Clan");
-        starClan = new(_allCats);
-        darkForest = new(_allCats);
-        unknownRes = new(_allCats);
-        outsiders = new(_allCats);
+        get { return _otherClans.AsReadOnly(); }
     }
     
     public World(List<Cat> allCats, GameMode worldGameMode, int lastCatId = 0,  
@@ -134,26 +115,26 @@ public partial class World
 
         this.WorldGameMode = worldGameMode;
         
-        currentClan ??= new(_allCats, "New");
+        currentClan ??= new(GetNextGroupId(), _allCats, "New");
         this.currentClan = currentClan;
         
         // Create the afterlives
-        starClan ??= new(_allCats, "StarClan");
+        starClan ??= new(GetNextGroupId(), _allCats, "StarClan");
         this.starClan = starClan;
         
-        darkForest ??= new( _allCats, "Dark Forest");
+        darkForest ??= new(GetNextGroupId(), _allCats, "Dark Forest");
         this.darkForest = darkForest;
         
-        unknownRes ??= new(_allCats,"Unknown Residence");
+        unknownRes ??= new(GetNextGroupId(), _allCats,"Unknown Residence");
         this.unknownRes = unknownRes;
         
         // Outsiders
-        outsiders ??= new( _allCats);
+        outsiders ??= new(GetNextGroupId(), _allCats);
         this.outsiders = outsiders; 
         
         // Two Other Clans
-        otherClans ??= new List<OtherClan>() { new OtherClan(_allCats,"Clan1"), new OtherClan(_allCats,"Clan2") };
-        this.otherClans = otherClans;
+        otherClans ??= new List<OtherClan>() { new OtherClan(GetNextGroupId(), _allCats,"Clan1"), new OtherClan(GetNextGroupId(), _allCats,"Clan2") };
+        this._otherClans = otherClans;
         
     }
     
@@ -161,19 +142,47 @@ public partial class World
     {
         _lastCatId = lastCatId;
         
-        this.currentClan = new(_allCats, clanName);
+        this.currentClan = new(GetNextGroupId(), _allCats, clanName);
         
         // Create the afterlives
-        starClan = new(_allCats,"StarClan");
-        darkForest = new( _allCats,"Dark Forest");
-        unknownRes = new( _allCats,"Unknown Residence");
-        outsiders = new (_allCats);
+        starClan = new(GetNextGroupId(), _allCats,"StarClan");
+        darkForest = new(GetNextGroupId(), _allCats,"Dark Forest");
+        unknownRes = new(GetNextGroupId(), _allCats,"Unknown Residence");
+        outsiders = new (GetNextGroupId(), _allCats);
         
         // Two Other Clans
         for (int i = 0; i < 2; i++)
         {
-            otherClans.Add(new OtherClan(_allCats,$"Other{i}"));
+            _otherClans.Add(new OtherClan(GetNextGroupId(), _allCats,$"Other{i}"));
         }
+    }
+
+    [JsonConstructor]
+    public World(IReadOnlyCollection<Cat> _allCatsForSerialize, Clan currentClan, Afterlife starClan, Afterlife darkForest,
+        Afterlife unknownRes, Outsiders outsiders, IReadOnlyList<OtherClan> otherClans)
+    {
+        foreach (var cat in _allCatsForSerialize)
+        {
+            _allCats.Add(cat.ID, cat);
+        }
+        
+        currentClan.SetAllCats(_allCats);
+        this.currentClan = currentClan;
+        starClan.SetAllCats(_allCats);
+        this.starClan = starClan;
+        darkForest.SetAllCats(_allCats);
+        this.darkForest = darkForest;
+        unknownRes.SetAllCats(_allCats);
+        this.unknownRes = unknownRes;
+        outsiders.SetAllCats(_allCats);
+        this.outsiders = outsiders;
+
+        foreach (var otherClan in otherClans)
+        {
+            otherClan.SetAllCats(_allCats);
+        }
+        _otherClans = otherClans.ToList();
+
     }
 
     /// <summary>
@@ -234,7 +243,7 @@ public partial class World
         GenerateRandomCat(Cat.CatStatus.Apprentice);
         GenerateRandomCat(Cat.CatStatus.Kit);
         GenerateRandomCat(Cat.CatStatus.Kit);
-        
+
         foreach (var value in _allCats)
         {
             Console.WriteLine($"{value.Value.fullName} {value.Value.pelt.peltPattern} {value.Value.pelt.peltColor}");
@@ -260,6 +269,37 @@ public partial class World
         _allCats.Clear();
     }
 
+    public string GetNextCatId()
+    {
+        _lastCatId++;
+        return _lastCatId.ToString();
+    }
+
+    public string GetNextGroupId()
+    {
+        _lastGroupId++;
+        return _lastGroupId.ToString();
+    }
+
+    /// <summary>
+    /// Get a group from it's ID. 
+    /// </summary>
+    /// <param name="groupID"></param>
+    /// <returns></returns>
+    public Group FetchGroup(string groupID)
+    {
+        if (groupID == currentClan.ID) { return currentClan; }
+        if (groupID == starClan.ID) { return starClan; }
+        if (groupID == unknownRes.ID) { return unknownRes; }
+        if (groupID == darkForest.ID) { return darkForest; }
+        if (groupID == outsiders.ID) { return outsiders; }
+
+        var outsiderGroup = otherClans.Where(i=>i.ID == groupID).FirstOrDefault();
+        if (outsiderGroup != null) { return  outsiderGroup; }
+
+        throw new ArgumentException($"Group with the ID {groupID} was not found");
+    }
+
     /// <summary>
     /// Fetches a cat object based on the cat ID.
     /// Will load faded cats if needed.
@@ -267,7 +307,8 @@ public partial class World
     /// <param name="catID"></param>
     /// <returns></returns>
     public Cat FetchCat(string catId) => _allCats.FetchCat(catId);
-    
+
+
     public IReadOnlyCollection<Cat> GetAllCats()
     {
         return _allCats.Values.ToList().AsReadOnly();

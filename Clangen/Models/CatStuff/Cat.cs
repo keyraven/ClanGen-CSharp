@@ -16,54 +16,95 @@ public partial class Cat : IEquatable<Cat>
 
     // PRIVATE INSTANCE ATTRIBUTES
     [JsonInclude]
-    private Dictionary<string, Relationship> _relationships { get; set; } = new();
+    [JsonPropertyName("relationships")]
+    private Dictionary<string, Relationship> _relationships = new();
+
+    [JsonInclude]
+    private string belongGroupID => belongGroup.ID;
+
     private List<string> _previousApprentices = new();
     private int _timeskips = 0;
     private int _experience;
     private List<string> _apprentices = new();
+    private List<string> _mates = new();
+    private List<string> _previousMates = new();
+    private CatStatus _status = CatStatus.Warrior;
+
+    //Only used for JSON loading
+    private string _groupIDAtLoadIn = string.Empty;
 
     //PUBLIC ATTRIBUTES and PROPERTIES
-    
+
+    [JsonPropertyOrder(1)]
     public readonly string ID;
 
     public Name name { get; set; }
 
-    [JsonIgnore]
-    public string fullName
+    /// <summary>
+    /// Status or Rank of the cat. 
+    /// </summary>
+    public CatStatus status 
     {
-        get { return name.fullName; }
+        get
+        {
+            return _status;
+        } 
+        set
+        {
+            _status = value;
+            name.nameStatus = value;
+        }
     }
-    
+
+    public readonly CatSex sex = CatSex.Female;
+
     public Pelt pelt { get; set; }
     
     public Personality personality { get; set; }
     
     public CatSkills skills { get; set; }
-    
-    public readonly CatSex Sex;
-    
-    public string gender { get; set; }
 
-    [JsonInclude]
+    public string gender { get; set; } = "female";
+
     public IReadOnlyList<string> bioParents { get; private set; } = new List<string>();
     
     public List<string> adoptiveParents { get; set; } = new();
     
     public int lives { get; set; } = 1;
 
-    [JsonInclude]
-    public List<string> mates { get; private set; } = new();
+    public IReadOnlyList<string> mates
+    {
+        get { return _mates; }
+    }
 
-    [JsonInclude]
-    public List<string> previousMates { get; private set; } = new();
-    
+    public IReadOnlyList<string> previousMates 
+    {
+        get { return _previousMates; }
+    }
+
+    public bool worked { get; set; } = false;
+
+    // Bool if the cat is able to work
+    // Injuries are not yet implemented, so always return true.
+    [JsonIgnore]
+    public bool canWork
+    {
+        get
+        {
+            return true;
+        }
+    }
+
+    [JsonIgnore]
+    public string fullName => name.fullName;
+
+    [JsonIgnore]
     public CatAge age { get; private set; }
 
     [JsonInclude]
     public Backstory backstory { get; private set; } = new(Backstory.BackstoryType.Clanborn);
 
-    public bool worked { get; set; } = false;
-    
+    [JsonIgnore]
     public Group belongGroup { get; set; }
     
     /// <summary>
@@ -133,20 +174,22 @@ public partial class Cat : IEquatable<Cat>
             experienceLevel = ExpLevel.Untrained;
         }
     }
-    
-    public string thought { get; set; } = "is a cat.";
+
     public List<Pronoun> pronouns { get; set; } = new() {Pronoun.theyThem};
-    public ExpLevel experienceLevel { get; set; } = ExpLevel.Untrained;
-    
-    public bool dead
-    {
-        get { return belongGroup.dead; }
-    }
-    
-    
+
+    [JsonIgnore]
+    public string thought { get; set; } = "is a cat.";
+
+    [JsonIgnore]
+    public ExpLevel experienceLevel { get; private set; } = ExpLevel.Untrained;
+
+    [JsonIgnore]
+    public bool dead => belongGroup.dead;
+
     /// <summary>
     /// Age of the cat, in moons. Readonly, increment timeskips instead. 
     /// </summary>
+    [JsonIgnore]
     public float moons
     {
         get
@@ -155,6 +198,7 @@ public partial class Cat : IEquatable<Cat>
         }
     }
 
+    [JsonIgnore]
     public float deadForMoons
     {
         get
@@ -171,45 +215,33 @@ public partial class Cat : IEquatable<Cat>
         }
     }
 
-    // Bool if the cat is able to work
-    // Injuries are not yet implemented, so always return true.
-    public bool canWork
-    {
-        get
-        {
-            return true;
-        }
-    }
+    // CONSTRUCTORS
     
-    /// <summary>
-    /// Status or Rank of the cat. 
-    /// </summary>
-    public CatStatus status { get; set; }
-
-    [JsonConstructor]
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    internal Cat()
-    {
-        ID = "0";
-        name = new("prefix", "suffix");
-        pelt = new();
-        belongGroup = new Outsiders(new CatDictionary());
-    }
-
-
-    public Cat(string id, Group belongGroup, CatStatus status = CatStatus.Kit, Pelt? pelt = null, Backstory? backstory = null,
+    public Cat(string ID, Group belongGroup, CatStatus status = CatStatus.Kit, Pelt? pelt = null, Backstory? backstory = null,
         int timeskips = 0, CatSex sex = CatSex.Female, List<string>? bioParents = null, List<string>? adoptiveParents = null, 
         string? prefix = null, string? gender = null, string? suffix = null, int experience = 0)
     {
-        this.ID = id;
-        this.Sex = sex;
+        this.ID = ID;
+        this.sex = sex;
         this.gender = gender == null ? sex.ToString() : gender;
-        this.status = status;
         this.timeskips = timeskips;
         this.belongGroup = belongGroup;
         this.pelt = pelt == null ? new() : pelt;
         this.backstory = backstory == null ? new Backstory(Backstory.BackstoryType.Clanborn) : backstory;
-        
+        this.personality = new("loyal");
+        this.skills = new();
+
+        if (prefix == null && suffix == null)
+        {
+            name = Name.GenerateRandomName(this.status);
+        }
+        else
+        {
+            name = new Name(prefix, suffix, this.status);
+        }
+
+        this.status = status; //Must be set after name
+
         if (bioParents != null)
         {
             this.bioParents = bioParents;
@@ -222,16 +254,30 @@ public partial class Cat : IEquatable<Cat>
         
         this.experience = experience;
 
-        if (prefix == null && suffix == null)
-        {
-            name = Name.GenerateRandomName(this);
-        }
-        else
-        {
-            name = new Name(prefix, suffix, cat: this);
-        }
+        
     }
-    
+
+    [JsonConstructor]
+    internal Cat(string ID, CatSex sex, IReadOnlyList<string> mates, IReadOnlyList<string> previousMates, 
+        IReadOnlyList<string> bioParents, Name name, string belongGroupID)
+    {
+        this.ID = ID;
+        this.sex = sex;
+        this._mates = mates.ToList();
+        this._previousMates = previousMates.ToList();
+        this.bioParents = bioParents;
+        this.name = name;
+        _groupIDAtLoadIn = belongGroupID;
+
+        // These should be set to proper values by the deseralizer after the constructor is called
+        pelt = new();
+        skills = new();
+        personality = new("quiet");
+
+
+        belongGroup = new Outsiders("0", new CatDictionary());
+    }
+
     // EQ-OVERRIDES (And HASH)
 
     public override bool Equals(object? obj) => this.Equals(obj as Cat);
@@ -278,17 +324,7 @@ public partial class Cat : IEquatable<Cat>
     public static bool operator !=(Cat? lhs, Cat? rhs) => !(lhs == rhs);
 
     // END EQ OVERRIDES
-    
-    public bool IsPotentialMate(Cat otherCat)
-    {
-        if (this == otherCat)
-        {
-            return false;
-        }
-
-        return true;
-    }
-    
+        
     public void SetMate(Cat otherCat)
     {
         throw new NotImplementedException();
@@ -349,4 +385,8 @@ public partial class Cat : IEquatable<Cat>
         return _relationships[otherCatId];
     }
     
+    public void SetGroupBasedOnDeseralizedGroupID(Func<string, Group> fetchGroup)
+    {
+        belongGroup = fetchGroup(_groupIDAtLoadIn);
+    }
 }

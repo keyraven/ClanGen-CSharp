@@ -10,7 +10,7 @@ public class Clan : Group
 {
     // NAME ATTRIBUTES
     private string prefix { get; set; } = string.Empty;
-    private string suffix { get; set; } = "Clan";
+    private string suffix { get; } = "Clan";
     
     public override string GetName()
     {
@@ -48,11 +48,13 @@ public class Clan : Group
     }
 
     [JsonConstructor]
-    internal Clan() : base(false, new CatDictionary()) { }
+    public Clan(string ID, bool dead) : base(ID, dead, new CatDictionary())
+    {
 
-    // For creating a new clan, not loading them. 
-    public Clan(IReadOnlyFetchableObject<string, Cat> allCats, string prefix, string? leader = null, string? deputy = null,
-        List<string>? medicineCats = null) : base(false, allCats)
+    }
+
+    public Clan(string ID, IReadOnlyFetchableObject<string, Cat> allCats, string prefix, string? leader = null, string? deputy = null,
+        List<string>? medicineCats = null) : base(ID, false, allCats)
     {
         this.prefix = prefix;
     }

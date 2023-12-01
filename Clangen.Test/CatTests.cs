@@ -6,7 +6,7 @@ namespace Clangen.Tests;
 
 public class CatTests
 {
-    private Group _dummyClan1 = new Clan(new CatDictionary(), "Dummy1");
+    private Group _dummyClan1 = new Clan("0", new CatDictionary(), "Dummy1");
     private int _lastId = 0;
 
     private string GetNextId() => _lastId++.ToString();

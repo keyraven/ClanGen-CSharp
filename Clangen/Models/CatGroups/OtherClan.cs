@@ -9,9 +9,12 @@ namespace Clangen.Models.CatGroups;
 public class OtherClan : Group
 {
     [JsonConstructor]
-    internal OtherClan() : base(false, new CatDictionary()) { }
+    public OtherClan(string ID, bool dead) : base(ID, dead, new CatDictionary())
+    {
 
-    public OtherClan(IReadOnlyFetchableObject<string, Cat> allCats, string prefix) : base( false, allCats)
+    }
+
+    public OtherClan(string ID, IReadOnlyFetchableObject<string, Cat> allCats, string prefix) : base(ID, false, allCats)
     {
         this.prefix = prefix;
     }
