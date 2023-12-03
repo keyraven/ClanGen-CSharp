@@ -26,7 +26,7 @@ public abstract class Group
 
     public IReadOnlyCollection<Cat> GetMembers()
     {
-        return _allCats.Values.Where(cat => cat.belongGroup == this).ToList().AsReadOnly();
+        return _allCats.Values.Where(cat => cat.belongGroup == this && !cat.faded).ToList().AsReadOnly();
     }
 
     public Cat FetchCat(string catId) => _allCats.FetchCat(catId);

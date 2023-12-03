@@ -15,34 +15,49 @@ public partial class Cat : IEquatable<Cat>
 {
 
     // PRIVATE INSTANCE ATTRIBUTES
+    private int _timeskips = 0;
+    private int _experience = 0;
+    private CatStatus _status = CatStatus.Warrior;
+
     [JsonInclude]
     [JsonPropertyName("relationships")]
     private Dictionary<string, Relationship> _relationships = new();
 
     [JsonInclude]
+    [JsonRequired]
     private string belongGroupID => belongGroup.ID;
-
-    private List<string> _previousApprentices = new();
-    private int _timeskips = 0;
-    private int _experience;
-    private List<string> _apprentices = new();
-    private List<string> _mates = new();
-    private List<string> _previousMates = new();
-    private CatStatus _status = CatStatus.Warrior;
 
     //Only used for JSON loading
     private string _groupIDAtLoadIn = string.Empty;
 
+    [JsonInclude]
+    [JsonPropertyName("mates")]
+    private List<string> _mates = new();
+    
+    [JsonInclude]
+    [JsonPropertyName("previousMates")]
+    private List<string> _previousMates = new();
+
+    [JsonInclude]
+    [JsonPropertyName("apprentices")]
+    private List<string> _apprentices = new();
+
+    [JsonInclude]
+    [JsonPropertyName("previousApprentices")]
+    private List<string> _previousApprentices = new();
+
     //PUBLIC ATTRIBUTES and PROPERTIES
 
-    [JsonPropertyOrder(1)]
+    [JsonRequired]
     public readonly string ID;
 
+    [JsonRequired]
     public Name name { get; set; }
 
     /// <summary>
     /// Status or Rank of the cat. 
     /// </summary>
+    [JsonRequired]
     public CatStatus status 
     {
         get
@@ -66,51 +81,23 @@ public partial class Cat : IEquatable<Cat>
 
     public string gender { get; set; } = "female";
 
-    public IReadOnlyList<string> bioParents { get; private set; } = new List<string>();
+    [JsonInclude]
+    public IReadOnlyList<string> bioParents { get; init; } = new List<string>();
     
     public List<string> adoptiveParents { get; set; } = new();
     
     public int lives { get; set; } = 1;
 
-    public IReadOnlyList<string> mates
-    {
-        get { return _mates; }
-    }
-
-    public IReadOnlyList<string> previousMates 
-    {
-        get { return _previousMates; }
-    }
-
     public bool worked { get; set; } = false;
-
-    // Bool if the cat is able to work
-    // Injuries are not yet implemented, so always return true.
-    [JsonIgnore]
-    public bool canWork
-    {
-        get
-        {
-            return true;
-        }
-    }
-
-    [JsonIgnore]
-    public string fullName => name.fullName;
-
-    [JsonIgnore]
-    public CatAge age { get; private set; }
 
     [JsonInclude]
     public Backstory backstory { get; private set; } = new(Backstory.BackstoryType.Clanborn);
 
-    [JsonIgnore]
-    public Group belongGroup { get; set; }
-    
     /// <summary>
     /// Number of timeskips a cat has gone through
     /// 1 Timeskip = 1/2 moon.
     /// </summary>
+    [JsonRequired]
     public int timeskips
     {
         get
@@ -143,26 +130,8 @@ public partial class Cat : IEquatable<Cat>
     
     public int deadForTimeSkips { get; set; } = 0;
 
-    /// <summary>
-    /// Cat's mentor. Can be null to indicate that a cat doesn't have a mentor
-    /// </summary>
     [JsonInclude]
     public string? mentor { get; private set; }
-
-    /// <summary>
-    /// List of current apprentices. 
-    /// </summary>
-    public IReadOnlyCollection<string> apprentices {
-        get
-        {
-            return _apprentices.AsReadOnly();
-        }
-    }
-
-    public IReadOnlyCollection<string> previousApprentices
-    {
-        get => _previousApprentices.AsReadOnly();
-    }
 
     public int experience
     {
@@ -175,7 +144,55 @@ public partial class Cat : IEquatable<Cat>
         }
     }
 
+    [JsonIgnore] // For now. 
     public List<Pronoun> pronouns { get; set; } = new() {Pronoun.theyThem};
+
+    // Bool if the cat is able to work
+    // Injuries are not yet implemented, so always return true.
+    [JsonIgnore]
+    public bool canWork
+    {
+        get
+        {
+            return true;
+        }
+    }
+
+    [JsonIgnore]
+    public string fullName => name.fullName;
+
+    [JsonIgnore]
+    public CatAge age { get; private set; }
+
+    [JsonIgnore]
+    public Group belongGroup { get; set; }
+
+    [JsonIgnore]
+    public IReadOnlyList<string> previousMates
+    {
+        get { return _previousMates; }
+    }
+
+    [JsonIgnore]
+    public IReadOnlyList<string> mates
+    {
+        get { return _mates; }
+    }
+
+    [JsonIgnore]
+    public IReadOnlyCollection<string> apprentices
+    {
+        get
+        {
+            return _apprentices.AsReadOnly();
+        }
+    }
+
+    [JsonIgnore]
+    public IReadOnlyCollection<string> previousApprentices
+    {
+        get => _previousApprentices.AsReadOnly();
+    }
 
     [JsonIgnore]
     public string thought { get; set; } = "is a cat.";
@@ -185,6 +202,9 @@ public partial class Cat : IEquatable<Cat>
 
     [JsonIgnore]
     public bool dead => belongGroup.dead;
+
+    [JsonIgnore]
+    public bool faded { get; set; } = false;
 
     /// <summary>
     /// Age of the cat, in moons. Readonly, increment timeskips instead. 
@@ -258,14 +278,10 @@ public partial class Cat : IEquatable<Cat>
     }
 
     [JsonConstructor]
-    internal Cat(string ID, CatSex sex, IReadOnlyList<string> mates, IReadOnlyList<string> previousMates, 
-        IReadOnlyList<string> bioParents, Name name, string belongGroupID)
+    internal Cat(string ID, CatSex sex, Name name, string belongGroupID)
     {
         this.ID = ID;
         this.sex = sex;
-        this._mates = mates.ToList();
-        this._previousMates = previousMates.ToList();
-        this.bioParents = bioParents;
         this.name = name;
         _groupIDAtLoadIn = belongGroupID;
 
@@ -274,7 +290,7 @@ public partial class Cat : IEquatable<Cat>
         skills = new();
         personality = new("quiet");
 
-
+        // Dummy group, to be replaced with true group late during the load-in process 
         belongGroup = new Outsiders("0", new CatDictionary());
     }
 
@@ -327,12 +343,24 @@ public partial class Cat : IEquatable<Cat>
         
     public void SetMate(Cat otherCat)
     {
-        throw new NotImplementedException();
+        otherCat._mates.Add(this.ID);
+        this._mates.Add(otherCat.ID);
     }
 
-    public void UnSetMate(Cat otherCat)
+    public void RemoveMate(Cat otherCat)
     {
-        throw new NotImplementedException();
+        if (!_mates.Contains(otherCat.ID)) { return; }
+
+        _mates.Remove(otherCat.ID);
+        otherCat._mates.Remove(this.ID);
+    }
+
+    public void RemoveMate(string catID)
+    {
+        if (!_mates.Contains(catID)) { return; }
+
+        belongGroup.FetchCat(catID)._mates.Remove(this.ID);
+        _mates.Remove(this.ID);
     }
 
     public void SetMentor(Cat newMentor)

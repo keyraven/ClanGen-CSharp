@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Security.Cryptography.X509Certificates;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Clangen.Models.CatStuff;
+using Microsoft.CodeAnalysis;
 
 namespace Clangen.Models;
 
-public class GameConfig
-{
-    public Dictionary<Cat.CatAge, int[]> ageMoons { get; set; }
-
-}
 
 public class GameSettings
 {
@@ -17,33 +17,109 @@ public class GameSettings
 
 public class Game
 {
+    //TODO: Add some proper logic to determine the save location. 
+    public const string fadedCatFolderName = "fadedCats";
+    public const string saveDirectory = "saves";
     public World? currentWorld { get; set; }
-    public GameConfig gameConfig { get; set; }
 
     public Game()
     {
         Console.WriteLine("creating game");
     }
 
-    public bool SaveWorld()
+    public World? LoadWorld(string pathToWorldFolder)
     {
-        if (currentWorld == null)
+        var options = new JsonSerializerOptions
         {
-            return false;
+            IncludeFields = true,
+            Converters = { new JsonStringEnumConverter() }
+        };
+
+        string worldFolder = new DirectoryInfo(pathToWorldFolder).Name;
+
+        string jsonString = File.ReadAllText(Path.Combine(pathToWorldFolder, "world.json"));
+        World? loadedWorld = null;
+        try { loadedWorld = JsonSerializer.Deserialize<World?>(jsonString, options); }
+        catch (JsonException ex) { return null; }
+        
+
+        // Finish Up Tasks
+        loadedWorld?.ReplaceDeseralizedGroupIDWithGroupObjects();
+        loadedWorld?.SetFadedCatPath(Path.Combine(pathToWorldFolder, fadedCatFolderName));
+        if (loadedWorld is not null) { loadedWorld.saveFolderName = worldFolder; }
+
+        return loadedWorld;
+    }
+
+ 
+    public void SaveWorld(World world, string saveFolderPath)
+    {
+        if (!Directory.Exists(saveFolderPath))
+        {
+            Directory.CreateDirectory(saveFolderPath);
         }
 
-        return SaveWorld(currentWorld);
+        world.saveFolderName ??= GetAndCreateOpenWorldSaveFolder(saveFolderPath);
 
+        var options = new JsonSerializerOptions
+        {
+            IncludeFields = true,
+            Converters = { new JsonStringEnumConverter() }
+        };
+
+        
+        // Fade Cats, Offically
+        foreach (var fadeCat in world.GetCatsToFade())
+        {
+            //Remove mentor, if needed
+            fadeCat.RemoveMentor();
+
+            //Remove mates, if needed
+            foreach (var mateID in fadeCat.mates)
+            {
+                fadeCat.RemoveMate(mateID);
+            }
+
+            string fadedJsonString = JsonSerializer.Serialize(fadeCat, options);
+            File.WriteAllText(Path.Combine(saveFolderPath, world.saveFolderName, 
+                fadedCatFolderName, $"{fadeCat.ID}.json"),fadedJsonString);
+        }
+
+        string jsonString = JsonSerializer.Serialize(world, options);
+        File.WriteAllText(Path.Combine(saveDirectory, world.saveFolderName, "world.json"),
+            jsonString);
+        jsonString = JsonSerializer.Serialize(world.GetWorldSummary(), options);
+        File.WriteAllText(Path.Combine(saveDirectory, world.saveFolderName, "worldSummary.json"),
+            jsonString);
     }
 
-    public bool SaveWorld(World world)
+    /// <summary>
+    /// Gets all saved worlds in the save directory/ 
+    /// </summary>
+    /// <returns>A dictionary, keyed with the name of the save folder, </returns>
+    public Dictionary<string, WorldSummary> GetAllSavedWorlds(string saveFolderName)
     {
-        
-        
+        Dictionary<string, WorldSummary> output = new();
+        foreach (var worldFolderPath in Directory.GetDirectories(saveFolderName))
+        {
+            if (File.Exists(Path.Combine(worldFolderPath, "world.json")) && 
+                File.Exists(Path.Combine(worldFolderPath, "worldSummary.json")))
+            {
+                WorldSummary? worldSummary = null;
+                try
+                {
+                    
+                    worldSummary = JsonSerializer.Deserialize<WorldSummary>(Path.Combine(
+                        worldFolderPath, "worldSummary.json"));
+                }
+                catch { continue; }
+                
+                if (worldSummary != null) { continue; }
 
-        return true;
+            }
+        }
     }
-    
+
     /// <summary>
     /// Load a save, creating a Clan Object and putting it as
     /// the current clan. 
@@ -59,12 +135,30 @@ public class Game
     /// </summary>
     public void GameStart()
     {
-        //Sprite.LoadResources();
-        //TODO --> Needs to be run once at startup. 
         
         Sprites.LoadSprites();
         LoadWorld();
         Console.WriteLine("Game-Start Tasks Complete");
     }
+
+    public string GetAndCreateOpenWorldSaveFolder(string saveFolderPath)
+    {
+        int i = 0;
+        while (true) 
+        {
+            if (++i > 10000)
+            {
+                throw new Exception("Unable to find unused name for World save folder");
+            }
+
+            string worldSaveFolderName = $"World{i}";
+            if (Directory.Exists(Path.Combine(saveFolderPath, worldSaveFolderName))) { continue; }
+
+            Directory.CreateDirectory(Path.Combine(worldSaveFolderName, worldSaveFolderName));
+            return worldSaveFolderName;
+        }
+    }
+
+
 
 }

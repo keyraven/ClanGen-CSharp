@@ -7,6 +7,7 @@ using Clangen.Models.Events;
 using Clangen.Models.CatStuff;
 using Clangen.Models.CatGroups;
 using Microsoft.CodeAnalysis.Scripting.Hosting;
+using System.IO;
 
 namespace Clangen.Models;
 
@@ -39,27 +40,37 @@ public enum GameMode
 /// Holds information on a single save. 
 /// </summary>
 public partial class World
-{
-    
+{ 
     private const int TimeskipsPerSeason = 6; 
-    
-    private int _lastCatId = 0;
-    private int _lastGroupId = 0;
     private readonly Season _startingSeason = Season.Newleaf;
     private int _timeskips = 0;
     private readonly List<OtherClan> _otherClans = new List<OtherClan>();
-    
     private CatDictionary _allCats = new();
+    private string? _saveFolderName = null;
+
+    [JsonInclude]
+    [JsonPropertyName("lastCatId")]
+    private int _lastCatId = 0;
+
+    [JsonInclude]
+    [JsonPropertyName("lastGroupId")]
+    private int _lastGroupId = 0;
 
     [JsonInclude]
     [JsonPropertyName("allCats")]
     private IReadOnlyCollection<Cat> _allCatsForSerialize => GetAllCats();
 
-    public WorldSettings worldSettings { get; set; } = new();
+    // PUBLIC
+
+    // If null, the world has not yet been saved. 
+    [JsonIgnore]
+    public string? saveFolderName { get; set; }
 
     [JsonIgnore]
     public Season season { get; private set; } = Season.Newleaf;
-    
+
+    public WorldSettings worldSettings { get; set; } = new();
+
     public int timeskips
     {
         get
@@ -101,12 +112,13 @@ public partial class World
         get { return _otherClans.AsReadOnly(); }
     }
     
-    public World(List<Cat> allCats, GameMode worldGameMode, int lastCatId = 0,  
-        Clan? currentClan = null, Afterlife? starClan = null, Afterlife? darkForest = null, 
+    public World(List<Cat> allCats, GameMode worldGameMode, int lastCatId = 0,
+        int lastGroupId = 0, Clan? currentClan = null, Afterlife? starClan = null, Afterlife? darkForest = null, 
         Afterlife? unknownRes = null, Outsiders? outsiders = null, List<OtherClan>? otherClans = null)
     {
 
         _lastCatId = lastCatId;
+        _lastGroupId = lastGroupId;
         
         foreach (Cat kitty in allCats)
         {
@@ -138,9 +150,10 @@ public partial class World
         
     }
     
-    public World(string clanName, int lastCatId = 0)
+    public World(string clanName, int lastCatId = 0, int lastGroupId = 0)
     {
         _lastCatId = lastCatId;
+        _lastGroupId = lastGroupId;
         
         this.currentClan = new(GetNextGroupId(), _allCats, clanName);
         
@@ -157,6 +170,7 @@ public partial class World
         }
     }
 
+    // This is only to be used for JSON deserlization. 
     [JsonConstructor]
     public World(IReadOnlyCollection<Cat> _allCatsForSerialize, Clan currentClan, Afterlife starClan, Afterlife darkForest,
         Afterlife unknownRes, Outsiders outsiders, IReadOnlyList<OtherClan> otherClans)
@@ -183,6 +197,11 @@ public partial class World
         }
         _otherClans = otherClans.ToList();
 
+    }
+
+    public WorldSummary GetWorldSummary()
+    {
+        return new WorldSummary(currentClan.GetName(), GetAllCats().Count, moons);
     }
 
     /// <summary>
@@ -260,26 +279,25 @@ public partial class World
     {
         _allCats.Add(addCat.ID, addCat);
     }
-    
-    /// <summary>
-    /// Remove all the cats from the world. 
-    /// </summary>
-    public void ClearWorld()
+
+    public void RemoveCatFromWorld(string catID)
+    {
+        _allCats.Remove(catID);
+    }
+
+    public void RemoveCatFromWorld(Cat removeCat)
+    {
+        RemoveCatFromWorld(removeCat.ID);
+    }
+
+    public void RemoveAllCatsFromWorld()
     {
         _allCats.Clear();
     }
 
-    public string GetNextCatId()
-    {
-        _lastCatId++;
-        return _lastCatId.ToString();
-    }
+    public string GetNextCatId() => (++_lastCatId).ToString();
 
-    public string GetNextGroupId()
-    {
-        _lastGroupId++;
-        return _lastGroupId.ToString();
-    }
+    public string GetNextGroupId() => (++_lastGroupId).ToString();
 
     /// <summary>
     /// Get a group from it's ID. 
@@ -301,6 +319,27 @@ public partial class World
     }
 
     /// <summary>
+    /// After initial deseralization, cat objects only have a groupID, but not the group object. 
+    /// This assigns then the proper group object. 
+    /// </summary>
+    public void ReplaceDeseralizedGroupIDWithGroupObjects()
+    {
+        foreach (var catValuePair in _allCats)
+        {
+            catValuePair.Value.SetGroupBasedOnDeseralizedGroupID(FetchGroup);
+        }
+    }
+
+    /// <summary>
+    /// Set the directory where faded cats are located. 
+    /// </summary>
+    /// <param name="path"></param>
+    public void SetFadedCatPath(string path)
+    {
+        _allCats.fadedCatPath = path;
+    }
+
+    /// <summary>
     /// Fetches a cat object based on the cat ID.
     /// Will load faded cats if needed.
     /// </summary>
@@ -308,15 +347,19 @@ public partial class World
     /// <returns></returns>
     public Cat FetchCat(string catId) => _allCats.FetchCat(catId);
 
-
     public IReadOnlyCollection<Cat> GetAllCats()
     {
-        return _allCats.Values.ToList().AsReadOnly();
+        return _allCats.Values.Where(i => !i.faded).ToList().AsReadOnly();
     }
 
     public IReadOnlyCollection<string> GetAllCatIds()
     {
-        return _allCats.Keys.ToList().AsReadOnly();
+        return _allCats.Keys.Where(i => !_allCats[i].faded).ToList().AsReadOnly();
+    }
+
+    public IReadOnlyCollection<Cat> GetCatsToFade()
+    {
+        return _allCats.Values.Where(i => i.faded).ToList().AsReadOnly();
     }
 
 }
@@ -326,3 +369,13 @@ public class WorldSettings
     
 }
 
+public struct WorldSummary
+{
+    public string CurrentClanName { get; init; }
+    public int CatNumber { get; init; }
+    public float WorldMoons { get; init; }
+
+    [JsonConstructor]
+    public WorldSummary(string currentClanName, int catNumber, float worldMoons) => 
+        (CurrentClanName, CatNumber, WorldMoons) = (currentClanName, catNumber, worldMoons);
+}

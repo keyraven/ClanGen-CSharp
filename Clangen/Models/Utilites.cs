@@ -71,12 +71,13 @@ public static class Utilities
 
         return Rnd.Next(range[0], range[1]);
     }
-    
+
     /// <summary>
     /// Add multiple dictionaries together. If there are duplicate keys,
     /// this uses the value from the new dictionary. 
     /// </summary>
     public static void AddRange<TKey, TValue>(this Dictionary<TKey, TValue> source, Dictionary<TKey, TValue> collection)
+        where TKey : notnull
     {
         if (collection == null)
         {

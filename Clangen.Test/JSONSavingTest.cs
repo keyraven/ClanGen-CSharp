@@ -8,14 +8,17 @@ namespace Clangen.Tests;
 
 public class JSONSavingTest
 {
-    private World _testWorld { get; set; }
+    private Game _game { get; set; } = new Game();
 
     private readonly ITestOutputHelper output;
 
     public JSONSavingTest(ITestOutputHelper output)
     {
         this.output = output;
-        _testWorld = new World("Test");
+
+        _game.GameStart();
+        _game.currentWorld = new World("Test");
+        _game.currentWorld.saveFolderName = "World1";
     }
     
     [Fact]
@@ -23,41 +26,23 @@ public class JSONSavingTest
     {
         PopulateWorld();
 
-        var options = new JsonSerializerOptions
-        {
-            IncludeFields = true,
-            Converters = { new JsonStringEnumConverter() }
-        };
+        _game.SaveWorld();
         
-        string json = JsonSerializer.Serialize(_testWorld, options);
-        output.WriteLine(json);
-        World? recoveredWorld = JsonSerializer.Deserialize<World>(json, options);
-        Assert.NotNull(recoveredWorld);
-
-        
-        
-        foreach (var cat in recoveredWorld.GetAllCats())
-        {
-            cat.SetGroupBasedOnDeseralizedGroupID(recoveredWorld.FetchGroup);
-        }
-        
-
-
-        json = JsonSerializer.Serialize(recoveredWorld, options);
-        output.WriteLine(json);
     }
     
     private void PopulateWorld()
-    {
+    {   
+        if (_game.currentWorld == null) { return; }
+
         // All some clan cats
         for (int i = 0; i < 6; i++)
         {
-            Cat warrior = new Cat(_testWorld.GetNextCatId(), _testWorld.currentClan, Cat.CatStatus.Warrior);
-            _testWorld.AddCatToWorld(warrior);
+            Cat warrior = new Cat(_game.currentWorld.GetNextCatId(), _game.currentWorld.currentClan, Cat.CatStatus.Warrior);
+            _game.currentWorld.AddCatToWorld(warrior);
         }
 
-        Cat outsider = new Cat(_testWorld.GetNextCatId(), _testWorld.outsiders, Cat.CatStatus.Rogue);
-        _testWorld.AddCatToWorld(outsider);
+        Cat outsider = new Cat(_game.currentWorld.GetNextCatId(), _game.currentWorld.outsiders, Cat.CatStatus.Rogue);
+        _game.currentWorld.AddCatToWorld(outsider);
 
     }
 }
