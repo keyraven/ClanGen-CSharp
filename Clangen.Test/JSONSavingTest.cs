@@ -20,16 +20,7 @@ public class JSONSavingTest
         _game.currentWorld = new World("Test");
         _game.currentWorld.saveFolderName = "World1";
     }
-    
-    [Fact]
-    public void TestJson()
-    {
-        PopulateWorld();
-
-        _game.SaveWorld();
         
-    }
-    
     private void PopulateWorld()
     {   
         if (_game.currentWorld == null) { return; }

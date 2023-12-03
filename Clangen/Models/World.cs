@@ -6,8 +6,6 @@ using System.Text.Json.Serialization;
 using Clangen.Models.Events;
 using Clangen.Models.CatStuff;
 using Clangen.Models.CatGroups;
-using Microsoft.CodeAnalysis.Scripting.Hosting;
-using System.IO;
 
 namespace Clangen.Models;
 

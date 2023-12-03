@@ -1,13 +1,8 @@
-﻿using Avalonia.Media.Imaging;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
 using Clangen.Models.CatGroups;
 using SkiaSharp;
-using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.ComponentModel;
 
 namespace Clangen.Models.CatStuff;
 

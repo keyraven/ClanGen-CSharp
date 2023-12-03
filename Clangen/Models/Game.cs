@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Clangen.Models.CatStuff;
-using Microsoft.CodeAnalysis;
 
 namespace Clangen.Models;
 
@@ -40,7 +38,7 @@ public class Game
         string jsonString = File.ReadAllText(Path.Combine(pathToWorldFolder, "world.json"));
         World? loadedWorld = null;
         try { loadedWorld = JsonSerializer.Deserialize<World?>(jsonString, options); }
-        catch (JsonException ex) { return null; }
+        catch (JsonException) { return null; }
         
 
         // Finish Up Tasks
@@ -105,19 +103,19 @@ public class Game
             if (File.Exists(Path.Combine(worldFolderPath, "world.json")) && 
                 File.Exists(Path.Combine(worldFolderPath, "worldSummary.json")))
             {
-                WorldSummary? worldSummary = null;
+                string jsonstring = File.ReadAllText(Path.Combine(worldFolderPath, "worldSummary.json"));
+                WorldSummary worldSummary;
                 try
                 {
-                    
-                    worldSummary = JsonSerializer.Deserialize<WorldSummary>(Path.Combine(
-                        worldFolderPath, "worldSummary.json"));
+                    worldSummary = JsonSerializer.Deserialize<WorldSummary>(jsonstring);
                 }
-                catch { continue; }
+                catch (JsonException) { continue; }
                 
-                if (worldSummary != null) { continue; }
-
+                output.Add(new DirectoryInfo(worldFolderPath).Name, worldSummary);
             }
         }
+
+        return output;
     }
 
     /// <summary>

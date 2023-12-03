@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using SkiaSharp;
 namespace Clangen.Models.CatStuff;
 

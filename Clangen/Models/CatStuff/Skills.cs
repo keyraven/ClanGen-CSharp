@@ -1,6 +1,5 @@
 ﻿namespace Clangen.Models.CatStuff;
 
-
 public enum SkillPath
 {
     Swim,

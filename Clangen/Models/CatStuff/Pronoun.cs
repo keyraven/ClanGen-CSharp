@@ -3,7 +3,6 @@ using System.Text.Json.Serialization;
 
 namespace Clangen.Models.CatStuff;
 
-
 public class Pronoun
 {
     public enum Conjugation

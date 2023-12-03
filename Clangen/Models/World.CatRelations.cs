@@ -1,10 +1,8 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Collections.Generic;
 using System.Linq;
 using Clangen.Models.CatGroups;
 using Clangen.Models.CatStuff;
-using SkiaSharp;
 
 namespace Clangen.Models;
 
