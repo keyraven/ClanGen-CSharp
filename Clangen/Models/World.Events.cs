@@ -2,6 +2,7 @@
 using System.Text.Json.Serialization;
 using Clangen.Models.CatStuff;
 using Clangen.Models.Events;
+using Clangen.Models.CatGroups;
 
 namespace Clangen.Models;
 
@@ -99,7 +100,6 @@ public partial class World
         currentCat.timeskips++;
     }
     
-
     private void CheckAndUpdateStatus(Cat currentCat)
     {
         // Updating Status Kit --> Apprentice
@@ -107,10 +107,14 @@ public partial class World
         {
             MakeApprentice(currentCat);
         }
-        // Updating Status Apprentice --> 
+        // Updating Status Apprentice --> Full Status
         else if (currentCat.status.IsApprentice() && currentCat.timeskips == Cat.AgeTimeskips[Cat.CatAge.YoungAdult][0])
         {
             GraduateFromApprenticeship(currentCat);
+        }
+        else if (currentCat.status.CanRetire() && currentCat.timeskips == Cat.AgeTimeskips[Cat.CatAge.Senior][0])
+        {
+            Retire(currentCat);
         }
     }
 
@@ -137,12 +141,62 @@ public partial class World
 
     private void GraduateFromApprenticeship(Cat currentCat)
     {
-        if (!currentCat.status.IsApprentice())
+        if (!currentCat.status.IsApprentice()) { return; }
+
+        string oldName = currentCat.fullName;
+        string eventText = string.Empty;
+        
+        if (currentCat.status == Cat.CatStatus.Apprentice)
         {
-            return;
+            currentCat.status = Cat.CatStatus.Warrior;
+            eventText = $"{oldName} is ready to become a warrior. A ceremony is held, and they are named " +
+                $"{currentCat.fullName}.";
         }
-        
-        
+        else if (currentCat.status == Cat.CatStatus.MediatorApprentice)
+        {
+            currentCat.status = Cat.CatStatus.Mediator;
+            eventText = $"{oldName} is ready to become a mediator. A ceremony is held, and they are named " +
+                $"{currentCat.fullName}.";
+        }
+        else if (currentCat.status == Cat.CatStatus.MedicineCatApprentice)
+        {
+            currentCat.status = Cat.CatStatus.MedicineCat;
+            eventText = $"{oldName} is ready to become full medicine cat. A ceremony is held, and they are " +
+                $"named {currentCat.fullName}.";
+        }
+        else { return; }
+
+        currentCat.RemoveMentor();
+
+        currentEvents.Add(new SingleEvent(eventText, currentCat.ID));
     }
     
+    private void Retire(Cat currentCat)
+    {
+        currentCat.status = Cat.CatStatus.Elder;
+
+        string eventText = $"{currentCat.fullName} retired to elder's den. ";
+        currentEvents.Add(new SingleEvent(eventText, currentCat.ID));
+    }
+
+    private void CheckAndPromoteLeader(Cat currentCat)
+    {
+        if (currentClan.leader != null) { return; }
+
+        
+    }
+
+    private void GetValidLeaderOrDeputy(Group clan)
+    {
+        var clanMembers = clan.GetMembers();
+        List<Group> members = new List<Group>();
+
+        Utilities.ChoseRandom((IList<string>)clanMembers);
+        
+        foreach (var kitty in clanMembers)
+        {
+
+        }
+    }
+      
 }

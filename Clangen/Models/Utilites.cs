@@ -13,21 +13,12 @@ public static class Utilities
     /// <param name="list"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns>A random entry from the passed list.</returns>
-    public static T ChoseRandom<T>(List<T> list)
+    public static T ChoseRandom<T>(IList<T> list)
     {
         return list[Rnd.Next(0, list.Count)];
     }
     
-    /// <summary>
-    /// Choose a random entry from a list. 
-    /// </summary>
-    /// <param name="list"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns>A random entry from the passed list.</returns>
-    public static T ChoseRandom<T>(IReadOnlyList<T> list)
-    {
-        return list[Rnd.Next(0, list.Count)];
-    }
+
 
     /// <summary>
     /// Makes a roll where the chance of success (true return) is 1/inverseChance

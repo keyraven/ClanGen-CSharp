@@ -235,7 +235,7 @@ public partial class World
         }
         
         Cat newCat = new(GetNextCatId(), belongGroup: currentClan, timeskips: timeskips, sex: sex,
-            status: status, pelt: Pelt.GenerateRandomPelt());
+            status: status, pelt: Pelt.GenerateRandomPelt(sex));
         AddCatToWorld(newCat);
         return newCat;
     }
@@ -260,11 +260,13 @@ public partial class World
         GenerateRandomCat(Cat.CatStatus.Apprentice);
         GenerateRandomCat(Cat.CatStatus.Kit);
         GenerateRandomCat(Cat.CatStatus.Kit);
-
+        
+        /*
         foreach (var value in _allCats)
         {
             Console.WriteLine($"{value.Value.fullName} {value.Value.pelt.peltPattern} {value.Value.pelt.peltColor}");
         }
+        */
         Console.WriteLine("Done");
     }
     

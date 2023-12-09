@@ -295,16 +295,15 @@ public static class Sprites
     /// <param name="color"></param>
     /// <param name="blendMode"></param>
     /// <returns></returns>
-    private static SKBitmap ApplyTint(SKImage source, SKBlendMode blendMode)
+    private static SKBitmap ApplyTint(SKImage source, SKColor color, SKBlendMode blendMode)
     {
         // this is almost certainly the worst way to do this. 
-        SKColor color = new SKColor(0, 0, 0, 0);
         SKBitmap output = SKBitmap.FromImage(source);
         using (SKCanvas canvas = new SKCanvas(output))
         {
             SKPaint paint = new SKPaint()
             {
-                ColorFilter = SKColorFilter.CreateBlendMode(SKColors.Aqua, blendMode),
+                ColorFilter = SKColorFilter.CreateBlendMode(color, blendMode),
                 BlendMode = SKBlendMode.SrcATop
             };
             
@@ -335,7 +334,6 @@ public static class Sprites
                 //WHITE PATCHES
                 if (cat.pelt.whitePatches != null)
                 {
-                    
                     canvas.DrawImage(whitePatches[$"{cat.pelt.whitePatches}{spriteNumber}"], 0, 0);
                 }
                 

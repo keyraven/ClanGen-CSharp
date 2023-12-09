@@ -55,12 +55,24 @@ public class Pelt
         "DAUB", "EMBER", "BRIE", "ORIOLE", "ROBIN", "BRINDLE", "PAIGE", "ROSETAIL", "SAFI", "DAPPLENIGHT", 
         "BLANKET", "BELOVED", "BODY", "SHILOH"
     };
+
+    private static readonly IReadOnlyList<string> AllPeltLengths = new List<string>()
+    {
+        "SHORT", "MEDIUM", "LONG"
+    };
+    
+    private const string newbornSprite = "20";
+    private const string paraYoungSprite = "17";
+    private const string sickYoungSprite = "19";
+    private const string sickAdultSprite = "20";
+    
     
     // Needed
     public string peltColor { get; private set; } = AllColorNames[0];
     public string peltPattern { get; private set; } = AllPeltPatterns[0];
     public string eyeColor { get; private set; } = AllEyeColors[0];
     public string skin { get; private set; } = "PINK";
+    
     public string kittenSprite { get; private set; } = "0";
     public string adolSprite { get; private set; } = "3";
     public string adultSprite { get; private set; } = "6";
@@ -96,25 +108,44 @@ public class Pelt
     public string? tortiePatches { get; private set; }
 
 
-    public static Pelt GenerateRandomPelt(List<Cat>? parents = null)
+    public static Pelt GenerateRandomPelt(Cat.CatSex sex, List<Cat>? parents = null)
     {
         Pelt newPelt = new Pelt();
-        newPelt.peltPattern = Utilities.ChoseRandom(AllPeltPatterns);
-        Console.WriteLine(newPelt.peltPattern);
-        newPelt.peltColor = Utilities.ChoseRandom(AllColorNames);
-        newPelt.eyeColor = Utilities.ChoseRandom(AllEyeColors);
-
-        if (Utilities.InverseChanceRoll(3))
+        
+        // DETERMINE PELT LENGTH
+        newPelt.peltLength = Utilities.ChoseRandom((IList<string>)AllPeltLengths);
+        if (newPelt.peltLength  == "LONG")
         {
-            newPelt.whitePatches = Utilities.ChoseRandom(AllWhitePatches);
+            newPelt.adultSprite = Utilities.RandomInt(9, 11).ToString();
+            newPelt.paraAdultSprite = "13";
+        }
+        else
+        {
+            newPelt.adultSprite = Utilities.RandomInt(6, 8).ToString();
+            newPelt.paraAdultSprite = "12";
         }
         
+        newPelt.seniorSprite = Utilities.RandomInt(13, 15).ToString();
+        newPelt.kittenSprite = Utilities.RandomInt(0, 2).ToString();
+        newPelt.adolSprite = Utilities.RandomInt(3, 5).ToString();
+        
+        newPelt.peltPattern = Utilities.ChoseRandom((IList<string>)AllPeltPatterns);
+        newPelt.peltColor = Utilities.ChoseRandom((IList<string>)AllColorNames);
+        newPelt.eyeColor = Utilities.ChoseRandom((IList<string>)AllEyeColors);
+        
+        if (Utilities.InverseChanceRoll(3))
+        {
+            newPelt.whitePatches = Utilities.ChoseRandom((IList<string>)AllWhitePatches);
+        }
+        
+        // Determine tortie. TODO- add sex dependence
         if (Utilities.InverseChanceRoll(4))
         {
-            newPelt.tortiePatches = Utilities.ChoseRandom(AllTortiePatches);
-            newPelt.tortieColor = Utilities.ChoseRandom(AllColorNames);
-            newPelt.tortiePattern = Utilities.ChoseRandom(AllPeltPatterns);
+            newPelt.tortiePatches = Utilities.ChoseRandom((IList<string>)AllTortiePatches);
+            newPelt.tortieColor = Utilities.ChoseRandom((IList<string>)AllColorNames);
+            newPelt.tortiePattern = Utilities.ChoseRandom((IList<string>)AllPeltPatterns);
         }
+        
 
         return newPelt;
     }
@@ -124,28 +155,28 @@ public class Pelt
         switch (age)
         {
             case Cat.CatAge.Newborn:
-                return "20";
+                return newbornSprite;
             
             case Cat.CatAge.Kitten:
-                if (!canWork) { return "19"; }
-                return paralyzed ? "17" : kittenSprite;
+                if (!canWork) { return sickYoungSprite; }
+                return paralyzed ? paraYoungSprite : kittenSprite;
             
             case Cat.CatAge.Adolescent:
-                if (!canWork) { return "19"; }
-                return paralyzed ? "17" : adolSprite;
+                if (!canWork) { return sickYoungSprite; }
+                return paralyzed ? paraYoungSprite : adolSprite;
             
             case Cat.CatAge.YoungAdult:
             case Cat.CatAge.Adult:
             case Cat.CatAge.SeniorAdult:
-                if (!canWork) { return "18"; }
+                if (!canWork) { return sickAdultSprite; }
                 return paralyzed ? paraAdultSprite : adultSprite;
             
             case (Cat.CatAge.Senior):
-                if (!canWork) { return "18"; }
+                if (!canWork) { return sickAdultSprite; }
                 return paralyzed ? paraAdultSprite : seniorSprite;
             
             default:
-                if (!canWork) { return "18"; }
+                if (!canWork) { return sickAdultSprite; }
                 return paralyzed ? paraAdultSprite : adultSprite;
         }
     }
@@ -177,30 +208,5 @@ public class Pelt
         }
 
         return peltPattern;
-    }
-
-    private void InitFurLength()
-    {
-        
-    }
-    
-    private void InitColorPattern()
-    {
-        
-    }
-    
-    private void InitWhitePatches()
-    {
-        
-    }
-
-    private void InitEyes()
-    {
-        
-    }
-
-    private void InitTints()
-    {
-        
     }
 }

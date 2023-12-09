@@ -241,8 +241,8 @@ public partial class Cat : IEquatable<Cat>
         this.gender = gender == null ? sex.ToString() : gender;
         this.timeskips = timeskips;
         this.belongGroup = belongGroup;
-        this.pelt = pelt == null ? new() : pelt;
-        this.backstory = backstory == null ? new Backstory(Backstory.BackstoryType.Clanborn) : backstory;
+        this.pelt = pelt ?? new();
+        this.backstory = backstory ?? new Backstory(Backstory.BackstoryType.Clanborn);
         this.personality = new("loyal");
         this.skills = new();
 
@@ -371,8 +371,6 @@ public partial class Cat : IEquatable<Cat>
             return;
         }
         
-        // We need the worldObject here in order to get the mentor object. 
-        // If you can think of a better way to do this, feel free to change. 
         var mentorObject = belongGroup.FetchCat(this.mentor);
         mentorObject._apprentices.Remove(this.ID);
         this.mentor = null;
