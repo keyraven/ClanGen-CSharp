@@ -12,4 +12,23 @@
     <Application.Styles>
         <FluentTheme />
     </Application.Styles>
+             
+    <Application.Resources>
+        <ControlTheme x:Key="RectangleButton" TargetType="Button">
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Panel>
+                    <Rectangle Fill="Black" />
+                    <Rectangle Fill="Indigo" Margin="7"/>
+                    <ContentPresenter x:Name="PART_ContentPresenter"
+                                      FontFamily="{TemplateBinding FontFamily}"
+                                      Foreground="Beige"
+                                      Content="{TemplateBinding Content}"
+                                      Margin="{TemplateBinding Padding}"/>
+                    </Panel>
+                </ControlTemplate>
+            </Setter>
+        </ControlTheme>
+    </Application.Resources>
 </Application>

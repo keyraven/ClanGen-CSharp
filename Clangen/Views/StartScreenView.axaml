@@ -12,9 +12,9 @@
     <vm:StartScreenViewModel /> 
   </Design.DataContext> -->
   
-    <StackPanel>
-        <TextBlock>ClanGen : Clan Generator </TextBlock>
-        <Button Content="Start" Command="{Binding PressStart}"/>
-        <Button Content="Settings" Command="{Binding PressSettings}"/>
+    <StackPanel HorizontalAlignment="Left" Margin="50">
+        <TextBlock FontWeight="ExtraBlack" FontSize="40">ClanGen : Clan Generator </TextBlock>
+        <Button Content="Start" FontSize="25" Command="{Binding PressStart}"/>
+        <Button Theme="{StaticResource RectangleButton}" Content="Settings" FontSize="25" Command="{Binding PressSettings}"/>
     </StackPanel>
 </UserControl>
