@@ -65,6 +65,7 @@ public partial class App : Application
         services.AddSingleton<MainViewModel>();
         services.AddTransient<ClanScreenViewModel>();
         services.AddTransient<StartScreenViewModel>();
+        services.AddTransient<CatProfileScreenViewModel>();
         return services.BuildServiceProvider();
     }
 }

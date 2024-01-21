@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Clangen.Models.CatStuff;
 
@@ -75,6 +76,7 @@ public class Relationship
         set { _loyalty = AdjustToRange(value, MinLoyalty, MaxLoyalty); }
     }
     
+    
     public Relationship() { }
 
     public Relationship(string catFrom, string catTo, int closeness = 0, int sentiment = 0, int loyalty = 0, List<RelationshipLog>? log = null)
@@ -88,6 +90,11 @@ public class Relationship
         this.loyalty = loyalty;
         this.log = log;
     }
+
+    public int CountInteractionsOfType(RelationshipLogType types)
+    {
+        return log.Count(x => x.types.HasFlag(types));
+    }
     
     private static int AdjustToRange(int value, int minVal, int maxVal)
     {
@@ -99,19 +106,20 @@ public class Relationship
 }
 
 
+[Flags]
+public enum RelationshipLogType
+{
+    Romantic = 1 << 0,
+    Closeness = 1 << 1,
+    Sentiment = 1 << 2,
+    Loyalty = 1 << 3,
+    Negative = 1 << 4,
+    Positive = 1 << 5,
+}
+
 public class RelationshipLog
 {
     
-    [Flags]
-    public enum RelationshipLogType
-    {
-        Romantic = 0,
-        Closeness = 1 << 0,
-        Sentiment = 1 << 2,
-        Loyalty = 1 << 3,
-        Negative = 1 << 4,
-        Positive = 1 << 5,
-    }
     
     public string text { get; private set; }
     public string[] involved { get; private set; }

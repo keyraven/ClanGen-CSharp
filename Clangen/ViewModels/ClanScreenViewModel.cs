@@ -35,6 +35,9 @@ public partial class ClanScreenViewModel : PageViewModelBase
         var cat = _game.currentWorld?.FetchCat(catID);
         Console.WriteLine(cat.fullName);
         Console.WriteLine("Button Pressed");
+        
+        //Wow this looks awful. But it works. 
+        _router.GoTo<CatProfileScreenViewModel>().SetCat(cat);
     }
     
     public ClanScreenViewModel(Game game, HistoryRouter<PageViewModelBase> router) : base(game, router)
