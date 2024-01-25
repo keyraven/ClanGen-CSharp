@@ -16,8 +16,9 @@ public partial class World
 
     public bool CheckRelated(Cat cat1, Cat cat2)
     {
-        return CheckParent(cat1, cat2) || CheckParent(cat2, cat1) || CheckGrandparent(cat1, cat2) ||
-               CheckGrandparent(cat2, cat1) || CheckSiblings(cat1, cat2) || CheckParentsSibling(cat1, cat2) ||
+        return cat1 == cat2 || CheckParent(cat1, cat2) || CheckParent(cat2, cat1) || 
+               CheckGrandparent(cat1, cat2) || CheckGrandparent(cat2, cat1) || 
+               CheckSiblings(cat1, cat2) || CheckParentsSibling(cat1, cat2) ||
                CheckParentsSibling(cat2, cat1) || CheckFirstCousin(cat1, cat2);
     }
     
@@ -42,6 +43,8 @@ public partial class World
 
     public bool CheckSiblings(Cat sibling1, Cat sibling2)
     {
+        if (sibling1 == sibling2) { return false; }
+        
         IEnumerable<string> allParents = sibling1.bioParents.Concat(sibling1.adoptiveParents);
         return allParents.Intersect(sibling2.bioParents.Concat(sibling2.adoptiveParents)).Any();
     }
@@ -61,6 +64,11 @@ public partial class World
 
     public bool CheckFirstCousin(Cat cousin1, Cat cousin2)
     {
+        if (cousin1 == cousin2) { return false; }
+        
+        // If cats are siblings, this should return false
+        if (CheckSiblings(cousin1, cousin2))  { return false; }
+        
         List<string> grandparents1 = new();
         foreach (var parentId in cousin1.bioParents.Concat(cousin1.adoptiveParents))
         {
@@ -82,17 +90,22 @@ public partial class World
 
     public bool IsPotentialMate(Cat cat1, Cat cat2, bool applyAgeGapRestriction = false, bool notAdultAlwaysFalse = true)
     {
-        if (cat1 == cat2) { return false; }
-        
         if (CheckRelated(cat1, cat2)) { return false; }
 
         if (cat1.dead != cat2.dead) { return false; }
-
+        
         if (!cat1.age.IsAdult() || !cat1.age.IsAdult())
         {
             if (notAdultAlwaysFalse) { return false; }
 
             if (cat1.age != cat2.age) { return false; }
+        }
+        else if (applyAgeGapRestriction)
+        {
+            if (cat1.age != cat2.age && Math.Abs(cat1.timeskips - cat2.timeskips) > 80)
+            {
+                return false;
+            }
         }
 
         if (cat1.ID == cat2.mentor || cat2.ID == cat1.mentor) { return false; }
@@ -117,25 +130,25 @@ public partial class World
     
     public Cat? AssignMentor(Cat apprentice)
     {
-        List<Cat> validMentors = new();
-        List<Cat> priorityMentors = new();
+        List<Cat> validMentors = [];
+        List<Cat> priorityMentors = [];
         foreach (var checkMentor in apprentice.belongGroup.GetMembers())
         {
             if (!apprentice.IsValidMentor(checkMentor)) { continue; }
             
             validMentors.Add(checkMentor);
-            if (checkMentor.canWork && !checkMentor.apprentices.Any())
+            if (checkMentor.canWork && checkMentor.apprentices.Count == 0)
             {
                 priorityMentors.Add(checkMentor);
             }
         }
 
-        if (!validMentors.Any())
+        if (validMentors.Count == 0)
         {
             return null;
         }
         
-        Cat chosenMentor = Utilities.ChoseRandom(priorityMentors.Any() ? priorityMentors : validMentors);
+        Cat chosenMentor = Utilities.ChoseRandom(priorityMentors.Count == 0 ? validMentors : priorityMentors );
         apprentice.SetMentor(chosenMentor);
         return chosenMentor;
     }

@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using Avalonia.Media.Imaging;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Avalonia.SimpleRouter;
 using Clangen.Models;
 using Clangen.Models.CatStuff;
-using CommunityToolkit.Mvvm.Input;
 
 namespace Clangen.ViewModels;
 
 public partial class CatProfileScreenViewModel : PageViewModelBase
 {
-    public Cat currentCat;
+    // Would prefer this not to be null. Set dummy cat? 
+    public Cat? CurrentCat;
 
     [ObservableProperty] 
     private string _catName = string.Empty;
@@ -22,7 +19,7 @@ public partial class CatProfileScreenViewModel : PageViewModelBase
 
     public void SetCat(Cat setCat)
     {
-        currentCat = setCat;
+        CurrentCat = setCat;
         CatName = setCat.fullName;
     }
 }

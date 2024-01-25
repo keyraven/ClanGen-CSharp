@@ -12,6 +12,9 @@ public partial class Cat : IEquatable<Cat>
     // PRIVATE INSTANCE ATTRIBUTES
     private int _timeskips = 0;
     private int _experience = 0;
+    
+    [JsonInclude]
+    [JsonPropertyName("status")]
     private CatStatus _status = CatStatus.Warrior;
 
     [JsonInclude]
@@ -52,7 +55,7 @@ public partial class Cat : IEquatable<Cat>
     /// <summary>
     /// Status or Rank of the cat. 
     /// </summary>
-    [JsonRequired]
+    [JsonIgnore]
     public CatStatus status 
     {
         get
@@ -61,8 +64,20 @@ public partial class Cat : IEquatable<Cat>
         } 
         set
         {
-            _status = value;
-            name.nameStatus = value;
+            // Prevent doing tasks twice for the same status value.
+            // There are som, like life settings, they should only be done once. 
+            if (_status != value)
+            {
+                _status = value;
+                name.nameStatus = value;
+
+                switch (_status)
+                {
+                    case CatStatus.Leader:
+                        lives = 9;
+                        break;
+                }
+            }
         }
     }
 
@@ -273,6 +288,7 @@ public partial class Cat : IEquatable<Cat>
     }
 
     [JsonConstructor]
+    //Never use. Only for deserialization
     internal Cat(string ID, CatSex sex, Name name, string belongGroupID)
     {
         this.ID = ID;
@@ -280,7 +296,7 @@ public partial class Cat : IEquatable<Cat>
         this.name = name;
         _groupIDAtLoadIn = belongGroupID;
 
-        // These should be set to proper values by the deseralizer after the constructor is called
+        // These should be set to proper values by the deserializer after the constructor is called
         pelt = new();
         skills = new();
         personality = new("quiet");
@@ -410,4 +426,5 @@ public partial class Cat : IEquatable<Cat>
     {
         belongGroup = fetchGroup(_groupIDAtLoadIn);
     }
+    
 }

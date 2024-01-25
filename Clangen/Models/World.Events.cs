@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json.Serialization;
 using Clangen.Models.CatStuff;
 using Clangen.Models.Events;
@@ -46,6 +47,8 @@ public partial class World
         
         foreach (var entry in _allCats)
         {
+            AllCatsTimeskip(entry.Value);
+            
             if (entry.Value.belongGroup == currentClan)
             {
                 AliveClanCatTimeskip(entry.Value);
@@ -65,11 +68,25 @@ public partial class World
         }
         
     }
-
+    
+    /// <summary>
+    /// Tasks that need to be done for all cats, regardless of group/dead status. 
+    /// </summary>
+    /// <param name="currentCat"></param>
+    private void AllCatsTimeskip(Cat currentCat)
+    {
+        if (!currentCat.dead || catsDeadOnCurrentTimeSkip.Contains(currentCat.ID))
+        {
+            currentCat.timeskips++;
+        }
+        else
+        {
+            currentCat.deadForTimeSkips++;
+        }
+    }
+    
     private void AliveClanCatTimeskip(Cat currentCat)
     {
-        currentCat.timeskips++;
-        
         // Check mentor is still valid, reassign if not. 
         CheckAndAdjustMentor(currentCat);
         
@@ -80,24 +97,17 @@ public partial class World
 
     private void DeadCatTimeSkip(Cat currentCat)
     {
-        if (catsDeadOnCurrentTimeSkip.Contains(currentCat.ID))
-        {
-            currentCat.timeskips++;
-        }
-        else
-        {
-            currentCat.deadForTimeSkips++;
-        }
+        
     }
 
     private void OutsideCatTimeSkip(Cat currentCat)
     {
-        currentCat.timeskips++;
+        
     }
 
     private void OtherCatTimeSkip(Cat currentCat)
     {
-        currentCat.timeskips++;
+        
     }
     
     private void CheckAndUpdateStatus(Cat currentCat)
@@ -179,24 +189,59 @@ public partial class World
         currentEvents.Add(new SingleEvent(eventText, currentCat.ID));
     }
 
-    private void CheckAndPromoteLeader(Cat currentCat)
+    private Cat? CheckAndPromoteLeader()
     {
-        if (currentClan.leader != null) { return; }
-
+        if (currentClan.leader != null) { return null; }
         
+        if (currentClan.deputy != null)
+        {
+            currentClan.deputy.status = Cat.CatStatus.Leader;
+        }
+        else
+        {
+            var chosenLeader = SelectValidLeaderOrDeputy(currentClan);
+            if (chosenLeader is null)
+            {
+                return null;
+            }
+
+            chosenLeader.status = Cat.CatStatus.Leader;
+        }
+        
+        return currentClan.leader;
     }
 
-    private void GetValidLeaderOrDeputy(Group clan)
+    private Cat? CheckAndPromoteDeputy()
     {
-        var clanMembers = clan.GetMembers();
-        List<Group> members = new List<Group>();
-
-        Utilities.ChoseRandom((IList<string>)clanMembers);
+        if (currentClan.deputy != null) { return null; }
         
-        foreach (var kitty in clanMembers)
+        var chosenDeputy = SelectValidLeaderOrDeputy(currentClan);
+        if (chosenDeputy is null)
         {
-
+            return null;
         }
+
+        chosenDeputy.status = Cat.CatStatus.Deputy;
+
+        return chosenDeputy;
+    }
+
+    private Cat? SelectValidLeaderOrDeputy(Group clan)
+    {
+        var allWarriors = clan.GetMembers().Where(x => x.status == Cat.CatStatus.Warrior).ToList();
+        var allWarriorsWithApprentices = allWarriors.Where(x => x.apprentices.Count != 0
+                                                                || x.previousApprentices.Count != 0).ToList();
+
+        if (allWarriorsWithApprentices.Any())
+        {
+            return Utilities.ChoseRandom(allWarriorsWithApprentices);
+        }
+        else if (allWarriors.Any())
+        {
+            return Utilities.ChoseRandom(allWarriors);
+        }
+
+        return null;
     }
       
 }

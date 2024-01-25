@@ -66,7 +66,7 @@ public class Game
         };
 
         
-        // Fade Cats, Offically
+        // Fade Cats
         foreach (var fadeCat in world.GetCatsToFade())
         {
             //Remove mentor, if needed
