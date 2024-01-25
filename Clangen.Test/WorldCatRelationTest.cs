@@ -20,18 +20,21 @@ public class WorldCatRelationTest
     [Fact]
     public void SiblingCheckingShouldBeFalse_WhenCheckingACatAgainstThemselves()
     {
+        // If a cat has a parent(s), you could get a case where a cat is treated as their own sibling. 
+        
         Cat bioParent = new Cat(_testWorld.GetNextCatId(), _testWorld.currentClan);
         Cat bioChild = new Cat(_testWorld.GetNextCatId(), _testWorld.currentClan, bioParents: [ bioParent.ID ]);
         _testWorld.AddCatToWorld(bioParent);
         _testWorld.AddCatToWorld(bioChild);
 
         _testWorld.CheckSiblings(bioChild, bioChild).Should().BeFalse();
-
     }
     
     [Fact]
     public void CousinCheckingShouldBeFalse_WhenCheckingACatAgainstThemselves()
     {
+        // If a cat has grandparents(s), you could get a case where a cat is treated as their own cousin. 
+        
         Cat bioGrandparent = new Cat(_testWorld.GetNextCatId(), _testWorld.currentClan);
         Cat bioParent = new Cat(_testWorld.GetNextCatId(), _testWorld.currentClan, bioParents: [ bioGrandparent.ID ]);
         Cat bioChild = new Cat(_testWorld.GetNextCatId(), _testWorld.currentClan, bioParents: [ bioParent.ID ]);
@@ -71,7 +74,7 @@ public class WorldCatRelationTest
     }
 
     [Fact]
-    public void CheckRelatedShouldBeFalseWhenCatsAreNotRelated()
+    public void CheckRelatedShouldBeFalse_WhenCatsAreNotRelatedAndHaveNoParents()
     {
         Cat cat1 = new Cat(_testWorld.GetNextCatId(), _testWorld.currentClan);
         Cat cat2 = new Cat(_testWorld.GetNextCatId(), _testWorld.currentClan);
@@ -81,7 +84,23 @@ public class WorldCatRelationTest
         _testWorld.CheckRelated(cat1, cat2).Should().BeFalse();
         _testWorld.CheckRelated(cat2, cat1).Should().BeFalse();
     }
-
+    
+    [Fact]
+    public void CheckRelatedShouldBeFalse_WhenCatsAreNotRelatedAndHaveAParent()
+    {
+        Cat parent1 = new Cat(_testWorld.GetNextCatId(), _testWorld.currentClan);
+        Cat parent2 = new Cat(_testWorld.GetNextCatId(), _testWorld.currentClan);
+        Cat cat1 = new Cat(_testWorld.GetNextCatId(), _testWorld.currentClan, bioParents: [parent1.ID]);
+        Cat cat2 = new Cat(_testWorld.GetNextCatId(), _testWorld.currentClan, bioParents: [parent2.ID]);
+        _testWorld.AddCatToWorld(parent1);
+        _testWorld.AddCatToWorld(parent2);
+        _testWorld.AddCatToWorld(cat1);
+        _testWorld.AddCatToWorld(cat2);
+        
+        _testWorld.CheckRelated(cat1, cat2).Should().BeFalse();
+        _testWorld.CheckRelated(cat2, cat1).Should().BeFalse();
+    }
+    
     [Fact]
     public void SiblingCheckingShouldBeTrue_WhenCatsAreSiblingsThroughBiologicalParent()
 
