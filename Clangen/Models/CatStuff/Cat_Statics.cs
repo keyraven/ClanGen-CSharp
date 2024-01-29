@@ -86,13 +86,13 @@ public partial class Cat : IEquatable<Cat>
 
     public static readonly IReadOnlyDictionary<CatAge, int[]> AgeTimeskips = new Dictionary<CatAge, int[]>()
     {
-        [CatAge.Newborn] = new int[] {0, 1},
-        [CatAge.Kitten] = new int[] {2, 11},
-        [CatAge.Adolescent] = new int[] {12, 23},
-        [CatAge.YoungAdult] = new int[] {24, 95},
-        [CatAge.Adult] = new int[] {96, 191},
-        [CatAge.SeniorAdult] = new int[] {192, 239},
-        [CatAge.Senior] = new int[] {240, 600}
+        [CatAge.Newborn] = new int[] {0, 3},
+        [CatAge.Kitten] = new int[] {4, 23},
+        [CatAge.Adolescent] = new int[] {24, 47},
+        [CatAge.YoungAdult] = new int[] {48, 191},
+        [CatAge.Adult] = new int[] {192, 383},
+        [CatAge.SeniorAdult] = new int[] {384, 479},
+        [CatAge.Senior] = new int[] {480, 1200}
      };
     
 }

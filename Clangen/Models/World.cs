@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.Json.Serialization;
 using Clangen.Models.Events;
 using Clangen.Models.CatStuff;
@@ -38,8 +39,9 @@ public enum GameMode
 /// Holds information on a single save. 
 /// </summary>
 public partial class World
-{ 
-    private const int TimeskipsPerSeason = 6; 
+{
+    private const int TimeskipsPerMoon = 4;
+    private const int TimeskipsPerSeason = TimeskipsPerMoon * 3; 
     private readonly Season _startingSeason = Season.Newleaf;
     private int _timeskips = 0;
     private readonly List<OtherClan> _otherClans = new List<OtherClan>();
@@ -60,6 +62,9 @@ public partial class World
 
     // PUBLIC
 
+    [JsonInclude] 
+    public bool saveFileEditingDetected { get; set; } = false;
+    
     // If null, the world has not yet been saved. 
     [JsonIgnore]
     public string? saveFolderName { get; set; }
@@ -84,7 +89,7 @@ public partial class World
     
     public float moons
     {
-        get { return (float)timeskips / 2; }
+        get { return (float)timeskips / TimeskipsPerMoon; }
     }
 
     public List<SingleEvent> currentEvents { get; } = new() { new SingleEvent("Test") };
@@ -197,9 +202,9 @@ public partial class World
 
     }
 
-    public WorldSummary GetWorldSummary()
+    public WorldSummary GetWorldSummary(string hash = "")
     {
-        return new WorldSummary(currentClan.GetName(), GetAllCats().Count, moons);
+        return new WorldSummary(currentClan.GetName(), GetAllCats().Count, timeskips, hash);
     }
 
     /// <summary>
@@ -371,11 +376,12 @@ public class WorldSettings
 
 public struct WorldSummary
 {
-    public string CurrentClanName { get; init; }
-    public int CatNumber { get; init; }
-    public float WorldMoons { get; init; }
+    public string currentClanName { get; init; }
+    public int catNumber { get; init; }
+    public int worldTimeskips { get; init; }
+    public string saveHash { get; init; }
 
     [JsonConstructor]
-    public WorldSummary(string currentClanName, int catNumber, float worldMoons) => 
-        (CurrentClanName, CatNumber, WorldMoons) = (currentClanName, catNumber, worldMoons);
+    public WorldSummary(string currentClanName, int catNumber, int worldTimeskips, string saveHash) => 
+        (this.currentClanName, this.catNumber, this.worldTimeskips, this.saveHash) = (currentClanName, catNumber, worldTimeskips, saveHash);
 }

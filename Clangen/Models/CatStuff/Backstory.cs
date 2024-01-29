@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text.Json.Serialization;
 
@@ -6,8 +7,19 @@ namespace Clangen.Models.CatStuff;
 
 public class Backstory
 {
+    private IReadOnlyDictionary<BackstoryType, string> _defaultShortText = new Dictionary<BackstoryType, string>()
+    {
+        
+    };
+    
+    private IReadOnlyDictionary<BackstoryType, string> _defaultLongText = new Dictionary<BackstoryType, string>()
+    {
+        [BackstoryType.Founder] = "m_c is one of the founding members of the Clan.",
+        [BackstoryType.Clanborn] = "m_c was born into the Clan."
+    };
+    
     [Flags]
-    public enum BackstoryType
+    public enum BackstoryType: UInt64
     {
         Founder = 0,
         Clanborn = 1 << 0,
@@ -15,7 +27,11 @@ public class Backstory
         Refugee = 1 << 2,
         Rogue = 1 << 3,
         Loner = 1 << 4,
-        Healer = 1 << 5
+        Healer = 1 << 5,
+        Kittypet = 1 << 6,
+        Abandoned = 1 << 7,
+        NotInClan = 1 << 8, 
+        JoinedAsKit = 1 << 9,
     }
 
     [JsonInclude]

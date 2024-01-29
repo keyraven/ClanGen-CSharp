@@ -4,7 +4,11 @@ using Clangen.Models.CatGroups;
 
 namespace Clangen.Tests;
 
-public class CatTests
+/// <summary>
+/// Testing anything with one one cat ---> NOT with relationships between cats.
+/// No WORLD here! 
+/// </summary>
+public class OneCatTests
 {
     private Group _dummyClan1 = new Clan("0", new CatDictionary(), "Dummy1");
     private int _lastId = 0;
@@ -30,7 +34,6 @@ public class CatTests
 
             testCat.age.Should().Be(age, $"the timeskips values was set in the range of {age}");
         }
-        
     }
     
     [Fact]
@@ -64,9 +67,9 @@ public class CatTests
     // Test both even and odd. 
     [InlineData(11)]
     [InlineData(12)]
-    public void MoonsShouldBeHalfOfTimeskips(int currentTimeskips)
+    public void MoonsShouldBeAFourthOfTimeskips(int currentTimeskips)
     {
         Cat testCat = new Cat(GetNextId(), _dummyClan1, timeskips: currentTimeskips);
-        testCat.moons.Should().Be(((float)currentTimeskips) / 2);
+        testCat.moons.Should().Be(((float)currentTimeskips) / 4);
     }
 }

@@ -8,7 +8,7 @@ namespace Clangen.Models.CatStuff;
 
 public partial class Cat : IEquatable<Cat>
 {
-
+    
     // PRIVATE INSTANCE ATTRIBUTES
     private int _timeskips = 0;
     private int _experience = 0;
@@ -22,7 +22,6 @@ public partial class Cat : IEquatable<Cat>
     private Dictionary<string, Relationship> _relationships = new();
 
     [JsonInclude]
-    [JsonRequired]
     private string belongGroupID => belongGroup.ID;
 
     //Only used for JSON loading
@@ -45,8 +44,7 @@ public partial class Cat : IEquatable<Cat>
     private List<string> _previousApprentices = new();
 
     //PUBLIC ATTRIBUTES and PROPERTIES
-
-    [JsonRequired]
+    
     public readonly string ID;
 
     [JsonRequired]
@@ -224,7 +222,7 @@ public partial class Cat : IEquatable<Cat>
     {
         get
         {
-            return (float)timeskips / 2;
+            return (float)timeskips / 4;
         }
     }
 
@@ -233,7 +231,7 @@ public partial class Cat : IEquatable<Cat>
     {
         get
         {
-            return (float)deadForTimeSkips / 2;
+            return (float)deadForTimeSkips / 4;
         }
     }
 

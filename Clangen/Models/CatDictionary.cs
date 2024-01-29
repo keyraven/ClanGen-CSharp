@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Abstractions;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Clangen.Models.CatGroups;
@@ -17,6 +18,9 @@ public class CatDictionary : Dictionary<string, Cat>, IReadOnlyFetchableObject<s
 {
     [JsonIgnore]
     public string? fadedCatPath { get; set; } = null;
+
+    [JsonIgnore] 
+    public IFileSystem fileSystem { get; set; } = new FileSystem();
     
     public Cat FetchCat(string catId)
     {
@@ -36,7 +40,7 @@ public class CatDictionary : Dictionary<string, Cat>, IReadOnlyFetchableObject<s
                 "Maybe the World hasn't been saved yet?");
         }
 
-        if (!File.Exists(Path.Combine(fadedCatPath, catID)))
+        if (!fileSystem.File.Exists(Path.Combine(fadedCatPath, catID)))
         {
             throw new Exception($"Unable to find faded cat with id: {catID}");
         }
@@ -47,7 +51,7 @@ public class CatDictionary : Dictionary<string, Cat>, IReadOnlyFetchableObject<s
             Converters = { new JsonStringEnumConverter() }
         };
 
-        string jsonString = File.ReadAllText(Path.Combine(fadedCatPath, $"{catID}.json"));
+        string jsonString = fileSystem.File.ReadAllText(Path.Combine(fadedCatPath, $"{catID}.json"));
         Cat? fadedCat = JsonSerializer.Deserialize<Cat>(jsonString, options);
 
         if (fadedCat is null)

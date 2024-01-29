@@ -9,6 +9,7 @@ namespace Clangen.Models.CatGroups;
 public class Clan : Group
 {
     // NAME ATTRIBUTES
+    [JsonInclude]
     private string prefix { get; set; } = string.Empty;
     private string suffix { get; } = "Clan";
     

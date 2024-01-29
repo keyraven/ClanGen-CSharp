@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Clangen.Models.CatStuff;
 
@@ -68,43 +69,63 @@ public class Pelt
     
     
     // Needed
+    [JsonInclude]
     public string peltColor { get; private set; } = AllColorNames[0];
+    [JsonInclude]
     public string peltPattern { get; private set; } = AllPeltPatterns[0];
+    [JsonInclude]
     public string eyeColor { get; private set; } = AllEyeColors[0];
+    [JsonInclude]
     public string skin { get; private set; } = "PINK";
     
+    [JsonInclude]
     public string kittenSprite { get; private set; } = "0";
+    [JsonInclude]
     public string adolSprite { get; private set; } = "3";
+    [JsonInclude]
     public string adultSprite { get; private set; } = "6";
+    [JsonInclude]
     public string seniorSprite { get; private set; } = "9";
+    [JsonInclude]
     public string paraAdultSprite { get; private set; } = "12";
+    [JsonInclude]
     public string peltLength { get; private set; }= "short";
     public List<string> scars { get; set; } = new();
     public bool paralyzed { get; set; } = false;
+    [JsonInclude]
     public string tint { get; private set; } = "none";
+    [JsonInclude]
     public string whitePatchesTint { get; private set; } = "none";
 
     /// <summary>
     /// The pattern inside the tortie patches. IE, Tabby, Single, ext
     /// </summary>
+    [JsonInclude]
     public string tortiePattern { get; private set; } = "single";
 
     /// <summary>
     /// The color of the tortie patches. 
     /// </summary>
+    [JsonInclude]
     public string tortieColor { get; private set; } = "white";
 
     // Optional/Nullable
+    [JsonInclude]
     public string? whitePatches { get; private set; } = null;
+    [JsonInclude]
     public string? points { get; private set; } = null;
+    [JsonInclude]
     public string? vitiligo { get; private set; } = null;
+    [JsonInclude]
     public string? accessory { get; private set; } = null;
+    [JsonInclude]
     public string? eyeColor2 { get; private set; } = null;
     
     /// <summary>
     /// The shape of the tortie patches --> The mask
     /// Non-null tortiePatches marks the cat as a tortie
     /// </summary>
+    [JsonInclude]
     public string? tortiePatches { get; private set; }
 
 

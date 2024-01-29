@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Clangen.Models.CatStuff;
+using System.IO.Abstractions;
 
 namespace Clangen.Models;
 
@@ -15,12 +19,20 @@ public class GameSettings
 
 public class Game
 {
+    private readonly IFileSystem _fileSystem;
+    
     //TODO: Add some proper logic to determine the save location. 
     public const string fadedCatFolderName = "fadedCats";
     public const string saveDirectory = "saves";
     public World? currentWorld { get; set; }
 
-    public Game()
+    public Game(IFileSystem fileSystem)
+    {
+        _fileSystem = fileSystem;
+        Console.WriteLine("creating game - passed filesystem. Testing?");
+    }
+
+    public Game() : this(fileSystem: new FileSystem())
     {
         Console.WriteLine("creating game");
     }
@@ -32,18 +44,48 @@ public class Game
             IncludeFields = true,
             Converters = { new JsonStringEnumConverter() }
         };
+        
+        // First, load in the WorldSummary in order so we can check the hash. 
+        WorldSummary worldSummary;
+        try
+        {
+            string worldSummaryJsonString = _fileSystem.File.ReadAllText(Path.Combine(pathToWorldFolder, "worldSummary.json"));
+            worldSummary = JsonSerializer.Deserialize<WorldSummary>(worldSummaryJsonString);
+        }
+        catch (JsonException)
+        {
+            return null; 
+        }
+        
+        World loadedWorld;
+        string jsonString;
+        try
+        {
+            jsonString = _fileSystem.File.ReadAllText(Path.Combine(pathToWorldFolder, "world.json"));
+            loadedWorld = JsonSerializer.Deserialize<World>(jsonString, options);
+        }
+        catch (JsonException)
+        {
+            return null; 
+        }
 
-        string worldFolder = new DirectoryInfo(pathToWorldFolder).Name;
+        if (loadedWorld is null)
+        {
+            return null;
+        }
 
-        string jsonString = File.ReadAllText(Path.Combine(pathToWorldFolder, "world.json"));
-        World? loadedWorld = null;
-        try { loadedWorld = JsonSerializer.Deserialize<World?>(jsonString, options); }
-        catch (JsonException) { return null; }
+        if (worldSummary.saveHash != 
+            GetStringHash(SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(jsonString))))
+        {
+            loadedWorld.saveFileEditingDetected = true;
+            throw new WarningException("Save File Editing Detected!");
+        }
         
 
         // Finish Up Tasks
-        loadedWorld?.ReplaceDeseralizedGroupIDWithGroupObjects();
-        loadedWorld?.SetFadedCatPath(Path.Combine(pathToWorldFolder, fadedCatFolderName));
+        string worldFolder = new DirectoryInfo(pathToWorldFolder).Name;
+        loadedWorld.ReplaceDeseralizedGroupIDWithGroupObjects();
+        loadedWorld.SetFadedCatPath(Path.Combine(pathToWorldFolder, fadedCatFolderName));
         if (loadedWorld is not null) { loadedWorld.saveFolderName = worldFolder; }
 
         return loadedWorld;
@@ -52,9 +94,9 @@ public class Game
  
     public void SaveWorld(World world, string saveFolderPath)
     {
-        if (!Directory.Exists(saveFolderPath))
+        if (!_fileSystem.Directory.Exists(saveFolderPath))
         {
-            Directory.CreateDirectory(saveFolderPath);
+            _fileSystem.Directory.CreateDirectory(saveFolderPath);
         }
 
         world.saveFolderName ??= GetAndCreateOpenWorldSaveFolder(saveFolderPath);
@@ -79,15 +121,23 @@ public class Game
             }
 
             string fadedJsonString = JsonSerializer.Serialize(fadeCat, options);
-            File.WriteAllText(Path.Combine(saveFolderPath, world.saveFolderName, 
+            _fileSystem.File.WriteAllText(Path.Combine(saveFolderPath, world.saveFolderName, 
                 fadedCatFolderName, $"{fadeCat.ID}.json"),fadedJsonString);
         }
 
         string jsonString = JsonSerializer.Serialize(world, options);
-        File.WriteAllText(Path.Combine(saveDirectory, world.saveFolderName, "world.json"),
+        
+        // store a hashed version of the main save info, to store in the WorldSummary. Helps detect save-file
+        // editing (if I must make them human readable)
+        byte[] encoded = SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(jsonString));
+        Console.WriteLine(jsonString);
+        Console.WriteLine(GetStringHash(encoded));
+        
+        _fileSystem.File.WriteAllText(Path.Combine(saveDirectory, world.saveFolderName, "world.json"),
             jsonString);
-        jsonString = JsonSerializer.Serialize(world.GetWorldSummary(), options);
-        File.WriteAllText(Path.Combine(saveDirectory, world.saveFolderName, "worldSummary.json"),
+        
+        jsonString = JsonSerializer.Serialize(world.GetWorldSummary(GetStringHash(encoded)), options);
+        _fileSystem.File.WriteAllText(Path.Combine(saveDirectory, world.saveFolderName, "worldSummary.json"),
             jsonString);
     }
 
@@ -122,7 +172,7 @@ public class Game
     /// Load a save, creating a Clan Object and putting it as
     /// the current clan. 
     /// </summary>
-    public void LoadWorld()
+    public void GenerateRandomWorld()
     {
         currentWorld = new World("New");
         currentWorld.PopulateClan();
@@ -135,11 +185,10 @@ public class Game
     {
         
         Sprites.LoadSprites();
-        LoadWorld();
         Console.WriteLine("Game-Start Tasks Complete");
     }
 
-    public string GetAndCreateOpenWorldSaveFolder(string saveFolderPath)
+    private string GetAndCreateOpenWorldSaveFolder(string saveFolderPath)
     {
         int i = 0;
         while (true) 
@@ -150,13 +199,22 @@ public class Game
             }
 
             string worldSaveFolderName = $"World{i}";
-            if (Directory.Exists(Path.Combine(saveFolderPath, worldSaveFolderName))) { continue; }
+            if (_fileSystem.Directory.Exists(Path.Combine(saveFolderPath, worldSaveFolderName))) { continue; }
 
-            Directory.CreateDirectory(Path.Combine(worldSaveFolderName, worldSaveFolderName));
+            SetUpWorldSaveFileLocation(saveFolderPath, worldSaveFolderName);
             return worldSaveFolderName;
         }
     }
 
+    private void SetUpWorldSaveFileLocation(string saveFolderPath, string woldSaveFolderName)
+    {
+        _fileSystem.Directory.CreateDirectory(Path.Combine(saveFolderPath, woldSaveFolderName));
+        _fileSystem.Directory.CreateDirectory(Path.Combine(saveFolderPath, woldSaveFolderName, fadedCatFolderName));
+    }
 
+    private string GetStringHash(byte[] hash)
+    {
+        return BitConverter.ToString(hash);
+    }
 
 }

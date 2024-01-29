@@ -30,6 +30,8 @@ public partial class App : Application
 
         var game = services.GetRequiredService<Game>();
         game.GameStart();
+        Console.WriteLine("Generating Random Clan for Testing... (App.axaml.cs)");
+        game.GenerateRandomWorld(); // For Testing
         
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
