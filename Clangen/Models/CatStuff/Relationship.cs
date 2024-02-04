@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace Clangen.Models.CatStuff;
 
@@ -20,10 +21,13 @@ public class Relationship
     
     // Difference from python version --- NOTE
     // Relationship catFrom and catTo are now stored as IDs.
-    public string catFrom { get; set; } = string.Empty;
-    public string catTo { get; set; } = string.Empty;
+    [JsonRequired]
+    public string catFrom { get; init; } = string.Empty;
+    [JsonRequired]
+    public string catTo { get; init; } = string.Empty;
 
-    public List<RelationshipLog> log { get; set; } = new();
+    [JsonRequired]
+    public List<RelationshipLog> log { get; init; } = new();
 
     private int _closeness = 0;
     private int _sentiment = 0;
@@ -117,14 +121,12 @@ public enum RelationshipLogType
     Positive = 1 << 5,
 }
 
-public class RelationshipLog
+public readonly struct RelationshipLog
 {
-    
-    
-    public string text { get; private set; }
-    public string[] involved { get; private set; }
-    public RelationshipLogType types { get; private set; }
-    public int timeskip { get; private set; }
+    public string text { get; init; }
+    public string[] involved { get; init; }
+    public RelationshipLogType types { get; init; }
+    public int timeskip { get; init; }
 
     public RelationshipLog(string text, RelationshipLogType types, int timeskip, params string[] involved)
     {

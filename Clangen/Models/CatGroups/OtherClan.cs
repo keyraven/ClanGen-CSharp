@@ -8,6 +8,8 @@ namespace Clangen.Models.CatGroups;
 
 public class OtherClan : Group
 {
+    private int _reputation = 0;
+    
     [JsonConstructor]
     public OtherClan(string ID, bool dead) : base(ID, dead, new CatDictionary())
     {
@@ -21,7 +23,25 @@ public class OtherClan : Group
 
     public string prefix { get; set; } = string.Empty;
     public string suffix { get; set; } = "Clan";
-
+    
+    public int reputation
+    {
+        get { return _reputation; }
+        set
+        {
+            _reputation = value;
+            if (_reputation > 50)
+            {
+                _reputation = 50;
+            }
+            else if (_reputation < -50)
+            {
+                _reputation = -50;
+            }
+            
+        }
+    }
+    
     public override string GetName()
     {
         return $"{prefix}{suffix}";

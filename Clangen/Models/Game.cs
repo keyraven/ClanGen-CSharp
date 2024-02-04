@@ -29,7 +29,6 @@ public class Game
     public Game(IFileSystem fileSystem)
     {
         _fileSystem = fileSystem;
-        Console.WriteLine("creating game - passed filesystem. Testing?");
     }
 
     public Game() : this(fileSystem: new FileSystem())
@@ -42,7 +41,7 @@ public class Game
         var options = new JsonSerializerOptions
         {
             IncludeFields = true,
-            Converters = { new JsonStringEnumConverter() }
+            Converters = { new JsonStringEnumConverter() },
         };
         
         // First, load in the WorldSummary in order so we can check the hash. 
@@ -130,7 +129,6 @@ public class Game
         // store a hashed version of the main save info, to store in the WorldSummary. Helps detect save-file
         // editing (if I must make them human readable)
         byte[] encoded = SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(jsonString));
-        Console.WriteLine(jsonString);
         Console.WriteLine(GetStringHash(encoded));
         
         _fileSystem.File.WriteAllText(Path.Combine(saveDirectory, world.saveFolderName, "world.json"),

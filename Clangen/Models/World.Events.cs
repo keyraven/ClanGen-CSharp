@@ -146,7 +146,7 @@ public partial class World
             involvedCats.Add(assignedMentor.ID);
         }
         
-        currentEvents.Add(new SingleEvent(eventText, SingleEvent.EventType.Ceremony, involvedCats));
+        currentEvents.Add(new SingleEvent(eventText, SingleEvent.EventType.Ceremony, timeskips, involvedCats));
     }
 
     private void GraduateFromApprenticeship(Cat currentCat)
@@ -178,7 +178,7 @@ public partial class World
 
         currentCat.RemoveMentor();
 
-        currentEvents.Add(new SingleEvent(eventText, currentCat.ID));
+        currentEvents.Add(new SingleEvent(eventText, SingleEvent.EventType.Ceremony, timeskips, currentCat.ID));
     }
     
     private void Retire(Cat currentCat)
@@ -186,7 +186,7 @@ public partial class World
         currentCat.status = Cat.CatStatus.Elder;
 
         string eventText = $"{currentCat.fullName} retired to elder's den. ";
-        currentEvents.Add(new SingleEvent(eventText, currentCat.ID));
+        currentEvents.Add(new SingleEvent(eventText, SingleEvent.EventType.Ceremony, timeskips, currentCat.ID));
     }
 
     private Cat? CheckAndPromoteLeader()

@@ -7,3 +7,23 @@ public class Condition
     public bool preventWorking { get; } = false;
     public int timeskips { get; private set; } = 0;
 }
+
+public class Injury : Condition
+{
+    public Complication? complication { get; set; }
+}
+
+public class Illness : Condition
+{
+    public Complication? complication { get; set; }
+}
+
+public class PermCondition : Condition
+{
+    public Complication? complication { get; set; }
+}
+
+public class Complication : Condition
+{
+    
+}

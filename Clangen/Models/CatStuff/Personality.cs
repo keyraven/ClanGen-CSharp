@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
 
 namespace Clangen.Models.CatStuff;
 
@@ -9,20 +11,19 @@ enum Trait
 
 public class Personality
 {
-    private class TraitInfo
+    private class TraitInfo (Dictionary<Trait, List<int>> normalTraits, Dictionary<Trait, List<int>> kittenTraits)
     {
-        public Dictionary<Trait, List<int>>? normal_traits;
-        public Dictionary<Trait, List<int>>? kitten_traits;
+        public Dictionary<Trait, List<int>> normalTraits { get; init; } = normalTraits;
+        public Dictionary<Trait, List<int>> kittenTraits { get; init; } = kittenTraits;
     }
 
-    //private static readonly TraitInfo? traitRanges = JsonSerializer.Deserialize<TraitInfo>(File.ReadAllText("file_name.json"));
+    //private static readonly TraitInfo? TraitRanges = JsonSerializer.Deserialize<TraitInfo>(File.ReadAllText("file_name.json"));
 
     private static readonly int[] facetRange = new int[] { 0, 16 };
 
     private int _aggression = 0;
-    private int _stability = 0;
+    private int _neuroticism = 0;
     private int _sociability = 0;
-    private int _lawfulness = 0;
     private bool kit = false;
 
     public string? trait;
@@ -34,22 +35,15 @@ public class Personality
             _aggression = AdjustValueToRange(value);
         }
     }
-    public int stability
+    public int neuroticism
     {
-        get { return _stability; }
+        get { return _neuroticism; }
         set
         {
-            _stability = AdjustValueToRange(value);
+            _neuroticism = AdjustValueToRange(value);
         }
     }
-    public int lawfulness
-    {
-        get { return _lawfulness; }
-        set
-        {
-            _lawfulness = AdjustValueToRange(value);
-        }
-    }
+    
     public int sociability
     {
         get { return _sociability; }

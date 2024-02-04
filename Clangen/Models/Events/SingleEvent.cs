@@ -22,7 +22,7 @@ public class SingleEvent
     }
 
     [JsonInclude]
-    public string text { get; private set; } = "";
+    public string text { get; init; } = "";
 
     [JsonInclude]
     public List<string> involvedCats { get; } = new();
@@ -30,21 +30,27 @@ public class SingleEvent
     [JsonInclude]
     public EventType types { get; } = EventType.General;
 
+    [JsonInclude] 
+    public int timeskip { get; init; } = 0;
+
     [JsonConstructor]
     [EditorBrowsable(EditorBrowsableState.Never)]
     internal SingleEvent() { }
     
-    public SingleEvent(string text, EventType types, List<string> involvedCats)
+    public SingleEvent(string text, EventType types, int timeskip, List<string> involvedCats)
     {
         this.text = text;
         this.involvedCats = new List<string>(involvedCats);
         this.types = types;
+        this.timeskip = timeskip;
     }
 
-    public SingleEvent(string text, params string[] involvedCats)
+    public SingleEvent(string text, EventType types, int timeskip, params string[] involvedCats)
     {
         this.text = text;
         this.involvedCats = involvedCats.ToList();
+        this.types = types;
+        this.timeskip = timeskip;
     }
     
 }

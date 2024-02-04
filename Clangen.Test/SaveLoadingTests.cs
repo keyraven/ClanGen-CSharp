@@ -1,10 +1,10 @@
 ﻿using System.IO.Abstractions.TestingHelpers;
 using Clangen.Models;
 using Xunit.Abstractions;
-using IFileSystem = System.IO.Abstractions.IFileSystem;
 
 namespace Clangen.Tests;
 
+// ReWrite these to be NOT bad. 
 public class SaveLoadingTests
 {
     private readonly MockFileSystem _filesystem;
@@ -25,17 +25,16 @@ public class SaveLoadingTests
         _game.GenerateRandomWorld();
         
         // Set Up File System
-        var saveFolderPath = Path.Combine("saves", "World1");
+        var saveFolderPath = Path.Combine("saves");
         _filesystem.AddDirectory("saves");
-        _filesystem.AddDirectory(saveFolderPath);
         
         _game.SaveWorld(_game.currentWorld, saveFolderPath);
 
         var worldFileContents = _filesystem.GetFile(Path.Combine("saves", "World1", "world.json"));
         var worldSummaryFileContents = _filesystem.GetFile(Path.Combine("saves", "World1", "worldSummary.json"));
 
-        worldFileContents.TextContents.Should().ContainAny();
-        worldSummaryFileContents.TextContents.Should().ContainAny();
+        worldFileContents.TextContents.Should().NotBeEmpty();
+        worldSummaryFileContents.TextContents.Should().NotBeEmpty();
     }
     
     [Fact]
@@ -60,6 +59,8 @@ public class SaveLoadingTests
         _game.SaveWorld(newWorld, Path.Combine("saves", "World2"));
         
         _output.WriteLine(_filesystem.GetFile(Path.Combine("saves", "World2", "world.json")).TextContents);
-        (_filesystem.GetFile(Path.Combine("saves", "World2", "world.json")).TextContents == _filesystem.GetFile(Path.Combine("saves", "World1", "world.json")).TextContents).Should().BeTrue();
+        (_filesystem.GetFile(Path.Combine("saves", "World2", "world.json")).TextContents == 
+         _filesystem.GetFile(Path.Combine("saves", "World1", "world.json")).TextContents)
+            .Should().BeTrue();
     }
 }

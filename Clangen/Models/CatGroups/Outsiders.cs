@@ -6,14 +6,35 @@ namespace Clangen.Models.CatGroups;
 
 public class Outsiders : Group
 {
+    private int _reputation = 0;
+    
     [JsonInclude]
+    [JsonPropertyName("name")]
     private string _name = string.Empty;
 
     public override string GetName()
     {
         return _name;
     }
-
+    
+    public int reputation
+    {
+        get { return _reputation; }
+        set
+        {
+            _reputation = value;
+            if (_reputation > 50)
+            {
+                _reputation = 50;
+            }
+            else if (_reputation < -50)
+            {
+                _reputation = -50;
+            }
+            
+        }
+    }
+    
     [JsonConstructor]
     public Outsiders(string ID, bool dead) : base(ID, dead, new CatDictionary())
     {

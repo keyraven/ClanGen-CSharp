@@ -8,19 +8,22 @@ namespace Clangen.Models.CatStuff;
 
 public class Name
 {
-    private class NameDetails
+    private class NameDetails (List<string> normalPrefixes, List<string> normalSuffixes, 
+        Dictionary<Cat.CatStatus, string> specialSuffixes, List<string> inappropriateNames,
+        List<string> lonerNames)
     {
-        public List<string> normalPrefixes { get; set; } = new();
-        public List<string> normalSuffixes { get; set; } = new();
-        public Dictionary<Cat.CatStatus, string> specialSuffixes { get; set; } = new();
-        public List<string> inappropriateNames { get; set; } = new();
+        public List<string> normalPrefixes { get; init; } = normalPrefixes;
+        public List<string> normalSuffixes { get; init; } = normalSuffixes;
+        public Dictionary<Cat.CatStatus, string> specialSuffixes { get; init; } = specialSuffixes;
+        public List<string> inappropriateNames { get; init; } = inappropriateNames;
 
-        public List<string> lonerNames { get; set; } = new();
+        public List<string> lonerNames { get; init; } = lonerNames;
 
     }
     
     // Not sure how to remove the "possible null reference" warning. 
-    private static readonly NameDetails details = JsonSerializer.Deserialize<NameDetails>(File.ReadAllText("Resources/names.json"));
+    private static readonly NameDetails details = 
+        JsonSerializer.Deserialize<NameDetails>(File.ReadAllText("Resources/names.json"));
 
     public string prefix { get; set; } = string.Empty;
     public string suffix { get; set; } = string.Empty;

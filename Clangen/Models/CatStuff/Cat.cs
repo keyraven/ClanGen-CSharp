@@ -136,11 +136,14 @@ public partial class Cat : IEquatable<Cat>
         }
     }
     
+    [JsonRequired]
     public int deadForTimeSkips { get; set; } = 0;
 
     [JsonInclude]
     public string? mentor { get; private set; }
-
+    
+    public string playerNotes { get; set; } = String.Empty;
+    
     public int experience
     {
         get { return _experience; }

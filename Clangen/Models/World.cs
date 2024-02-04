@@ -92,7 +92,7 @@ public partial class World
         get { return (float)timeskips / TimeskipsPerMoon; }
     }
 
-    public List<SingleEvent> currentEvents { get; } = new() { new SingleEvent("Test") };
+    public List<SingleEvent> currentEvents { get; } = new() {};
     public List<SingleEvent> medicineDenEvents { get; } = new();
     public List<string[]> mediated { get; } = new();
     public readonly GameMode WorldGameMode = GameMode.Expanded;
