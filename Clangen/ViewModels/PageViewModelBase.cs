@@ -1,16 +1,12 @@
-﻿using Avalonia.SimpleRouter;
-using Clangen.Models;
+﻿using Clangen.Models;
 
 namespace Clangen.ViewModels;
 
 public class PageViewModelBase : ViewModelBase
 {
-    protected HistoryRouter<PageViewModelBase> _router;
-    protected Game _game;
+    protected static Game _game;
 
-    public PageViewModelBase(Game game, HistoryRouter<PageViewModelBase> router)
+    public PageViewModelBase()
     {
-        _router = router;
-        _game = game;
     }
 }

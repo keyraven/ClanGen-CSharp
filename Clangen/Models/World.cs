@@ -109,11 +109,8 @@ public partial class World
     
     // Outsiders
     public Outsiders outsiders { get; }
-    
-    public IReadOnlyList<OtherClan> otherClans
-    {
-        get { return _otherClans.AsReadOnly(); }
-    }
+
+    public IReadOnlyList<OtherClan> otherClans => _otherClans.AsReadOnly();
     
     public World(List<Cat> allCats, GameMode worldGameMode, int lastCatId = 0,
         int lastGroupId = 0, Clan? currentClan = null, Afterlife? starClan = null, Afterlife? darkForest = null, 

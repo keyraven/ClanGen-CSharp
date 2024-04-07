@@ -12,6 +12,8 @@
         <vm:ClanScreenViewModel />
     </Design.DataContext>  -->
     
+    <!--
+    
     <ItemsControl ItemsSource="{Binding CatTiles}">
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
@@ -32,4 +34,6 @@
             </DataTemplate>
         </ItemsControl.ItemTemplate>
     </ItemsControl>
+    
+    -->
 </UserControl>

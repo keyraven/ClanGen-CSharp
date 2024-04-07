@@ -1,13 +1,8 @@
-﻿using System.IO;
-using CommunityToolkit.Mvvm.ComponentModel;
-using Avalonia.SimpleRouter;
-using Avalonia.Media.Imaging;
-using SkiaSharp;
-using Clangen.Models;
+﻿using ReactiveUI;
 
 namespace Clangen.ViewModels;
 
-public class ViewModelBase : ObservableObject
+public class ViewModelBase : ReactiveObject
 {
     
 }

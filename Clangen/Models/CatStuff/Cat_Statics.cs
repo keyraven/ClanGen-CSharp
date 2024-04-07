@@ -35,10 +35,19 @@ public partial class Cat : IEquatable<Cat>
         [Description("rogue")]
         Rogue,
         [Description("former Clancat")]
-        FormerClanCat,
-        [Description("exiled")]
-        Exiled
+        FormerClanCat
     }
+
+    public enum CatSecondaryStatus
+    {
+        [Description("None")]
+        None,
+        [Description("exiled")]
+        Exiled,
+        [Description("lost")]
+        Lost
+    }
+    
     public enum CatAge
     {
         [Description("newborn")]

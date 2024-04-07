@@ -1,23 +1,13 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Avalonia.SimpleRouter;
-using Clangen.Models;
-using Clangen.Views;
+﻿using Clangen.Models;
 
 namespace Clangen.ViewModels;
 
-public partial class MainViewModel : PageViewModelBase
+public class MainViewModel : PageViewModelBase
 {
-    [ObservableProperty]
+    //[ObservableProperty]
     private PageViewModelBase _content = default!;
 
-    public MainViewModel(Game game, HistoryRouter<PageViewModelBase> router) : base(game, router)
+    public MainViewModel()
     {
-        // register route changed event to set content to viewModel, whenever 
-        // a route changes
-        _router.CurrentViewModelChanged += viewModel => Content = viewModel;
-        
-        // change to HomeView 
-        _router.GoTo<StartScreenViewModel>();
-        
     }
 }

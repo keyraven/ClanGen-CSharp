@@ -25,10 +25,10 @@ public class SingleEvent
     public string text { get; init; } = "";
 
     [JsonInclude]
-    public List<string> involvedCats { get; } = new();
+    public List<string> involvedCats { get; init; } = new();
 
     [JsonInclude]
-    public EventType types { get; } = EventType.General;
+    public EventType types { get; init; } = EventType.General;
 
     [JsonInclude] 
     public int timeskip { get; init; } = 0;
@@ -40,7 +40,7 @@ public class SingleEvent
     public SingleEvent(string text, EventType types, int timeskip, List<string> involvedCats)
     {
         this.text = text;
-        this.involvedCats = new List<string>(involvedCats);
+        this.involvedCats = involvedCats;
         this.types = types;
         this.timeskip = timeskip;
     }

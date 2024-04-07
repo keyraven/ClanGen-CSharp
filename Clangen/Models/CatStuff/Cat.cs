@@ -16,6 +16,10 @@ public partial class Cat : IEquatable<Cat>
     [JsonInclude]
     [JsonPropertyName("status")]
     private CatStatus _status = CatStatus.Warrior;
+    
+    [JsonInclude]
+    [JsonPropertyName("secondaryStatus")]
+    private CatSecondaryStatus _secondaryStatus = CatSecondaryStatus.None;
 
     [JsonInclude]
     [JsonPropertyName("relationships")]
@@ -76,6 +80,19 @@ public partial class Cat : IEquatable<Cat>
                         break;
                 }
             }
+        }
+    }
+
+    [JsonIgnore]
+    public CatSecondaryStatus secondaryStatus
+    {
+        get
+        {
+            return _secondaryStatus;
+        }
+        set
+        {
+            _secondaryStatus = value;
         }
     }
 

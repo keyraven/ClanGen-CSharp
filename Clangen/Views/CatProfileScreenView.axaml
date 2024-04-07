@@ -6,5 +6,5 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Clangen.Views.CatProfileScreenView"
              x:DataType="vm:CatProfileScreenViewModel">
-    <TextBlock Text="{Binding CatName}"></TextBlock>
+    <!-- <TextBlock Text="{Binding CatName}"></TextBlock> -->
 </UserControl>

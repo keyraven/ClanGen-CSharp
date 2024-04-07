@@ -1,73 +1,67 @@
 ﻿using System;
+using System.Linq;
 using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
-using Avalonia.SimpleRouter;
 using Clangen.Models;
-using Microsoft.Extensions.DependencyInjection;
 
 using Clangen.ViewModels;
 using Clangen.Views;
+using Prism.DryIoc;
+using Prism.Ioc;
+using Prism.Modularity;
+using Prism.Regions;
 
 namespace Clangen;
 
-public partial class App : Application
+public class App : PrismApplication
 {
+    public static bool IsSingleViewLifetime =>
+        Environment.GetCommandLineArgs()
+            .Any(a => a == "--fbdev" || a == "--drm");
+    
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
+        base.Initialize();              // <-- Required
     }
 
-    public override void OnFrameworkInitializationCompleted()
+    protected override void RegisterTypes(IContainerRegistry containerRegistry)
     {
-        // Line below is needed to remove Avalonia data validation.
-        // Without this line you will get duplicate validations from both Avalonia and CT
-        BindingPlugins.DataValidators.RemoveAt(0);
-        
-        IServiceProvider services = ConfigureServices();
-        var mainViewModel = services.GetRequiredService<MainViewModel>();
+        // Register Services
+        //TODO - make Game an interface (IGame)
+        containerRegistry.RegisterSingleton<Game,Game>();
 
-        var game = services.GetRequiredService<Game>();
-        game.GameStart();
-        Console.WriteLine("Generating Random Clan for Testing... (App.axaml.cs)");
-        game.GenerateRandomWorld(); // For Testing
-        
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            desktop.MainWindow = new MainWindow
-            {
-                DataContext = mainViewModel
-            };
-        }
-        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
-        {
-            singleViewPlatform.MainView = new MainView()
-            {
-                DataContext = mainViewModel
-            };
-        }
+        // Views - Generic
+        containerRegistry.Register<MainWindow>();
 
-        base.OnFrameworkInitializationCompleted();
+        // Views - Region Navigation
+        containerRegistry.RegisterForNavigation<StartScreenView, StartScreenViewModel>();
+        containerRegistry.RegisterForNavigation<ClanScreenView, ClanScreenViewModel>();
+    }
 
-        
+    
+    protected override AvaloniaObject CreateShell()
+    { 
+        return Container.Resolve<MainWindow>();
     }
     
-    
-    private static ServiceProvider ConfigureServices()
+    /*
+
+    protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
     {
-        var services = new ServiceCollection();
-        //Add game as a service
-        services.AddSingleton<Game>();
-        
-        // Add the HistoryRouter as a service
-        services.AddSingleton<HistoryRouter<PageViewModelBase>>(s => new HistoryRouter<PageViewModelBase>(t => (PageViewModelBase)s.GetRequiredService(t)));
-        
-        // Add the ViewModels as a service (Main as singleton, others as transient)
-        services.AddSingleton<MainViewModel>();
-        services.AddTransient<ClanScreenViewModel>();
-        services.AddTransient<StartScreenViewModel>();
-        services.AddTransient<CatProfileScreenViewModel>();
-        return services.BuildServiceProvider();
+        // Register modules
+        //moduleCatalog.AddModule<Module1.Module>();
+        //moduleCatalog.AddModule<Module2.Module>();
+        //moduleCatalog.AddModule<Module3.Module>();
+    }
+    */
+
+    /// <summary>Called after <seealso cref="Initialize"/>.</summary>
+    protected override void OnInitialized()
+    {
+        // Register initial Views to Region.
+        var regionManager = Container.Resolve<IRegionManager>();
+        regionManager.RegisterViewWithRegion(RegionNames.MainRegion, typeof(StartScreenViewModel));
     }
 }
+    

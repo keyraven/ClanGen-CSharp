@@ -1,28 +1,24 @@
-﻿using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.ComponentModel;
-using Avalonia.SimpleRouter;
-using Clangen.Models;
+﻿using Clangen.Models;
 
 namespace Clangen.ViewModels;
 
-public partial class StartScreenViewModel : PageViewModelBase
+public class StartScreenViewModel : PageViewModelBase
 {
     public string Greeting => "Start Screen!";
     
-    public StartScreenViewModel(Game game, HistoryRouter<PageViewModelBase> router) : base(game, router)
+    public StartScreenViewModel() 
     {
-        _router = router;
     }
     
-    [RelayCommand]
+    //[RelayCommand]
     public void PressStart()
     {
-        _router.GoTo<ClanScreenViewModel>();
+       // _router.GoTo<ClanScreenViewModel>();
     }
 
-    [RelayCommand]
+    //[RelayCommand]
     public void PressSettings()
     {
-        _router.GoTo<ClanScreenViewModel>();
+        //_router.GoTo<ClanScreenViewModel>();
     }
 }
