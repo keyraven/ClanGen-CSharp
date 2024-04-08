@@ -1,19 +1,35 @@
-﻿using Clangen.Models;
+﻿using System;
+using Clangen.Models;
+using Prism.Regions;
+using ReactiveUI;
+using System.Windows.Input;
 
 namespace Clangen.ViewModels;
 
-public class StartScreenViewModel : PageViewModelBase
+public class StartScreenViewModel : ViewModelBase
 {
+    private IRegionManager _regionManager;
+    private Game _game;
     public string Greeting => "Start Screen!";
     
-    public StartScreenViewModel() 
+    public ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit> PressStartCommand { get; private set; }
+    
+    
+    public StartScreenViewModel(Game game, IRegionManager regionManager)
     {
+        _regionManager = regionManager;
+        _game = game;
+
+        PressStartCommand = ReactiveCommand.Create(PressStart);
     }
     
-    //[RelayCommand]
     public void PressStart()
     {
-       // _router.GoTo<ClanScreenViewModel>();
+        Console.WriteLine("Press Start");
+
+        NavigationParameters parameters = new NavigationParameters();
+        parameters.Add("test", "weeeee");
+       _regionManager.RequestNavigate(RegionNames.MainRegion, "ClanScreenView", parameters);
     }
 
     //[RelayCommand]

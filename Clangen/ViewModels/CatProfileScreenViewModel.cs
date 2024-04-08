@@ -3,7 +3,7 @@ using Clangen.Models.CatStuff;
 
 namespace Clangen.ViewModels;
 
-public partial class CatProfileScreenViewModel : PageViewModelBase
+public partial class CatProfileScreenViewModel : ViewModelBase
 {
     // Would prefer this not to be null. Set dummy cat? 
     public Cat? CurrentCat;

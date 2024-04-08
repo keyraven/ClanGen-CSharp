@@ -2,10 +2,10 @@
 
 namespace Clangen.ViewModels;
 
-public class MainViewModel : PageViewModelBase
+public class MainViewModel : ViewModelBase
 {
     //[ObservableProperty]
-    private PageViewModelBase _content = default!;
+    private ViewModelBase _content = default!;
 
     public MainViewModel()
     {

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Linq;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Clangen.Models;
-
+using Clangen.RegionAdapters;
 using Clangen.ViewModels;
 using Clangen.Views;
 using Prism.DryIoc;
 using Prism.Ioc;
-using Prism.Modularity;
 using Prism.Regions;
 
 namespace Clangen;
@@ -33,6 +33,7 @@ public class App : PrismApplication
 
         // Views - Generic
         containerRegistry.Register<MainWindow>();
+        containerRegistry.Register<MainWindow>();
 
         // Views - Region Navigation
         containerRegistry.RegisterForNavigation<StartScreenView, StartScreenViewModel>();
@@ -43,6 +44,13 @@ public class App : PrismApplication
     protected override AvaloniaObject CreateShell()
     { 
         return Container.Resolve<MainWindow>();
+    }
+
+
+    protected override void ConfigureRegionAdapterMappings(RegionAdapterMappings regionAdapterMappings)
+    {
+        base.ConfigureRegionAdapterMappings(regionAdapterMappings);
+        regionAdapterMappings.RegisterMapping(typeof(Grid), Container.Resolve<GridRegionAdapter>());
     }
     
     /*
@@ -62,6 +70,8 @@ public class App : PrismApplication
         // Register initial Views to Region.
         var regionManager = Container.Resolve<IRegionManager>();
         regionManager.RegisterViewWithRegion(RegionNames.MainRegion, typeof(StartScreenViewModel));
+        regionManager.RegisterViewWithRegion(RegionNames.TestRegion1, typeof(Test1ViewModel));
+        regionManager.RegisterViewWithRegion(RegionNames.TestRegion2, typeof(Test2ViewModel));
     }
 }
     
